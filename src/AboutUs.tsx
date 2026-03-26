@@ -16,6 +16,7 @@ import logo7 from '../src/Clients/Goldilocks.png'
 import logo8 from '../src/Clients/Smart.png'
 import logo9 from '../src/Clients/PLDT.png'
 import './AboutUs.css';
+import { color } from "framer-motion";
 
 function AboutUs() {
   const images = [abtproj1, abtproj2, abtproj3];
@@ -53,7 +54,7 @@ useEffect(() => {
           </div>
           <div className="abt-c1-description2">
             <p>
-                Pythagoras Construction, Inc. is a SEC-registered general contracting firm established in 1993, 
+                <span className="text-color">Pythagoras Construction, Inc.</span> is a SEC-registered general contracting firm established in 1993, 
                 providing construction and allied maintenance services to government and private clients. 
                 We offer comprehensive, client-focused solutions from planning and cost estimation to project execution and supervision,
                  delivered by a skilled administrative, technical, and operational team of over 100 construction workers. 

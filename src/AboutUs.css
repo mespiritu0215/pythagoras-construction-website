@@ -25,6 +25,11 @@ body::before {
   border-radius: 100px;
 }
 
+.text-color{
+  color:#920000;
+  font-family: 'Open Sans', sans-serif !important;
+}
+
 .abt-body-container1{
   height: 400px;
   width: 90%;
@@ -90,7 +95,6 @@ body::before {
   color: #000000;
   text-align: left;
   margin: 0;
-  padding-right: 80px;
 }
 
 .abt-body-container2{
@@ -105,6 +109,7 @@ body::before {
   border-radius: 90%;
   height: 900px;
   opacity: 90;
+  margin-bottom: 100px;
 }
 
 .abt-c2-description{
@@ -145,15 +150,16 @@ body::before {
     height: 24%;
     border-radius: 10px;
     font-size: 24px;
-    margin-left: 20px;
 }
 
 .abt-mission p, .abt-vision p, .abt-values p{
-  font-size: 18px;
+  font-size: 17px;
+  text-align: left;
 }
 
 .abt-mission p{
   margin: 0;
+  font-size: 15px;
 }
 
 .abt-mission h2{
@@ -214,18 +220,21 @@ body::before {
 .abt-slider {
   overflow: hidden;
   border-radius: 20px;
+  box-shadow: 0px 0px 10px 4px #0000009d;
 }
 
 .abt-slider-track {
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 100%;
+  width: 650px;
 }
 
 .abt-slider-track img {
   width: 100%;
   flex-shrink: 0;
   border-radius: 20px;
+  object-fit: cover;
+  object-position: 140%;
 }
 
 /* "Our Projects" Button Style */
@@ -425,6 +434,7 @@ body::before {
 .abt-section2 a{
   font-size: 16px;
   padding-bottom: 30px;
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 .abt-section2 p{
