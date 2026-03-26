@@ -1,0 +1,915 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;500&display=swap');
+
+body, p, li, li a {
+  font-family: 'Open Sans', sans-serif !important;
+}
+
+h1, h2, h3 {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+main {
+  padding-top: 40px;
+}
+
+/* STICKY NAVBAR */
+.App-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid #000;
+}
+
+/* TOP RED STRIP */
+.header-top {
+  background-color: #920000;
+  height: 40px;
+  width: 100%;
+}
+
+/* NAV BAR */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 1%;
+}
+
+/* BRAND */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand img {
+  width: 70px;
+  height: auto;
+}
+
+
+.brand p {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+/* NAV LINKS */
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 5px;
+}
+
+
+.nav-links li a {
+  position: relative;
+  font-size: 18px;
+  color: #000;
+  padding-bottom: 4px;
+}
+
+.nav-links li{
+    transition: all 0.2s ease-in-out;
+
+}
+.nav-links li:hover {
+  transform: scale(115%);
+  transition: all 0.2s ease-in-out;
+}
+
+/* CENTER-OUT UNDERLINE */
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #920000;
+  transform: translateX(-50%);
+  transition: 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* HAMBURGER ICON */
+.hamburger {
+  width: 30px;
+  height: 24px;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+.hamburger span {
+  height: 3px;
+  width: 100%;
+  background: #000;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+/* ANIMATION TO X */
+.hamburger.open span:nth-child(1) {
+  transform: translateY(9.5px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-9.5px) rotate(-45deg);
+}
+
+.header-top p{
+  color: transparent;
+}
+
+.header-items{
+  height: 50px;
+}
+
+.header ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.header li{
+  padding: 15px;
+  margin-top: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+.header a {
+  position: relative;
+  font-size: 20px;
+  color: #000000;
+  text-decoration: none;
+  padding-bottom: 4px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+}
+
+.header a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #920000;
+transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-50%);
+}
+
+.header a:hover::after {
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+}
+
+.header li span {
+  display: inline-block;
+}
+
+.logo{
+  width: 10px;
+  height: 10px;
+  margin-left: -50px;
+  margin-top: 20px;
+}
+
+.logo img{
+  margin-top: -12px;
+}
+
+.header .company-name{
+  margin: 0 2rem;
+  font-size: 18px;
+  margin-top: -24px;
+}
+
+a{
+  color: white;
+  text-decoration: none;
+}
+
+body{
+  position: relative; /* Establishes a positioning context for the pseudo-element */
+  min-height: 100vh; /* Ensures the body fills at least the full viewport height */
+  margin: 0; /* Optional: removes default body margins */
+  height: 150vh;
+}
+
+body::before {
+  content: ""; /* Required for pseudo-elements to render */
+  background-image: url('background.png'); /* Set your background image here */
+  background-position: 50% 67%;
+  position: absolute; /* Positions the pseudo-element relative to the body */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; /* These four properties make the pseudo-element cover the entire body */
+  opacity: 0.40; /* Adjust the opacity value (0.0 for fully transparent to 1.0 for fully opaque) */
+  z-index: -1; /* Sends the pseudo-element behind the body's actual content */
+  background-size: cover; /* Optional: ensures the image covers the entire area */
+  height: 50%;
+  border-radius: 100px;
+}
+
+.body-container1{
+  height: 500px;
+  width: 90%;
+  max-width: 1000px;
+  background-color: #ffffffbd;
+  margin: auto;
+  margin-top: 150px;
+  box-shadow: 3px 4px 10px 4px #00000099;
+  border-radius: 40px;
+}
+
+.body-logo{
+  z-index: 10;
+  opacity: 100 !important;
+}
+
+.body-logo img{
+  margin-top: -33px;
+  opacity: 100 !important;
+  width: 120px;
+  height: 70px;
+}
+
+.c1-description h1,
+.c1-description p {
+  font-family:'Times New Roman', Times, serif;
+}
+
+.c1-description h1{
+  margin-top: -2px;
+  font-size: 42px;
+  color: #920000;
+}
+
+.c1-description p{
+  margin-top: 70px;
+  font-size: 30px;
+  color: #000000;
+}
+
+.body-container2{
+  margin-top: 100px;
+}
+
+.body-container2-inner{
+  display: flex;
+  flex-direction: row;
+  content: " ";
+  background-color: #FDFDFD;
+  border-radius: 90%;
+  height: 900px;
+  opacity: 90;
+}
+
+.c2-description{
+  margin-top: 20%;
+}
+
+.c2-description p{
+  font-size: 20px;
+  font-weight: 500;
+  text-align: right;
+  background-color: #FDFDFD;
+  width: 600px;
+  margin: 0px;
+  padding-right: 40px;
+  padding-top: 20px;
+  padding-left: 200px;
+  letter-spacing: 2px;
+}
+
+.c2-description h2{
+  font-size: 30px;
+  color:#920000;
+  background-color: #FDFDFD;
+  width: 600px;
+  text-align: right;
+  margin: 0px;
+  padding-right: 40px;
+  padding-left: 200px;
+
+}
+
+.c2-description .desc{
+  padding-top: 20px;
+  padding-right: 40px;
+  padding-bottom: 30px;
+  font-size: 16px;
+  font-weight: 400;
+  padding-left: 200px;
+}
+
+.c2-images{
+  margin-left: 100px;
+}
+
+.c2-image1 img{
+  display: flex;
+  object-fit:scale-down;
+  height: 420px;
+  width: 520px;
+  margin-left: -20px;
+  margin-top: 35%;
+  z-index: 5;
+}
+
+.c2-image2{
+  height: 400px;
+  width: 300px;
+  border: solid 2px #920000;
+  margin-top: -330px;
+  z-index: -5;
+}
+
+.c2-image3 img{
+  display: flex;
+  object-fit:scale-down;
+  height: 420px;
+  width: 520px;
+  z-index: 10;
+  margin-left: -200px;
+  margin-top: -350px;
+}
+
+.body-container3-inner{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.recently-completed{
+  margin: 100px 0px 0px 60px;
+  text-align: left;
+  background-color: #FFFFFF;
+  width: 700px;
+  padding-left: 200px;
+  margin-left: -20px;
+}
+
+.recently-completed p{
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.recently-completed h2{
+  font-size: 30px;
+  font-style: italic;
+  font-weight: 800;
+  color:#920000;
+  margin-top: -10px;
+}
+
+.body-container3-inner .all-projects{
+  margin-top: 135px;
+  margin-right: 60px;
+  height: 50px;
+  width: 150px;
+  background-color: #920000;
+  font-size: 16px;
+  align-content: center;
+  box-shadow: 3px 4px 10px 4px #00000099;
+  transition: all 0.2s ease-in-out;
+}
+
+.body-container3-inner .all-projects:hover{
+  transform: scale(105%);
+  transition: all 0.2s ease-in-out;
+}
+
+.c3-images{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 50px 150px 10px 150px;
+  gap: 50px;
+}
+
+.c3-image1, .c3-image2, .c3-image3, .c3-image4 {
+  position: relative; 
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the tag horizontally */
+}
+
+.c3-images img {
+  height: 400px;
+  width: 250px;
+  box-shadow: 3px 4px 10px 4px #00000099;
+  object-fit: cover;
+  display: block; /* Removes tiny bottom gap in images */
+}
+
+
+.tag {
+  position: absolute;
+  bottom: 20px; /* Moves it 20px up from the bottom of the image */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: -100px;
+  margin-bottom: -20px;
+}
+
+/* 3. Style your text and links (Cleaned up) */
+.tag p {
+  background-color: #FEFBF2;
+  color: #920000;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+  display: flex; /* Use flex for centering text */
+  justify-content: center;
+  align-items: center;
+  margin: 0; /* Remove that negative margin */
+}
+
+.tag a {
+  background-color: #920000;
+  color: #FEFBF2;
+  text-decoration: none;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.body-container4{
+  margin-top: 100px;
+}
+
+.body-container4-inner{
+  display: flex;
+  flex-direction: row;
+  content: " ";
+  background-color: #FDFDFD;
+  border-radius: 90%;
+  height: 900px;
+  opacity: 90;
+}
+
+.c4-description{
+  margin-top: 20%;
+  margin-left: -50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.c4-description h1{
+  font-size: 48px;
+  font-weight: 700;
+  font-style: italic;
+  text-align: left;
+  background-color: #FDFDFD;
+  color:#920000;
+  width: 553px;
+  margin: 0px;
+  padding-right: 200px;
+  padding-top: 20px;
+}
+
+.c4-description h2{
+  font-size: 28px;
+  font-weight: 100;
+  color:#920000;
+  background-color: #FDFDFD;
+  width: 553px;
+  text-align: left;
+  margin: 0px;
+  padding-right: 200px;
+
+}
+
+.c4-description .desc{
+  padding-top: 20px;
+  padding-right: 200px;
+  padding-bottom: 30px;
+  margin-top: 0px;
+  font-size: 18px;
+  font-weight: 400;
+  width: 553px;
+  text-align: left;
+  background-color: #FDFDFD;
+}
+
+.c4-description .abt-tag {
+  background-color: #920000;
+  color: #FEFBF2;
+  text-decoration: none;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  box-shadow: 3px 4px 10px 4px #00000099;
+}
+
+.c4-images{
+  margin-left: 100px;
+  margin-right: 60px;
+}
+
+.c4-image1 img{
+  display: flex;
+  object-fit:contain;
+  height: 550px;
+  width: 750px;
+  margin-top: 25%;
+  margin-left: -100px;
+  z-index: 5;
+}
+
+.body-container5-inner {
+  /* Remove background properties from here */
+  /* background-image: url(...)  <-- DELETE */
+  /* background-size: cover;     <-- DELETE */
+
+  position: relative; /* Crucial for containing the pseudo-element */
+  z-index: 1; /* Ensure content sits above the background */
+  overflow: hidden; /* Ensures blurry edges don't escape */
+
+  width: 100%;
+  padding: 50px 0;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.body-container5-inner::before {
+  content: ""; /* Necessary to create the pseudo-element */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Places it behind the actual content */
+
+  /* Apply image and opacity HERE */
+  background-image: url('background.png'); /* Or use inline styles if in React */
+  background-size: cover;
+  background-position: 50% 67%;
+  background-repeat: no-repeat;
+  border-radius: 100px 100px 0px 0px;
+
+  opacity: 0.4; /* CHANGE THIS VALUE: 0.0 is invisible, 1.0 is full strength */
+}
+
+.c5-contact{
+  display: flex;
+  flex-direction: row;
+  gap: 70px;
+  margin-top: 30px;
+}
+
+.section1, .section2, .section3, .section4{
+  background-color: #fefbf2d9;
+  border-radius: 25px;
+  box-shadow: 3px 4px 10px 4px #92000075;
+}
+
+.section1{
+  height: 200px;
+  width: 330px;
+  padding: 0px 20px 0px 20px;
+  margin-left: 70px;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.section1 h3{
+  margin-top: 0px; 
+  margin-bottom: 0px;
+  font-size: 26px;
+  font-weight: 600;
+  color:#920000;
+}
+
+.section1 p{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 29px;
+  padding-right: 29px;
+  font-size: 18px;
+}
+
+.section2, .section3, .section4{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 200px;
+  padding: 0px 20px 0px 20px;
+}
+
+.section2 img, .section3 img, .section4 img{
+  height: 50px;
+  width: 50px;
+}
+
+.section2 a{
+  font-size: 16px;
+  padding-bottom: 30px;
+}
+
+.section2 p{
+  font-size: 14px;
+  color:#000000;
+}
+
+.c5-contact .section2 a{
+  color: #000000;
+  text-decoration: underline;
+}
+
+
+.section3 h4, .section4 h4{
+  font-size: 20px;
+  margin-top: 0px;
+}
+
+.section3 p, .section4 p{
+  font-size: 14px;
+}
+
+.footer{
+  display: flex;
+  flex-direction: row;
+  height: 60px;
+}
+
+.footer-left{
+  background-color: #920000;
+  color: #ffffff;
+  width: 18%;
+  padding: 0px 2px 0px 2px;
+  clip-path: polygon(0 0, 100% 0, 87% 100%, 0% 100%);
+  border-bottom: solid 1px #920000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-right{
+  background-color: #FEFBF2;
+  color: #920000;
+  width: 100%;
+  padding: 10px;
+  padding-right: 20px;
+  clip-path: polygon(2.1% 0, 100% 0, 100% 100%, 0 100%);
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 100px
+}
+
+.footer-left p{
+  font-size: 14px;
+  margin: 0px;
+} 
+.footer-right p{
+  font-size: 10px;
+}
+
+.footer-final{
+  background-color: #920000;
+  color:#FEFBF2;
+  width: 100%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.footer-final p{
+  font-size: 16px;
+  margin: 0px;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+
+  .hamburger {
+    display: flex;
+    margin-right: 15px;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0px;
+    left: 0;
+    width: 50%;
+    height: calc(70vh - 150px);
+    background: white;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    transform: translate(50%,-110%);
+    transition: transform 0.2s ease-in-out;
+    z-index: -5000;
+    border: solid 1px #000000;
+    list-style: none;
+    padding-left: 0px;
+  }
+
+  .nav-links.active {
+    transform: translate(50%,40%);
+    transition: transform 0.2s ease-in-out;
+    z-index: 1000;
+    padding-left: 0px;
+    border-radius: 25px;
+  }
+
+  .nav-links a {
+    font-size: 22px;
+  }
+
+  .nav-links a::after {
+    display: none;
+  }
+
+  .nav-links li:hover{
+    transform: scale(100%);
+  }
+
+  .body-container1 .c1-description h1{
+    font-size: 20px;
+  }
+  .body-container1 .c1-description p{
+    font-size: 15px;
+  }
+
+  .body-container2{
+    margin-top: 30px;
+  }
+
+  .body-container2-inner{
+    height: 400px; 
+  }
+
+  .c2-description{
+    margin-top: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    text-align: right;
+    margin-left: -50px;
+    width: 70%;
+    height: 100%;
+  }
+
+  .c2-description p, .c2-description h2, .c2-description .desc{
+    padding-left: 0px;
+    text-align: right;
+    width: 65%;
+    padding-right: 0px;
+  }
+
+   .c2-description p, .c2-description .desc{
+    font-size: 8px;
+    padding-left: 100px;
+   }
+
+  .c2-description h2{
+    font-size: 12px;
+    padding-left: 100px;
+    text-align: right;
+  }
+
+   .c2-description .desc{
+    padding-top: 10px;
+    padding-bottom: 0px;
+   }
+
+  .c2-images{
+    margin-left: 0px;
+  }
+
+  .c2-image1 img{
+    margin-top: 0px;
+    margin-left: 20px;
+  }
+
+  .c2-image2{
+    height: 80px;
+    width: 70px;
+    margin-top: -60px;
+    margin-left: 30px;
+  }
+
+.c2-image3 img{
+  margin:0px;
+  margin-left: -30px;
+  margin-top: -70px;
+}
+
+  .c2-image1 img, .c2-image3 img{
+    height: 100px;
+    width: 150px;
+  }
+
+
+}
+
+@media (max-width: 800px) {
+
+  .header ul {
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .logo {
+    margin: 0;
+  }
+
+  .logo img {
+    width: 40px;
+    height: auto;
+  }
+
+  .company-name {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+    font-size: 16px;
+  }
+
+  .header li {
+    padding: 5px 10px;
+  }
+
+  .header a {
+    font-size: 16px;
+  }
+
+  .body-container1 {
+    margin-top: 0px;
+    height: auto;
+    padding: 20px;
+  }
+
+  body::before{
+    height: 20% !important;
+    border-radius: 25px !important;
+  }
+
+   .body-container2-inner{
+    height: 260px;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .c1-description h1 {
+    font-size: 28px;
+  }
+
+  .c1-description p {
+    font-size: 18px;
+    margin-top: 30px;
+  }
+
+  .body-logo img {
+    width: 90px;
+    height: auto;
+  }
+}
+
+
+

@@ -1,0 +1,44 @@
+.proj-container1, .proj-container3{
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.proj-container1{
+    margin-top: 25%;
+}
+
+.proj-container2, .proj-container4{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.proj-c1-images, .proj-c2-images, .proj-c3-images, .proj-c4-images{
+    width: 15%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    margin: 5%;
+}
+
+.proj-c1-inner, .proj-c2-inner, .proj-c3-inner, .proj-c4-inner{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+}
+
+.proj-c1-inner img, .proj-c2-inner img, .proj-c3-inner img, .proj-c4-inner img{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}

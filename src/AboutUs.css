@@ -1,0 +1,451 @@
+*{
+  font-family: 'Times New Roman', Times, serif;
+}
+
+body{
+  position: relative; /* Establishes a positioning context for the pseudo-element */
+  min-height: 100vh; /* Ensures the body fills at least the full viewport height */
+  margin: 0; /* Optional: removes default body margins */
+  height: 150vh;
+}
+
+body::before {
+  content: ""; /* Required for pseudo-elements to render */
+  background-image: url('background.png'); /* Set your background image here */
+  background-position: 50% 67%;
+  position: absolute; /* Positions the pseudo-element relative to the body */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; /* These four properties make the pseudo-element cover the entire body */
+  opacity: 0.40; /* Adjust the opacity value (0.0 for fully transparent to 1.0 for fully opaque) */
+  z-index: -1; /* Sends the pseudo-element behind the body's actual content */
+  background-size: cover; /* Optional: ensures the image covers the entire area */
+  height: 50%;
+  border-radius: 100px;
+}
+
+.abt-body-container1{
+  height: 400px;
+  width: 90%;
+  max-width: 1000px;
+  background-color: #fefbf2b7;
+  margin: auto;
+  margin-top: 150px;
+  box-shadow: 3px 4px 10px 4px #00000099;
+  border-radius: 40px;
+}
+
+.abt-body-logo{
+  z-index: 10;
+  opacity: 100 !important;
+}
+
+.abt-body-logo img{
+  margin-top: -33px;
+  opacity: 100 !important;
+  width: 120px;
+  height: 70px;
+}
+
+.abt-c1-container{
+    display: flex;
+    flex-direction: row;
+    margin: 8% 0px 8% 0px;
+}
+
+.abt-c1-description{
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 50px;
+    width: 70%;
+}
+
+.abt-c1-description2{
+    display: flex;
+    width: 100%;
+    padding-right: 50px;
+    padding-left: 20px;
+    padding-right: 100px;
+    align-items: flex-start;
+    margin-top: -30px;
+}
+
+.abt-c1-description h1,
+.abt-c1-description p {
+  font-family:'Times New Roman', Times, serif;
+}
+
+.abt-c1-description h1{
+  font-size: 34px;
+  font-weight: 800;
+  color: #920000;
+  text-align: right;
+  margin: 0;
+}
+
+.abt-c1-description2 p{
+  font-size: 18px;
+  color: #000000;
+  text-align: left;
+  margin: 0;
+  padding-right: 80px;
+}
+
+.abt-body-container2{
+  margin-top: 100px;
+}
+
+.abt-body-container2-inner{
+  display: flex;
+  flex-direction: row;
+  content: " ";
+  background-color: #D9CCCC;
+  border-radius: 90%;
+  height: 900px;
+  opacity: 90;
+}
+
+.abt-c2-description{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+}
+
+.abt-c2-description-sec1{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height:100%;
+    margin-right: -100px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.abt-mission, .abt-vision, .abt-values{
+    background-color: #FEFBF2;
+    width: 60%;
+    height: 23%;
+    border-radius: 25px;
+    margin: 10px;
+    padding: 0px 20px 0px 20px;
+     box-shadow: 3px 4px 10px 4px #00000099;
+}
+
+.abt-mission h2, .abt-vision h2, .abt-values h2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #920000;
+    color: #FEFBF2;
+    width: 40%;
+    height: 24%;
+    border-radius: 10px;
+    font-size: 24px;
+    margin-left: 20px;
+}
+
+.abt-mission p, .abt-vision p, .abt-values p{
+  font-size: 18px;
+}
+
+.abt-mission p{
+  margin: 0;
+}
+
+.abt-mission h2{
+  margin-bottom: 2px;
+}
+
+.abt-vision{
+    background-color: #920000;
+    margin-top:0px;
+}
+
+.abt-vision h2{
+    background-color: #FEFBF2;
+    color: #920000;
+}
+
+.abt-vision p{
+  color: #FFFFFF;
+}
+
+.abt-values{
+    background-color: #FEFBF2;
+    margin-top:0px;
+}
+
+.abt-values h2{
+    background-color: #920000;
+    color: #FEFBF2;
+}
+
+/* The parent container MUST be relative */
+.abt-projects-window {
+  position: relative;
+  width: 30%;
+  margin-left: -100px;
+}
+
+.abt-projects-window img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 20px; /* Matching the rounded corners in your image */
+}
+
+/* 3. The Overlay Container */
+/* The overlay container spans the full image area */
+.abt-projects-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px; /* Space from the edges of the image */
+  display: flex;
+  justify-content: space-between; /* Pushes one left, one right */
+  box-sizing: border-box; /* Ensures padding doesn't break the width */
+}
+
+.abt-slider {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.abt-slider-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%;
+}
+
+.abt-slider-track img {
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: 20px;
+}
+
+/* "Our Projects" Button Style */
+.abt-projects-btn {
+  background-color: #FEFBF2;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.abt-projects-btn h2 {
+  color: #920000;
+  font-size: 20px;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* "Visit" Button Style */
+.abt-visit-btn {
+  background-color: #920000;
+  padding: 10px 40px; /* Wider padding for the 'Visit' button */
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.abt-visit-btn:hover {
+  background-color: #700000;
+}
+
+.abt-visit-btn h2 {
+  color: #FEFBF2;
+  font-size: 20px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.abt-projects{
+  position: relative;
+}
+
+/* 3. Style your text and links (Cleaned up) */
+.tag p {
+  background-color: #FEFBF2;
+  color: #920000;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+  display: flex; /* Use flex for centering text */
+  justify-content: center;
+  align-items: center;
+  margin: 0; /* Remove that negative margin */
+}
+
+.tag a {
+  background-color: #920000;
+  color: #FEFBF2;
+  text-decoration: none;
+  font-size: 16px;
+  width: 150px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.abt-body-container4-inner{
+  content: " ";
+  background-color: #D9CCCC;
+  border-radius: 90%;
+  height: 900px;
+  opacity: 90;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+ .abt-c4-desc{
+   display: flex;
+   flex-direction: row;
+   background-color: #920000;
+   color: #FEFBF2;
+   padding: 40px 100px 40px 100px;
+   gap: 80px;
+   border-radius: 70px 70px 0 0;
+ }
+
+ .abt-c4-desc2{
+  background-color: #FEFBF2;
+  color: #920000;
+  margin-top: 0;
+ }
+
+ .abt-c4-icons{
+  background-color: #FEFBF2;
+  border-radius: 0 0 70px 70px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
+  padding: 20px;
+ }
+
+
+.abt-body-container5-inner {
+  /* Remove background properties from here */
+  /* background-image: url(...)  <-- DELETE */
+  /* background-size: cover;     <-- DELETE */
+
+  position: relative; /* Crucial for containing the pseudo-element */
+  z-index: 1; /* Ensure content sits above the background */
+  overflow: hidden; /* Ensures blurry edges don't escape */
+
+  width: 100%;
+  padding: 50px 0;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.abt-body-container5-inner::before {
+  content: ""; /* Necessary to create the pseudo-element */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Places it behind the actual content */
+
+  /* Apply image and opacity HERE */
+  background-image: url('background.png'); /* Or use inline styles if in React */
+  background-size: cover;
+  background-position: 50% 67%;
+  background-repeat: no-repeat;
+  border-radius: 100px 100px 0px 0px;
+
+  opacity: 0.4; /* CHANGE THIS VALUE: 0.0 is invisible, 1.0 is full strength */
+}
+
+.abt-c5-contact{
+  display: flex;
+  flex-direction: row;
+  gap: 70px;
+  margin-top: 30px;
+}
+
+.abt-section1, .abt-section2, .abt-section3, .abt-section4{
+  background-color: #fefbf2d9;
+  border-radius: 25px;
+  box-shadow: 3px 4px 10px 4px #920000;
+}
+
+.abt-section1{
+  height: 200px;
+  width: 330px;
+  padding: 0px 20px 0px 20px;
+  margin-left: 70px;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.abt-section1 h3{
+  margin-top: 0px; 
+  margin-bottom: 0px;
+  font-size: 26px;
+  font-weight: 600;
+  color:#920000;
+}
+
+.abt-section1 p{
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 29px;
+  padding-right: 29px;
+  font-size: 18px;
+}
+
+.abt-section2, .abt-section3, .abt-section4{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 200px;
+  padding: 0px 20px 0px 20px;
+}
+
+.abt-section2 img, .abt-section3 img, .abt-section4 img{
+  height: 50px;
+  width: 50px;
+}
+
+.abt-section2 a{
+  font-size: 16px;
+  padding-bottom: 30px;
+}
+
+.abt-section2 p{
+  font-size: 14px;
+  color:#000000;
+}
+
+.abt-c5-contact .abt-section2 a{
+  color: #000000;
+  text-decoration: underline;
+}
+
+
+.abt-section3 h4, .abt-section4 h4{
+  font-size: 20px;
+  margin-top: 0px;
+}
+
+.abt-section3 p, .abt-section4 p{
+  font-size: 14px;
+}
+
+
+/* MOBILE */
