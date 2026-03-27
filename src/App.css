@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;500&display=swap');
 
-body, p, li, li a, .footer-add, .footer-phone, .footer-email {
+body, p, li, li a, .footer-add, .footer-phone, .footer-email, .footer-add strong, .footer-phone strong, .footer-email strong {
   font-family: 'Open Sans', sans-serif !important;
 }
 
