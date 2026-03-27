@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Open+Sans:wght@400;500&display=swap');
 
-body, p, li, li a {
+body, p, li, li a, .footer-add, .footer-phone, .footer-email {
   font-family: 'Open Sans', sans-serif !important;
 }
 
@@ -47,9 +47,10 @@ main {
 
 /* BRAND */
 .brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 20px;
 }
 
 .brand img {
