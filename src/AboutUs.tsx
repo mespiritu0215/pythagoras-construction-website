@@ -138,7 +138,7 @@ useEffect(() => {
             <div className="abt-c4-desc2">
               <p>Trusted by 20+ companies nationwide</p>
             </div>
-            <div className="abt-c4-icons">
+            {/*<div className="abt-c4-icons"> 
               <img src={logo1} alt="" style={{height:'45px',width:'130px'}} /> 
               <img src={logo2} alt="" style={{height:'80px', width:'110px'}}/>
               <img src={logo3} alt="" style={{width:'110px'}}/>
@@ -148,7 +148,7 @@ useEffect(() => {
               <img src={logo7} alt="" style={{height:'60px', width:'60px'}}/>
               <img src={logo8} alt="" style={{height:'40px', width:'110px'}}/>
               <img src={logo9} alt="" style={{height:'80px', width:'120px'}}/>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="abt-body-container5">

@@ -106,7 +106,6 @@ body::before {
   flex-direction: row;
   content: " ";
   background-color: #D9CCCC;
-  border-radius: 90%;
   height: 900px;
   opacity: 90;
   margin-bottom: 100px;
@@ -304,8 +303,6 @@ body::before {
 
 .abt-body-container4-inner{
   content: " ";
-  background-color: #D9CCCC;
-  border-radius: 90%;
   height: 900px;
   opacity: 90;
   display: flex;
@@ -459,3 +456,226 @@ body::before {
 
 
 /* MOBILE */
+@media(max-width:1120px){
+  .abt-c1-description h1{
+    font-size: 32px !important;
+  }
+  .abt-c2-description{
+    gap: 150px !important;
+  }
+  .abt-mission, .abt-vision, .abt-values{
+    width: 70%;
+  }
+.abt-mission h2, .abt-vision h2, .abt-values h2{
+  font-size: 20px !important;
+  width: 50%;
+}
+.abt-mission p{
+  font-size: 14px !important;
+}
+.abt-vision p, .abt-values p{
+  font-size:15px !important;
+}
+.abt-projects-window{
+  width: 40%;
+}
+.abt-body-container4-inner{
+  justify-content: flex-start;
+}
+.abt-c4-desc{
+  padding: 20px 60px 20px 60px
+}
+.abt-c4-integrity h2, .abt-c4-innovate h2, .abt-c4-excellency h2, .abt-c4-trustworthiness h2{
+  font-size: 16px;
+}
+.abt-c4-integrity p, .abt-c4-innovate p, .abt-c4-excellency p, .abt-c4-trustworthiness p{
+  font-size:14px;
+}
+.abt-body-container4-inner{
+  height: 350px;
+}
+
+.abt-c5-contact{
+  gap:40px;
+}
+
+.abt-section1{
+  height: 150px;
+  width: 230px;
+  margin-left: 0px;
+}
+
+.abt-section1 h3{
+  font-size:20px;
+}
+
+.abt-section1 p{
+  font-size:14px;
+}
+
+.abt-section2, .abt-section3, .abt-section4{
+  height: 150px;
+  width: 140px;
+}
+
+.abt-section2 img, .abt-section3 img, .abt-section4 img{
+  height: 40px;
+  width: 40px;
+}
+
+.abt-section2 a{
+  font-size: 14px;
+  padding-bottom: 10px;
+}
+
+.abt-section3 h4, .abt-section4 h4{
+ margin-bottom: 0px; 
+ font-size: 18px;
+ font-weight: 500;
+}
+
+.abt-section3 p, .abt-section4 p{
+ font-size: 16px; 
+}
+
+.footer-add, .footer-phone, .footer-email{
+  font-size: 14px;
+}
+}
+
+@media (max-width:768px){
+  .abt-c1-description2 p{
+    font-size: 15px;
+  }
+  .abt-c2-description{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px !important;
+    margin-top: 60px;
+    width: 100%;
+  }
+  .abt-c2-description-sec1{
+    flex-direction: row;
+    gap: 0px;
+    margin-top: 0px;
+    height: 41%;
+    width: 100%;
+  }
+  .abt-mission, .abt-vision, .abt-values{
+    height: 100%;
+    width: 485px;
+    margin-top: 0px;
+  }
+  .abt-mission h2, .abt-vision h2, .abt-values h2{
+    width: 80%;
+    height: 10%;
+    font-size: 18px !important;
+  }
+  .abt-mission p, .abt-vision p, .abt-values p{
+    font-size: 15px !important;
+    text-align: left;
+  }
+  .abt-mission p{
+    margin-top: 15px;
+  }
+  .abt-vision p{
+    font-size:17px !important;
+  }
+  .abt-values p{
+    font-size: 19px !important;
+  }
+  .abt-slider{
+    width: 100%;
+  }
+  .abt-slider-track {
+    width: 100%; 
+    display: flex;
+  }
+  .abt-projects-window {
+    width: 90%; 
+    margin: 20px auto; /* Centers it and removes that 15px left margin */
+    overflow: hidden;
+    position: relative; /* Keeps the 'Visit' button contained */
+    margin-left: 40px;
+    margin-right: 40px;
+    margin-bottom: 60px;
+    border-radius: 25px;
+  }
+  .abt-projects-window img {
+    width: 100%;
+    height: auto;
+    object-fit: fill;
+    border-radius: 10px; /* Optional: matches your card style */
+    object-position: 500% !important;
+  }
+  .visit-btn { 
+    right: 15px !important;
+    top: 15px !important;
+    padding: 5px 20px;
+    font-size: 14px;
+  }
+  .abt-body-container2-inner{
+    margin-bottom: 50px;
+  }
+  .abt-c4-desc{
+    gap:30px;
+    text-align: center;
+  }
+  body::before{
+    top: 80px;
+  }
+  .abt-body-container5-inner::before{
+    border-radius: 25px 25px 0px 0px;
+  }
+  .abt-section1 {
+    height: 90%;
+    width: 40%;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 0px;
+  }
+  .abt-section1 h3{
+    font-size: 16px;
+    padding-top: 10px;
+  }
+  .abt-section1 p{
+    font-size: 12px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-bottom: 10px;
+  }
+  .abt-section2 img, .abt-section3 img, .abt-section4 img{
+    height: 30px;
+    width: 30px;
+  }
+  .abt-c5-contact{
+    gap:10px;
+  }
+  .abt-section2 a{
+    font-size: 12px;
+    padding-bottom: 0px;
+  }
+  .abt-section2, .abt-section3, .abt-section4{
+    height: 90%;
+    width: 17%;
+  }
+  .abt-section2 p,.abt-section3 p,.abt-section4 p{
+    font-size:12px;
+    margin-top: 6px;
+  }
+  .abt-section3 h4, .abt-section4 h4{
+    font-size: 15px;
+  }
+  .abt-section4{
+    margin-right: 10px;
+  }
+  .footer-left p{
+    font-size:13px;
+  }
+  .footer-add, .footer-phone, .footer-email{
+    font-size:12px;
+  }
+  .footer-final p{
+    font-size:13px;
+  }
+}
