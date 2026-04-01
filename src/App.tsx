@@ -17,6 +17,7 @@ import Projects from './Projects';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import ProjectDetails from "./ProjectDetails";
 
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
@@ -191,7 +192,7 @@ function App() {
       <footer className="site-footer">
         <div className="footer-main">
           <div className="footer-brand">
-            <img src={logo} alt="Pythagoras Logo" />
+            <img src={logo} alt="Logo" />
             <div>
               <p className="footer-company-name">PYTHAGORAS CONSTRUCTION, INC.</p>
               <p className="footer-est">Est. 1993</p>
@@ -211,14 +212,6 @@ function App() {
               <span className="footer-label">Email</span>
               <a href="mailto:pci051@yahoo.com">pci051@yahoo.com</a>
             </div>
-          </div>
-
-          <div className="footer-links">
-            <p className="footer-label">Quick Links</p>
-            <Link to="/">Home</Link>
-            <Link to="/about">About Us</Link>
-            <Link to="/services">Services</Link>
-            <Link to="/projects">Projects</Link>
           </div>
         </div>
 
