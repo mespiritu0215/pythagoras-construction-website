@@ -1,5 +1,5 @@
 *{
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'open-sans', sans-serif;
 }
 
 body{
@@ -77,11 +77,6 @@ body::before {
     margin-top: -30px;
 }
 
-.abt-c1-description h1,
-.abt-c1-description p {
-  font-family:'Times New Roman', Times, serif;
-}
-
 .abt-c1-description h1{
   font-size: 34px;
   font-weight: 800;
@@ -108,7 +103,6 @@ body::before {
   background-color: #D9CCCC;
   height: 900px;
   opacity: 90;
-  margin-bottom: 100px;
 }
 
 .abt-c2-description{
@@ -218,6 +212,7 @@ body::before {
 
 .abt-slider {
   overflow: hidden;
+  width: 100% !important;
   border-radius: 20px;
   box-shadow: 0px 0px 10px 4px #0000009d;
 }
@@ -226,6 +221,8 @@ body::before {
   display: flex;
   transition: transform 0.5s ease-in-out;
   width: 650px;
+  max-width: 650px;
+  max-height: 591px;
 }
 
 .abt-slider-track img {
@@ -373,70 +370,71 @@ body::before {
 }
 
 .abt-c5-contact{
-  display: flex;
-  flex-direction: row;
-  gap: 70px;
-  margin-top: 30px;
+  display: grid;
+    grid-template-columns: repeat(4, minmax(0, 220px));
+    gap: 16px;
+    justify-content: center;
+    margin: 52px auto 0;
+    padding: 0 8px;
 }
 
 .abt-section1, .abt-section2, .abt-section3, .abt-section4{
-  background-color: #fefbf2d9;
-  border-radius: 25px;
-  box-shadow: 3px 4px 10px 4px #920000;
+      background: rgba(254, 251, 242, 0.92);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 22px 14px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(146, 0, 0, 0.18);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
-.abt-section1{
-  height: 200px;
-  width: 330px;
-  padding: 0px 20px 0px 20px;
-  margin-left: 70px;
-  margin-right: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
 .abt-section1 h3{
-  margin-top: 0px;
-  margin-bottom: 20px;
-  font-size: 26px;
-  font-weight: 600;
-  color:#920000;
+  font-size: clamp(13px, 2vw, 15px);
+    color: #920000;
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .abt-section1 p{
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding-left: 29px;
-  padding-right: 29px;
-  font-size: 18px;
-}
-
-.abt-section2, .abt-section3, .abt-section4{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  width: 200px;
-  padding: 0px 20px 0px 20px;
+  font-size: clamp(11px, 1.8vw, 13px);
+    color: #555;
+    margin: 0;
 }
 
 .abt-section2 img, .abt-section3 img, .abt-section4 img{
-  height: 50px;
-  width: 50px;
+  width: 34px;
+    height: 34px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.abt-section2 h4{
+  font-size: clamp(13px, 2vw, 15px);
+    color: #920000;
+    font-weight: 700;
+    margin: 0;
 }
 
 .abt-section2 a{
-  font-size: 16px;
-  padding-bottom: 30px;
-  font-family: 'Open Sans', sans-serif !important;
+  font-size: clamp(11px, 1.8vw, 13px);
+    color: #920000 !important;
+    text-decoration: none;
+    font-weight: 600;
+    word-break: break-all;
+    font-family: 'open-sans', sans-serif;
 }
 
 .abt-section2 p{
-  font-size: 14px;
-  color:#000000;
+  font-size: clamp(11px, 1.8vw, 13px);
+    color: #555;
+    margin: 0;
 }
 
 .abt-c5-contact .abt-section2 a{
@@ -446,16 +444,52 @@ body::before {
 
 
 .abt-section3 h4, .abt-section4 h4{
-  font-size: 20px;
-  margin-top: 0px;
+  font-size: clamp(13px, 2vw, 15px);
+    color: #920000;
+    font-weight: 700;
+    margin: 0;
 }
 
 .abt-section3 p, .abt-section4 p{
-  font-size: 14px;
+  font-size: clamp(11px, 1.8vw, 13px);
+    color: #555;
+    margin: 0;
 }
+.see-more-button{
+   background-color: #920000;
+   color: #FEFBF2;
+   border: none;
+   font-family: "open-sans", sans-serif;
+   font-size: 16px;
+   margin-bottom: 20px;
+   padding: 10px;
+   border-radius: 10px;
+   transition: all ease-in-out 0.2ms;
+  }
+  .see-more-button:hover{
+    transition: all ease-in-out 0.2ms;
+    transform: scale(1.23);
+    background-color: #ffffff;
+    color: #920000;
+    
+  }
 
 
 /* MOBILE */
+@media (max-width: 1440px){
+  .abt-mission p{
+    font-size: 14px;
+  }
+  .abt-vision p{
+    font-size: 15px;
+  }
+  .abt-body-container2-inner{
+    margin-bottom: 0px;
+  }
+  .abt-body-container4-inner{
+    height: 500px !important;
+  }
+}
 @media(max-width:1120px){
   .abt-c1-description h1{
     font-size: 32px !important;

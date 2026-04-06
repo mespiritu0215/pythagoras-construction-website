@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import logo from './logo.png';
 import abtproj1 from './aboutproject-img1.jpg';
 import abtproj2 from './aboutproject-img2.jpg';
-import abtproj3 from './aboutproject-img3.jpg';
+import abtproj4 from './pyth5.jpg';
 import email from './email.png';
 import phone from './phone.png';
 import clock from './clock.png';
@@ -19,7 +19,7 @@ import './AboutUs.css';
 import { color } from "framer-motion";
 
 function AboutUs() {
-  const images = [abtproj1, abtproj2, abtproj3];
+  const images = [abtproj1, abtproj2, abtproj4];
 const [currentIndex, setCurrentIndex] = useState(0);
 
 useEffect(() => {
@@ -137,6 +137,8 @@ useEffect(() => {
             </div>
             <div className="abt-c4-desc2">
               <p>Trusted by 20+ companies nationwide</p>
+              <a href="#"><button className="see-more-button">See More</button>
+              </a>
             </div>
             {/*<div className="abt-c4-icons"> 
               <img src={logo1} alt="" style={{height:'45px',width:'130px'}} /> 
@@ -157,13 +159,12 @@ useEffect(() => {
               <div className="abt-section1">
                 <h3>Contact us today</h3>
                 <p>Let's bring your vision to life
-                   together. Reach out to us to talk
-                   about your next project.
+                   together.
                 </p>
               </div>
               <div className="abt-section2">
                 <img src={email} alt="email icon"/>
-                <a href="#">Pythagoras@gmail.com</a>
+                <a href="mailto:pci051@yahoo.com">pci051@yahoo.com</a>
                 <p>We Reply Within 24 Hours</p>
               </div>
               <div className="abt-section3">
@@ -176,7 +177,7 @@ useEffect(() => {
                 <h4>Working hours</h4>
                 <p>Mon to Sat 8:00AM - 5:00PM</p>
               </div>
-            </div>
+            </div>  
           </div>
         </div>
       </main>
