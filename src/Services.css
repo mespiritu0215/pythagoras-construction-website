@@ -1,4 +1,4 @@
-.services-c1-inner, .services-c2-inner, .services-c3-inner, .services-c4-inner{
+.services-c1-inner, .services-c2-inner, .services-c3-inner, .services-c4-inner {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -7,12 +7,11 @@
     padding: 50px;
 }
 
-.services-c2-inner, .services-c4-inner{
-    background-color:#FDFDFD ;
-    
+.services-c2-inner, .services-c4-inner {
+    background-color: #FDFDFD;
 }
 
-.c1-civil, .c3-end{
+.c1-civil, .c3-end {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,7 +22,7 @@
     margin-top: 25%;
 }
 
-.c2-electrical, .c4-architectural{
+.c2-electrical, .c4-architectural {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,11 +34,11 @@
     border: 1px solid #920000;
 }
 
-.c2-electrical, .c3-end, .c4-architectural{
+.c2-electrical, .c3-end, .c4-architectural {
     margin-top: 0px;
 }
 
-.c1-civil h2, .c3-end h2{
+.c1-civil h2, .c3-end h2 {
     background-color: #FEFBF2;
     color: #920000;
     border-radius: 7px;
@@ -49,7 +48,7 @@
     margin-left: -35%;
 }
 
-.c2-electrical h2, .c4-architectural h2{
+.c2-electrical h2, .c4-architectural h2 {
     background-color: #920000;
     color: #FEFBF2;
     border-radius: 7px;
@@ -59,30 +58,30 @@
     margin-left: -35%;
 }
 
-.c2-electrical h2{
+.c2-electrical h2 {
     width: 45%;
 }
 
-.c3-end h2{
+.c3-end h2 {
     width: 50%;
 }
 
-.c4-architectural h2{
+.c4-architectural h2 {
     width: 60%;
     margin-left: -25%;
 }
 
-.c1-civil ul, .c2-electrical ul, .c3-end ul, .c4-architectural ul{
+.c1-civil ul, .c2-electrical ul, .c3-end ul, .c4-architectural ul {
     text-align: left;
 }
 
-.c1-civil li, .c3-end li{
+.c1-civil li, .c3-end li {
     color: #FEFBF2;
     padding: 2px;
     font-size: 16px;
 }
 
-.c1-image{
+.c1-image {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,14 +89,51 @@
     margin-top: 25%;
 }
 
-.c2-image, .c3-image, .c4-image{
+.c2-image, .c3-image, .c4-image {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 57%;
 }
 
-.c1-image img, .c2-image img, .c3-image img, .c4-image img{
+.c1-image img, .c4-image img {
     width: 100%;
     border-radius: 25px;
+}
+
+/* ── Carousel ─────────────────────────────────────── */
+.carousel {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+.carousel-img {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    border-radius: 25px;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+
+.carousel-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: 10px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.carousel-dot.active {
+    background: #920000;
 }
