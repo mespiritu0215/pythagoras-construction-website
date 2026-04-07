@@ -576,7 +576,6 @@ main {
 .footer-brand img {
   width: 52px;
   height: auto;
-  filter: brightness(0) invert(1);
   opacity: 0.85;
 }
 
