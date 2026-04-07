@@ -10,6 +10,7 @@ import Services from './Services';
 import Projects from './Projects';
 import ProjectDetails from './ProjectDetails';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import STI from "./CompletedProjects/pages/STIBACOOR.png";
 
 // ── All project data comes from here — no duplicate imports ────
 import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
@@ -178,7 +179,7 @@ function App(): JSX.Element {
               <section className="about-strip">
                 <div className="about-strip-inner">
                   <div className="about-strip-img">
-                    <img src={abtusimg1} alt="Our team" />
+                    <img src={STI} alt="Our team" />
                     <div className="about-img-border" />
                   </div>
                   <div className="about-strip-text">

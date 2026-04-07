@@ -1,715 +1,673 @@
-*{
-  font-family: 'open-sans', sans-serif;
+/* ─────────────────────────────────────────────────────────────
+   ABOUT US  — Alternate Layout
+   Same design system as App.css (Bebas Neue + Barlow, dark theme)
+   New structure: split hero, tall panels, interactive value tabs
+───────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
+
+:root {
+  --red:          #920000;
+  --red-hover:    #b50000;
+  --dark:         #0f0e0e;
+  --dark2:        #181717;
+  --off-white:    #f4eeea;
+  --cream:        #fefbf2;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body:    'Barlow', sans-serif;
+  --font-cond:    'Barlow Condensed', sans-serif;
+  --section-pad:  clamp(60px, 8vw, 120px);
+  --side-pad:     clamp(20px, 6vw, 80px);
+  --max-w:        1280px;
 }
 
-body{
-  position: relative; /* Establishes a positioning context for the pseudo-element */
-  min-height: 100vh; /* Ensures the body fills at least the full viewport height */
-  margin: 0; /* Optional: removes default body margins */
-  height: 150vh;
+*, *::before, *::after { box-sizing: border-box; }
+
+.abt-page {
+  background: var(--dark);
+  color: #fff;
+  overflow-x: hidden;
 }
 
-body::before {
-  content: ""; /* Required for pseudo-elements to render */
-  background-image: url('background.png'); /* Set your background image here */
-  background-position: 50% 67%;
-  position: absolute; /* Positions the pseudo-element relative to the body */
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0; /* These four properties make the pseudo-element cover the entire body */
-  opacity: 0.40; /* Adjust the opacity value (0.0 for fully transparent to 1.0 for fully opaque) */
-  z-index: -1; /* Sends the pseudo-element behind the body's actual content */
-  background-size: cover; /* Optional: ensures the image covers the entire area */
-  height: 50%;
-  border-radius: 100px;
-}
-
-.text-color{
-  color:#920000;
-  font-family: 'Open Sans', sans-serif !important;
-}
-
-.abt-body-container1{
-  height: 400px;
-  width: 90%;
-  max-width: 1000px;
-  background-color: #fefbf2b7;
-  margin: auto;
-  margin-top: 150px;
-  box-shadow: 3px 4px 10px 4px #00000099;
-  border-radius: 40px;
-}
-
-.abt-body-logo{
-  z-index: 10;
-  opacity: 100 !important;
-}
-
-.abt-body-logo img{
-  margin-top: -33px;
-  opacity: 100 !important;
-  width: 120px;
-  height: 70px;
-}
-
-.abt-c1-container{
-    display: flex;
-    flex-direction: row;
-    margin: 8% 0px 8% 0px;
-}
-
-.abt-c1-description{
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-left: 50px;
-    width: 70%;
-}
-
-.abt-c1-description2{
-    display: flex;
-    width: 100%;
-    padding-right: 50px;
-    padding-left: 20px;
-    padding-right: 100px;
-    align-items: flex-start;
-    margin-top: -30px;
-}
-
-.abt-c1-description h1{
-  font-size: 34px;
-  font-weight: 800;
-  color: #920000;
-  text-align: right;
-  margin: 0;
-}
-
-.abt-c1-description2 p{
-  font-size: 18px;
-  color: #000000;
-  text-align: left;
-  margin: 0;
-}
-
-.abt-body-container2{
-  margin-top: 100px;
-}
-
-.abt-body-container2-inner{
-  display: flex;
-  flex-direction: row;
-  content: " ";
-  background-color: #D9CCCC;
-  height: 900px;
-  opacity: 90;
-}
-
-.abt-c2-description{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 0px;
-}
-
-.abt-c2-description-sec1{
-    display: flex;
-    flex-direction: column;
-    width: 50%;
-    height:100%;
-    margin-right: -100px;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-.abt-mission, .abt-vision, .abt-values{
-    background-color: #FEFBF2;
-    width: 60%;
-    height: 23%;
-    border-radius: 25px;
-    margin: 10px;
-    padding: 0px 20px 0px 20px;
-     box-shadow: 3px 4px 10px 4px #00000099;
-}
-
-.abt-mission h2, .abt-vision h2, .abt-values h2{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #920000;
-    color: #FEFBF2;
-    width: 40%;
-    height: 24%;
-    border-radius: 10px;
-    font-size: 24px;
-}
-
-.abt-mission p, .abt-vision p, .abt-values p{
-  font-size: 17px;
-  text-align: left;
-}
-
-.abt-mission p{
-  margin: 0;
-  font-size: 15px;
-}
-
-.abt-mission h2{
-  margin-bottom: 2px;
-}
-
-.abt-vision{
-    background-color: #920000;
-    margin-top:0px;
-}
-
-.abt-vision h2{
-    background-color: #FEFBF2;
-    color: #920000;
-}
-
-.abt-vision p{
-  color: #FFFFFF;
-}
-
-.abt-values{
-    background-color: #FEFBF2;
-    margin-top:0px;
-}
-
-.abt-values h2{
-    background-color: #920000;
-    color: #FEFBF2;
-}
-
-/* The parent container MUST be relative */
-.abt-projects-window {
-  position: relative;
-  width: 30%;
-  margin-left: -100px;
-}
-
-.abt-projects-window img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 20px; /* Matching the rounded corners in your image */
-}
-
-/* 3. The Overlay Container */
-/* The overlay container spans the full image area */
-.abt-projects-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 20px; /* Space from the edges of the image */
-  display: flex;
-  justify-content: space-between; /* Pushes one left, one right */
-  box-sizing: border-box; /* Ensures padding doesn't break the width */
-}
-
-.abt-slider {
-  overflow: hidden;
-  width: 100% !important;
-  border-radius: 20px;
-  box-shadow: 0px 0px 10px 4px #0000009d;
-}
-
-.abt-slider-track {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
-  width: 650px;
-  max-width: 650px;
-  max-height: 591px;
-}
-
-.abt-slider-track img {
-  width: 100%;
-  flex-shrink: 0;
-  border-radius: 20px;
-  object-fit: cover;
-  object-position: 140%;
-}
-
-/* "Our Projects" Button Style */
-.abt-projects-btn {
-  background-color: #FEFBF2;
-  padding: 10px 20px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.abt-projects-btn h2 {
-  color: #920000;
-  font-size: 20px;
-  margin: 0;
+/* ─────────────────────────────────────────────────────────────
+   SHARED UTILITIES
+───────────────────────────────────────────────────────────── */
+.abt-section-tag {
+  font-family: var(--font-cond);
+  font-size: clamp(10px, 1.2vw, 13px);
   font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0 0 12px;
 }
+.abt-tag-light { color: rgba(255, 255, 255, 0.4); }
 
-/* "Visit" Button Style */
-.abt-visit-btn {
-  background-color: #920000;
-  padding: 10px 40px; /* Wider padding for the 'Visit' button */
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.abt-visit-btn:hover {
-  background-color: #700000;
-}
-
-.abt-visit-btn h2 {
-  color: #FEFBF2;
-  font-size: 20px;
-  margin: 0;
+.abt-btn-primary {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-family: var(--font-cond);
   font-weight: 700;
-}
-
-.abt-projects{
-  position: relative;
-}
-
-/* 3. Style your text and links (Cleaned up) */
-.tag p {
-  background-color: #FEFBF2;
-  color: #920000;
-  font-size: 16px;
-  width: 150px;
-  height: 40px;
-  display: flex; /* Use flex for centering text */
-  justify-content: center;
-  align-items: center;
-  margin: 0; /* Remove that negative margin */
-}
-
-.tag a {
-  background-color: #920000;
-  color: #FEFBF2;
+  font-size: clamp(11px, 1.2vw, 13px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: 2px solid var(--red);
   text-decoration: none;
-  font-size: 16px;
-  width: 150px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+.abt-btn-primary:hover {
+  background: transparent;
+  color: var(--red);
 }
 
-.abt-body-container4-inner{
-  content: " ";
-  height: 900px;
-  opacity: 90;
+/* ─────────────────────────────────────────────────────────────
+   HERO — vertical split (text left, slider right)
+───────────────────────────────────────────────────────────── */
+.abt-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100svh;
+  padding-top: 70px;
+}
+
+/* LEFT PANEL */
+.abt-hero-left {
+  background: var(--dark);
+  display: flex;
+  align-items: center;
+  padding: clamp(40px, 6vw, 80px) var(--side-pad);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.abt-hero-left-inner {
+  max-width: 560px;
+  animation: abtFadeUp 0.9s ease both;
+}
+
+@keyframes abtFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.abt-eyebrow {
+  font-family: var(--font-cond);
+  font-size: clamp(10px, 1.2vw, 13px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0 0 clamp(14px, 2vw, 24px);
+}
+
+.abt-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(44px, 7vw, 100px);
+  line-height: 0.92;
+  letter-spacing: 2px;
+  color: #fff;
+  margin: 0 0 clamp(20px, 3vw, 32px);
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
- .abt-c4-desc{
-   display: flex;
-   flex-direction: row;
-   background-color: #920000;
-   color: #FEFBF2;
-   padding: 40px 100px 40px 100px;
-   gap: 80px;
-   border-radius: 70px 70px 0 0;
- }
 
- .abt-c4-desc2{
-  background-color: #FEFBF2;
-  color: #920000;
-  margin-top: 0;
- }
+.abt-ht-line { display: block; }
+.abt-ht-line:nth-child(1) { animation: abtFadeUp 0.7s 0.10s ease both; }
+.abt-ht-line:nth-child(2) { animation: abtFadeUp 0.7s 0.18s ease both; }
+.abt-ht-line:nth-child(3) { animation: abtFadeUp 0.7s 0.26s ease both; }
+.abt-ht-line:nth-child(4) { animation: abtFadeUp 0.7s 0.34s ease both; }
+.abt-ht-line:nth-child(5) { animation: abtFadeUp 0.7s 0.42s ease both; }
+.abt-ht-line:nth-child(6) { animation: abtFadeUp 0.7s 0.50s ease both; }
+.abt-ht-accent { color: var(--red); }
 
- .abt-c4-icons{
-  background-color: #FEFBF2;
-  border-radius: 0 0 70px 70px;
+.abt-hero-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--red);
+  margin-bottom: clamp(16px, 2.5vw, 28px);
+  animation: abtFadeUp 0.7s 0.52s ease both;
+}
+
+.abt-hero-sub {
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 clamp(28px, 4vw, 44px);
+  animation: abtFadeUp 0.7s 0.56s ease both;
+}
+.abt-hero-sub strong { color: #fff; font-weight: 600; }
+
+/* Stats row inside hero */
+.abt-hero-stats {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
   align-items: center;
-  gap: 45px;
-  padding: 20px;
- }
-
-
-.abt-body-container5-inner {
-  /* Remove background properties from here */
-  /* background-image: url(...)  <-- DELETE */
-  /* background-size: cover;     <-- DELETE */
-
-  position: relative; /* Crucial for containing the pseudo-element */
-  z-index: 1; /* Ensure content sits above the background */
-  overflow: hidden; /* Ensures blurry edges don't escape */
-
-  width: 100%;
-  padding: 50px 0;
-  display: flex;
-  justify-content: center;
-  margin-top: 50px;
+  flex-wrap: wrap;
+  gap: 0;
+  animation: abtFadeUp 0.7s 0.62s ease both;
 }
 
-.abt-body-container5-inner::before {
-  content: ""; /* Necessary to create the pseudo-element */
-  position: absolute;
-  top: 0;
-  left: 0;
+.abt-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: clamp(20px, 3vw, 36px);
+}
+
+.abt-stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 36px);
+  color: var(--red);
+  letter-spacing: 1px;
+}
+
+.abt-stat-label {
+  font-family: var(--font-cond);
+  font-size: clamp(9px, 1vw, 11px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.abt-stat-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.12);
+  margin-right: clamp(20px, 3vw, 36px);
+  flex-shrink: 0;
+}
+
+/* RIGHT PANEL — slider */
+.abt-hero-right {
+  position: relative;
+  overflow: hidden;
+}
+
+.abt-hero-slider {
+  position: relative;
   width: 100%;
   height: 100%;
-  z-index: -1; /* Places it behind the actual content */
-
-  /* Apply image and opacity HERE */
-  background-image: url('background.png'); /* Or use inline styles if in React */
-  background-size: cover;
-  background-position: 50% 67%;
-  background-repeat: no-repeat;
-  border-radius: 100px 100px 0px 0px;
-
-  opacity: 0.4; /* CHANGE THIS VALUE: 0.0 is invisible, 1.0 is full strength */
+  overflow: hidden;
 }
 
-.abt-c5-contact{
+.abt-hero-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.abt-hero-track img {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Slide counter — top right */
+.abt-slide-counter {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 4;
+}
+.abt-counter-current {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: #fff;
+  letter-spacing: 1px;
+}
+.abt-counter-sep {
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.abt-counter-total {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Dot nav — bottom center */
+.abt-slider-dots {
+  position: absolute;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+}
+.abt-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+.abt-dot-active {
+  background: var(--red);
+  transform: scale(1.35);
+}
+
+/* Footer bar over slider */
+.abt-hero-slider-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(15, 14, 14, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 4;
+}
+.abt-hero-slider-footer span {
+  font-family: var(--font-cond);
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+}
+.abt-visit-chip {
+  font-family: var(--font-cond);
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--red);
+  color: #fff;
+  padding: 8px 22px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.abt-visit-chip:hover { background: var(--red-hover); }
+
+/* Red accent bar on right edge */
+.abt-hero-accent-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--red);
+  z-index: 5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   WHO WE ARE — 3 equal tall panels
+───────────────────────────────────────────────────────────── */
+.abt-who-section {
+  background: var(--off-white);
+  padding: var(--section-pad) var(--side-pad);
+}
+
+.abt-who-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.abt-who-header {
+  margin-bottom: clamp(32px, 5vw, 52px);
+}
+
+.abt-who-heading {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 64px);
+  color: var(--dark);
+  letter-spacing: 2px;
+  margin: 0;
+  font-style: italic;
+}
+
+.abt-who-panels {
   display: grid;
-    grid-template-columns: repeat(4, minmax(0, 220px));
-    gap: 16px;
-    justify-content: center;
-    margin: 52px auto 0;
-    padding: 0 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
 }
 
-.abt-section1, .abt-section2, .abt-section3, .abt-section4{
-      background: rgba(254, 251, 242, 0.92);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 22px 14px;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(146, 0, 0, 0.18);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+.abt-who-panel {
+  padding: clamp(32px, 4vw, 52px) clamp(24px, 3vw, 40px);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease;
+  cursor: default;
+}
+.abt-who-panel:hover { transform: translateY(-4px); }
+
+/* All three panels are solid dark cards — no more blending into bg */
+.abt-panel-dark  { background: #1a1919; border-top: 3px solid var(--red); }
+.abt-panel-red   { background: var(--red); border-top: 3px solid #fff; }
+.abt-panel-light { background: #2a2828; border-top: 3px solid var(--red); }
+
+.abt-panel-number {
+  font-family: var(--font-display);
+  font-size: clamp(52px, 7vw, 88px);
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.07);
+  margin-bottom: 16px;
+  letter-spacing: 2px;
 }
 
-
-.abt-section1 h3{
-  font-size: clamp(13px, 2vw, 15px);
-    color: #920000;
-    font-weight: 700;
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
+.abt-panel-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 30px);
+  letter-spacing: 2px;
+  color: #fff;
+  margin: 0 0 clamp(14px, 2vw, 20px);
 }
 
-.abt-section1 p{
-  font-size: clamp(11px, 1.8vw, 13px);
-    color: #555;
-    margin: 0;
+.abt-panel-text {
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.3vw, 15px);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+.abt-panel-red .abt-panel-text { color: rgba(255, 255, 255, 0.82); }
+
+/* ─────────────────────────────────────────────────────────────
+   CORE VALUES — interactive tab + content panel
+───────────────────────────────────────────────────────────── */
+.abt-values-section {
+  background: var(--dark);
+  padding: var(--section-pad) var(--side-pad);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.abt-section2 img, .abt-section3 img, .abt-section4 img{
-  width: 34px;
-    height: 34px;
-    object-fit: contain;
-    margin-bottom: 4px;
+.abt-values-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
 }
 
-.abt-section2 h4{
-  font-size: clamp(13px, 2vw, 15px);
-    color: #920000;
-    font-weight: 700;
-    margin: 0;
+.abt-values-header {
+  margin-bottom: clamp(32px, 5vw, 52px);
 }
 
-.abt-section2 a{
-  font-size: clamp(11px, 1.8vw, 13px);
-    color: #920000 !important;
-    text-decoration: none;
-    font-weight: 600;
-    word-break: break-all;
-    font-family: 'open-sans', sans-serif;
+.abt-values-heading {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 5vw, 64px);
+  color: #fff;
+  letter-spacing: 2px;
+  margin: 0;
+  font-style: italic;
 }
 
-.abt-section2 p{
-  font-size: clamp(11px, 1.8vw, 13px);
-    color: #555;
-    margin: 0;
+.abt-values-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: clamp(24px, 4vw, 60px);
+  align-items: start;
 }
 
-.abt-c5-contact .abt-section2 a{
-  color: #000000;
-  text-decoration: underline;
+/* Tab list */
+.abt-values-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-
-.abt-section3 h4, .abt-section4 h4{
-  font-size: clamp(13px, 2vw, 15px);
-    color: #920000;
-    font-weight: 700;
-    margin: 0;
+.abt-value-tab {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid transparent;
+  padding: clamp(16px, 2vw, 22px) clamp(16px, 2vw, 24px);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background 0.2s, border-color 0.2s;
+}
+.abt-value-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-left-color: rgba(146, 0, 0, 0.5);
+}
+.abt-tab-active {
+  background: rgba(146, 0, 0, 0.1) !important;
+  border-left-color: var(--red) !important;
+  border-color: rgba(146, 0, 0, 0.3) !important;
 }
 
-.abt-section3 p, .abt-section4 p{
-  font-size: clamp(11px, 1.8vw, 13px);
-    color: #555;
-    margin: 0;
+.abt-tab-num {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 26px);
+  color: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+  width: 36px;
+  transition: color 0.2s;
 }
-.see-more-button{
-   background-color: #920000;
-   color: #FEFBF2;
-   border: none;
-   font-family: "open-sans", sans-serif;
-   font-size: 16px;
-   margin-bottom: 20px;
-   padding: 10px;
-   border-radius: 10px;
-   transition: all ease-in-out 0.2ms;
-  }
-  .see-more-button:hover{
-    transition: all ease-in-out 0.2ms;
-    transform: scale(1.23);
-    background-color: #ffffff;
-    color: #920000;
-    
-  }
+.abt-tab-active .abt-tab-num { color: var(--red); }
 
+.abt-tab-title {
+  font-family: var(--font-cond);
+  font-size: clamp(13px, 1.4vw, 16px);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  flex: 1;
+  transition: color 0.2s;
+}
+.abt-tab-active .abt-tab-title { color: #fff; }
 
-/* MOBILE */
-@media (max-width: 1440px){
-  .abt-mission p{
-    font-size: 14px;
-  }
-  .abt-vision p{
-    font-size: 15px;
-  }
-  .abt-body-container2-inner{
-    margin-bottom: 0px;
-  }
-  .abt-body-container4-inner{
-    height: 500px !important;
-  }
-}
-@media(max-width:1120px){
-  .abt-c1-description h1{
-    font-size: 32px !important;
-  }
-  .abt-c2-description{
-    gap: 150px !important;
-  }
-  .abt-mission, .abt-vision, .abt-values{
-    width: 70%;
-  }
-.abt-mission h2, .abt-vision h2, .abt-values h2{
-  font-size: 20px !important;
-  width: 50%;
-}
-.abt-mission p{
-  font-size: 14px !important;
-}
-.abt-vision p, .abt-values p{
-  font-size:15px !important;
-}
-.abt-projects-window{
-  width: 40%;
-}
-.abt-body-container4-inner{
-  justify-content: flex-start;
-}
-.abt-c4-desc{
-  padding: 20px 60px 20px 60px
-}
-.abt-c4-integrity h2, .abt-c4-innovate h2, .abt-c4-excellency h2, .abt-c4-trustworthiness h2{
+.abt-tab-arrow {
   font-size: 16px;
+  color: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+  transition: color 0.2s;
 }
-.abt-c4-integrity p, .abt-c4-innovate p, .abt-c4-excellency p, .abt-c4-trustworthiness p{
-  font-size:14px;
-}
-.abt-body-container4-inner{
-  height: 350px;
+.abt-tab-active .abt-tab-arrow { color: var(--red); }
+
+/* Content panel */
+.abt-values-panel {
+  padding: clamp(32px, 4vw, 52px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  min-height: 280px;
+  position: relative;
 }
 
-.abt-c5-contact{
-  gap:40px;
+.abt-values-panel-num {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 9vw, 120px);
+  color: rgba(146, 0, 0, 0.15);
+  line-height: 1;
+  margin-bottom: 8px;
+  letter-spacing: 3px;
 }
 
-.abt-section1{
-  height: 150px;
-  width: 230px;
-  margin-left: 0px;
+.abt-values-panel-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 52px);
+  color: #fff;
+  letter-spacing: 2px;
+  margin: 0 0 clamp(14px, 2vw, 20px);
 }
 
-.abt-section1 h3{
-  font-size:20px;
+.abt-values-panel-text {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.4vw, 16px);
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 clamp(24px, 3vw, 36px);
+  max-width: 480px;
 }
 
-.abt-section1 p{
-  font-size:14px;
+.abt-values-panel-line {
+  width: 48px;
+  height: 2px;
+  background: var(--red);
 }
 
-.abt-section2, .abt-section3, .abt-section4{
-  height: 150px;
-  width: 140px;
+/* ─────────────────────────────────────────────────────────────
+   CONTACT
+───────────────────────────────────────────────────────────── */
+.abt-contact-section {
+  position: relative;
+  background: var(--dark);
+  padding: var(--section-pad) var(--side-pad) calc(var(--section-pad) * 1.2);
+  overflow: hidden;
 }
 
-.abt-section2 img, .abt-section3 img, .abt-section4 img{
-  height: 40px;
-  width: 40px;
+.abt-contact-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
 
-.abt-section2 a{
-  font-size: 14px;
-  padding-bottom: 10px;
+.abt-contact-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.90);
+  pointer-events: none;
 }
 
-.abt-section3 h4, .abt-section4 h4{
- margin-bottom: 0px; 
- font-size: 18px;
- font-weight: 500;
+.abt-contact-inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  text-align: center;
 }
 
-.abt-section3 p, .abt-section4 p{
- font-size: 16px; 
+.abt-contact-heading {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5.5vw, 72px);
+  color: #fff;
+  letter-spacing: 2px;
+  margin: 0 0 clamp(10px, 1.5vw, 16px);
 }
 
-.footer-add, .footer-phone, .footer-email{
-  font-size: 14px;
-}
+.abt-contact-sub {
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 auto clamp(40px, 6vw, 70px);
+  max-width: 480px;
+  line-height: 1.7;
 }
 
-@media (max-width:768px){
-  .abt-c1-description2 p{
-    font-size: 15px;
+.abt-contact-cards {
+  display: flex;
+  gap: clamp(14px, 2vw, 28px);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.abt-contact-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: clamp(24px, 3.5vw, 40px) clamp(20px, 2.5vw, 32px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: clamp(150px, 18vw, 210px);
+  flex: 1;
+  max-width: 280px;
+  transition: background 0.2s, border-color 0.2s;
+}
+.abt-contact-card:hover {
+  background: rgba(146, 0, 0, 0.12);
+  border-color: rgba(146, 0, 0, 0.4);
+}
+.abt-card-wide { max-width: 320px; }
+
+.abt-contact-icon {
+  width: clamp(32px, 4vw, 44px);
+  height: clamp(32px, 4vw, 44px);
+  margin-bottom: 8px;
+}
+
+.abt-contact-label {
+  font-family: var(--font-cond);
+  font-size: clamp(9px, 1vw, 12px);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin: 0;
+}
+
+.abt-contact-value {
+  font-size: clamp(12px, 1.3vw, 15px);
+  color: #fff;
+  margin: 0;
+  line-height: 1.65;
+  text-align: center;
+}
+a.abt-contact-value.abt-link { text-decoration: underline; }
+
+.abt-contact-note {
+  font-size: clamp(10px, 1vw, 12px);
+  color: rgba(255, 255, 255, 0.3);
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .abt-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
   }
-  .abt-c2-description{
+  .abt-hero-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding: clamp(100px, 14vw, 140px) var(--side-pad) clamp(40px, 6vw, 60px);
+  }
+  .abt-hero-right {
+    height: 55vw;
+    min-height: 320px;
+    max-height: 520px;
+  }
+  .abt-hero-accent-bar {
+    width: 100%;
+    height: 4px;
+    top: auto;
+    bottom: 0;
+    right: 0;
+  }
+  .abt-who-panels {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .abt-values-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .abt-values-panel { min-height: auto; }
+  .abt-clients-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 15px !important;
-    margin-top: 60px;
-    width: 100%;
   }
-  .abt-c2-description-sec1{
-    flex-direction: row;
-    gap: 0px;
-    margin-top: 0px;
-    height: 41%;
-    width: 100%;
-  }
-  .abt-mission, .abt-vision, .abt-values{
-    height: 100%;
-    width: 485px;
-    margin-top: 0px;
-  }
-  .abt-mission h2, .abt-vision h2, .abt-values h2{
-    width: 80%;
-    height: 10%;
-    font-size: 18px !important;
-  }
-  .abt-mission p, .abt-vision p, .abt-values p{
-    font-size: 15px !important;
-    text-align: left;
-  }
-  .abt-mission p{
-    margin-top: 15px;
-  }
-  .abt-vision p{
-    font-size:17px !important;
-  }
-  .abt-values p{
-    font-size: 19px !important;
-  }
-  .abt-slider{
-    width: 100%;
-  }
-  .abt-slider-track {
-    width: 100%; 
-    display: flex;
-  }
-  .abt-projects-window {
-    width: 90%; 
-    margin: 20px auto; /* Centers it and removes that 15px left margin */
-    overflow: hidden;
-    position: relative; /* Keeps the 'Visit' button contained */
-    margin-left: 40px;
-    margin-right: 40px;
-    margin-bottom: 60px;
-    border-radius: 25px;
-  }
-  .abt-projects-window img {
-    width: 100%;
-    height: auto;
-    object-fit: fill;
-    border-radius: 10px; /* Optional: matches your card style */
-    object-position: 500% !important;
-  }
-  .visit-btn { 
-    right: 15px !important;
-    top: 15px !important;
-    padding: 5px 20px;
-    font-size: 14px;
-  }
-  .abt-body-container2-inner{
-    margin-bottom: 50px;
-  }
-  .abt-c4-desc{
-    gap:30px;
-    text-align: center;
-  }
-  body::before{
-    top: 80px;
-  }
-  .abt-body-container5-inner::before{
-    border-radius: 25px 25px 0px 0px;
-  }
-  .abt-section1 {
-    height: 90%;
-    width: 40%;
-    margin-left: 10px;
-    margin-right: 10px;
-    padding: 0px;
-  }
-  .abt-section1 h3{
-    font-size: 16px;
-    padding-top: 10px;
-  }
-  .abt-section1 p{
-    font-size: 12px;
-    padding-left:20px;
-    padding-right:20px;
-    padding-bottom: 10px;
-  }
-  .abt-section2 img, .abt-section3 img, .abt-section4 img{
-    height: 30px;
-    width: 30px;
-  }
-  .abt-c5-contact{
-    gap:10px;
-  }
-  .abt-section2 a{
-    font-size: 12px;
-    padding-bottom: 0px;
-  }
-  .abt-section2, .abt-section3, .abt-section4{
-    height: 90%;
-    width: 17%;
-  }
-  .abt-section2 p,.abt-section3 p,.abt-section4 p{
-    font-size:12px;
-    margin-top: 6px;
-  }
-  .abt-section3 h4, .abt-section4 h4{
-    font-size: 15px;
-  }
-  .abt-section4{
-    margin-right: 10px;
-  }
-  .footer-left p{
-    font-size:13px;
-  }
-  .footer-add, .footer-phone, .footer-email{
-    font-size:12px;
-  }
-  .footer-final p{
-    font-size:13px;
-  }
+}
+
+@media (max-width: 640px) {
+  .abt-hero-stats { flex-wrap: wrap; row-gap: 14px; }
+  .abt-stat-divider { display: none; }
+  .abt-stat { padding-right: 20px; }
+  .abt-contact-cards { flex-direction: column; align-items: stretch; }
+  .abt-contact-card, .abt-card-wide { max-width: 100%; }
+}
+
+@media (max-width: 380px) {
+  .abt-hero-title { font-size: clamp(38px, 12vw, 60px); }
 }

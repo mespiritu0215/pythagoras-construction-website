@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
 
 /* ─────────────────────────────────────────────────────────────
-   RESET & BASE
+    RESET & BASE
 ───────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -40,10 +40,9 @@ a   { text-decoration: none; color: inherit; }
 main { flex: 1; }
 
 /* ─────────────────────────────────────────────────────────────
-   SHARED UTILITIES
+    SHARED UTILITIES
 ───────────────────────────────────────────────────────────── */
 
-/* background.png helper – reuse anywhere */
 .bg-photo {
   position: absolute;
   inset: 0;
@@ -54,7 +53,6 @@ main { flex: 1; }
   pointer-events: none;
 }
 
-/* 90 % black veil on top of the photo */
 .bg-veil {
   position: absolute;
   inset: 0;
@@ -74,7 +72,7 @@ main { flex: 1; }
 .section-tag.light { color: rgba(255,255,255,0.4); }
 
 /* ─────────────────────────────────────────────────────────────
-   BUTTONS
+    BUTTONS
 ───────────────────────────────────────────────────────────── */
 .btn-primary {
   display: inline-block;
@@ -95,7 +93,6 @@ main { flex: 1; }
   color: var(--red) !important;
 }
 
-/* dark-background variant keeps white text on light bg sections */
 .btn-dark {
   background: var(--red);
   border-color: var(--red);
@@ -132,7 +129,7 @@ main { flex: 1; }
 .btn-outline-light:hover { background: rgba(255,255,255,0.08); border-color: #fff; }
 
 /* ─────────────────────────────────────────────────────────────
-   NAVBAR
+    NAVBAR
 ───────────────────────────────────────────────────────────── */
 .App-header {
   position: fixed;
@@ -207,7 +204,6 @@ main { flex: 1; }
 }
 .nav-links li a:hover::after { width: calc(100% - 28px); }
 
-/* Hamburger */
 .hamburger {
   width: 28px;
   height: 20px;
@@ -236,8 +232,7 @@ main { flex: 1; }
 .nav-backdrop { display: none; }
 
 /* ─────────────────────────────────────────────────────────────
-   HERO
-   background.png sits behind a 90 % black overlay
+    HERO
 ───────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
@@ -255,7 +250,6 @@ main { flex: 1; }
   background-size: cover;
   background-position: center 60%;
   background-repeat: no-repeat;
-  /* photo shows at only 10 % → effectively 90 % black veil */
 }
 
 .hero-bg-overlay {
@@ -325,7 +319,6 @@ main { flex: 1; }
   animation: fadeUp 0.8s 0.60s ease both;
 }
 
-/* Stats bar */
 .hero-stats {
   position: relative;
   z-index: 2;
@@ -367,7 +360,7 @@ main { flex: 1; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   WHO WE ARE  (light section)
+    WHO WE ARE
 ───────────────────────────────────────────────────────────── */
 .who-section {
   background: var(--off-white);
@@ -403,7 +396,6 @@ main { flex: 1; }
   margin: 0 0 clamp(24px, 3vw, 40px);
 }
 
-/* stacked image composition */
 .who-images {
   position: relative;
   flex-shrink: 0;
@@ -441,7 +433,7 @@ main { flex: 1; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   RECENTLY COMPLETED PROJECTS  (dark section)
+    PROJECTS SECTION
 ───────────────────────────────────────────────────────────── */
 .projects-section {
   background: var(--dark2);
@@ -489,7 +481,6 @@ main { flex: 1; }
 }
 .project-card:hover img { transform: scale(1.07); }
 
-/* hover overlay */
 .project-card-overlay {
   position: absolute;
   inset: 0;
@@ -524,7 +515,6 @@ main { flex: 1; }
   align-self: flex-start;
 }
 
-/* always-visible bottom tag */
 .project-card-tag {
   position: absolute;
   bottom: 0; left: 0; right: 0;
@@ -563,7 +553,7 @@ main { flex: 1; }
 .project-card-tag a:hover { background: var(--red-hover); }
 
 /* ─────────────────────────────────────────────────────────────
-   ABOUT STRIP  (light section)
+    ABOUT STRIP
 ───────────────────────────────────────────────────────────── */
 .about-strip {
   background: var(--off-white);
@@ -587,8 +577,7 @@ main { flex: 1; }
 }
 .about-strip-img img {
   width: 100%;
-  height: clamp(220px, 32vw, 440px);
-  object-fit: cover;
+  object-fit: contain;
   box-shadow: 8px 12px 40px rgba(0,0,0,0.18);
 }
 .about-img-border {
@@ -619,7 +608,7 @@ main { flex: 1; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   CONTACT  (dark, background.png at 10 % / 90 % black veil)
+    CONTACT
 ───────────────────────────────────────────────────────────── */
 .contact-section {
   position: relative;
@@ -728,7 +717,7 @@ a.contact-card-value.link { text-decoration: underline; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   FOOTER  (PRESERVED EXACTLY)
+    FOOTER (FIXED LOGO VISIBILITY)
 ───────────────────────────────────────────────────────────── */
 .site-footer {
   background-color: #272626;
@@ -759,8 +748,8 @@ a.contact-card-value.link { text-decoration: underline; }
 .footer-brand img {
   width: 70px;
   height: auto;
-  filter: brightness(0) invert(1);
-  opacity: 0.85;
+  /* Removed filter: brightness(0) invert(1) which was hiding your logo */
+  opacity: 1; /* Increased opacity for full visibility */
 }
 
 .footer-company-name {
@@ -828,7 +817,7 @@ a.contact-card-value.link { text-decoration: underline; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   RESPONSIVE  ─ tablet  (≤ 1024px)
+    RESPONSIVE
 ───────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .projects-grid {
@@ -859,9 +848,6 @@ a.contact-card-value.link { text-decoration: underline; }
   }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   RESPONSIVE  ─ hamburger nav  (≤ 860px)
-───────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .hamburger { display: flex; }
 
@@ -882,7 +868,6 @@ a.contact-card-value.link { text-decoration: underline; }
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     transition: transform 0.28s ease;
     z-index: 1050;
-    list-style: none;
   }
   .nav-links.active {
     transform: translateX(-50%) translateY(70px);
@@ -902,16 +887,12 @@ a.contact-card-value.link { text-decoration: underline; }
   }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   RESPONSIVE  ─ mobile  (≤ 600px)
-───────────────────────────────────────────────────────────── */
 @media (max-width: 600px) {
   :root {
     --section-pad: 52px;
     --side-pad: 20px;
   }
 
-  /* hero */
   .hero-content { padding-top: 100px; }
   .hero-stats {
     flex-wrap: wrap;
@@ -921,7 +902,6 @@ a.contact-card-value.link { text-decoration: underline; }
   .stat-divider { display: none; }
   .stat { padding: 0 24px 0 0; }
 
-  /* projects */
   .projects-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
@@ -932,7 +912,6 @@ a.contact-card-value.link { text-decoration: underline; }
     gap: 16px;
   }
 
-  /* contact */
   .contact-cards {
     flex-direction: column;
     align-items: stretch;
@@ -942,7 +921,6 @@ a.contact-card-value.link { text-decoration: underline; }
     max-width: 100%;
   }
 
-  /* footer */
   .footer-main {
     flex-direction: column;
     align-items: center;
@@ -954,22 +932,13 @@ a.contact-card-value.link { text-decoration: underline; }
   .footer-info-item { align-items: center; }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   RESPONSIVE  ─ tiny phones  (≤ 380px)
-───────────────────────────────────────────────────────────── */
 @media (max-width: 380px) {
   .hero-title { font-size: clamp(44px, 13vw, 70px); }
   .projects-grid { grid-template-columns: 1fr; }
 }
 
-/* ─────────────────────────────────────────────────────────────
-   ZOOM  ─ browser zoom-out (wide viewport, e.g. 67 % zoom)
-   Use max-width guard so layout never breaks wide
-───────────────────────────────────────────────────────────── */
 @media (min-width: 1600px) {
-  :root {
-    --side-pad: 100px;
-  }
+  :root { --side-pad: 100px; }
 }
 @media (min-width: 2000px) {
   :root {

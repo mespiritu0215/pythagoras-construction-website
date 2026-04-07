@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import './Services.css';
+
+// Core Icons/Images
 import image1 from './serv-img1.png';
 import image4 from './serv-img4.png';
-import email from './email.png';
-import phone from './phone.png';
-import clock from './clock.png';
+import emailIcon from './email.png';
+import phoneIcon from './phone.png';
+import clockIcon from './clock.png';
 
+// Project Images for Carousels
 import GaisanoMactanSmart1 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart1.jpg";
 import GaisanoMactanSmart2 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart2.jpg";
 import GaisanoMactanSmart3 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart3.jpg";
@@ -31,18 +34,11 @@ import GlobeBaliuag9 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag9.png";
 import GlobeBaliuag10 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag10.png";
 import GlobeBaliuag11 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag11.png";
 import GlobeBaliuag12 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag12.png";
-import GlobeBaliuag13 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag13.png";
-import GlobeBaliuag14 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag14.png";
-import GlobeBaliuag15 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag15.png";
-import GlobeBaliuag16 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag16.png";
-import GlobeBaliuag17 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag17.png";
-import GlobeBaliuag18 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag18.png";
 
 const globeBaliuagImages: string[] = [
     GlobeBaliuag1, GlobeBaliuag2, GlobeBaliuag3, GlobeBaliuag4, GlobeBaliuag5,
     GlobeBaliuag6, GlobeBaliuag7, GlobeBaliuag8, GlobeBaliuag9, GlobeBaliuag10,
-    GlobeBaliuag11, GlobeBaliuag12, GlobeBaliuag13, GlobeBaliuag14, GlobeBaliuag15,
-    GlobeBaliuag16, GlobeBaliuag17, GlobeBaliuag18,
+    GlobeBaliuag11, GlobeBaliuag12,
 ];
 
 const gaisanoMactanImages: string[] = [
@@ -51,11 +47,28 @@ const gaisanoMactanImages: string[] = [
     GaisanoMactanSmart9, GaisanoMactanSmart10, GaisanoMactanSmart11, GaisanoMactanSmart12,
 ];
 
+// ── Types ─────────────────────────────────────────────────────────────────────
+
 interface CarouselProps {
     images: string[];
 }
 
-function Carousel({ images }: CarouselProps) {
+interface ServiceData {
+    n: number;
+    label: string;
+    heading: string;
+    items: string[];
+    dark: boolean;
+    reverse: boolean;
+    image?: string;
+    imageAlt?: string;
+    carousel?: string[];
+    caption?: string;
+}
+
+// ── Carousel ──────────────────────────────────────────────────────────────────
+
+function Carousel({ images }: CarouselProps): JSX.Element {
     const [current, setCurrent] = useState<number>(0);
     const [hovered, setHovered] = useState<boolean>(false);
     const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -64,30 +77,40 @@ function Carousel({ images }: CarouselProps) {
         if (hovered) {
             intervalRef.current = setInterval(() => {
                 setCurrent((c) => (c + 1) % images.length);
-            }, 1000);
+            }, 1200);
         } else {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
-        }
-        return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
-        };
+        }
+        return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     }, [hovered, images.length]);
 
     return (
         <div
-            className="carousel"
+            className="srv-carousel-wrapper"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
         >
-            <img src={images[current]} alt={`Slide ${current + 1}`} className="carousel-img" />
-            <div className="carousel-dots">
+            {images.map((img, i) => (
+                <img
+                    key={i}
+                    src={img}
+                    alt=""
+                    className={`srv-carousel-img${i === current ? ' active' : ''}`}
+                />
+            ))}
+            {/* Progress bar */}
+            <div className="srv-carousel-bar">
+                <div
+                    className="srv-carousel-bar-fill"
+                    style={{ width: `${((current + 1) / images.length) * 100}%` }}
+                />
+            </div>
+            {/* Dots */}
+            <div className="srv-carousel-dots">
                 {images.map((_, i) => (
                     <span
                         key={i}
-                        className={`carousel-dot${i === current ? ' active' : ''}`}
+                        className={`srv-dot${i === current ? ' active' : ''}`}
                         onClick={() => setCurrent(i)}
                     />
                 ))}
@@ -96,150 +119,231 @@ function Carousel({ images }: CarouselProps) {
     );
 }
 
-function Services() {
+// ── Services page ─────────────────────────────────────────────────────────────
+
+const services: ServiceData[] = [
+    {
+        n: 1,
+        label: 'Expertise',
+        heading: 'Civil Works',
+        items: [
+            'New Construction & Renovation',
+            'Tower Erection & Dismantling',
+            'Waterproofing & Roofing Works',
+            'Slope Protection / Rip Rapping',
+            'Plumbing, Pipefitting & Drilling',
+            'Metal Works & Masonry',
+        ],
+        image: image1,
+        imageAlt: 'Civil Works',
+        dark: true,
+        reverse: false,
+    },
+    {
+        n: 2,
+        label: 'Systems',
+        heading: 'Electrical Works',
+        items: [
+            'Environmental Alarm Systems',
+            'Digital & Manual Transfer Switches',
+            'Structured Cabling & Access Control',
+            'Pole Mounted Distribution Transformers',
+            'Generators & ATS Installation',
+            'Panel Boards & Circuit Breakers',
+        ],
+        carousel: globeBaliuagImages,
+        caption: 'Featured: Globe Baliuag Electrical Project',
+        dark: false,
+        reverse: true,
+    },
+    {
+        n: 3,
+        label: 'Portfolio',
+        heading: 'Our End Products',
+        items: [
+            'Commercial & Industrial Warehouses',
+            'Residential & School Buildings',
+            'Office / Business Centers',
+            'Submersible Pump Installation',
+            'Sewer and Drainage Lines',
+            'Site Development',
+        ],
+        carousel: gaisanoMactanImages,
+        caption: 'Featured: Gaisano Mactan Development',
+        dark: true,
+        reverse: false,
+    },
+    {
+        n: 4,
+        label: 'Design',
+        heading: 'Architectural & Design',
+        items: [
+            'Schematic Design & 3D Modelling',
+            'Rendered Walkthroughs & Presentations',
+            'Design Development & Working Drawings',
+            'As-built Plans & Technical Specs',
+            'Contract Documents & Site Supervision',
+        ],
+        image: image4,
+        imageAlt: 'Design Works',
+        dark: false,
+        reverse: true,
+    },
+];
+
+export default function Services(): JSX.Element {
     return (
-        <main>
-            <div className="services-container1">
-                <div className="services-c1-inner">
-                    <div className="c1-civil">
-                        <h2>Civil Works</h2>
-                        <ul>
-                            <li>New Construction</li>
-                            <li>Tower Erection & Dismantling</li>
-                            <li>Renovation</li>
-                            <li>Waterproofing Works</li>
-                            <li>Slope protection / Rip Rapping</li>
-                            <li>Plumbing and Pipefitting / laying</li>
-                            <li>Drilling</li>
-                            <li>Metal Works</li>
-                            <li>Roofing Works</li>
-                            <li>Painting and Finishing</li>
-                            <li>Carpentry</li>
-                            <li>Tiling, Stones, Masonry</li>
-                            <li>Glass / Glazing and Accessories</li>
-                            <li>Windows and Doors</li>
-                        </ul>
+        <main className="srv-page">
+
+            {/* ── HERO ── */}
+            <section className="srv-hero">
+                <div className="srv-hero-bg" />
+                <div className="srv-hero-overlay" />
+
+                {/* Decorative vertical bar */}
+                <div className="srv-hero-vbar" />
+
+                <div className="srv-hero-content">
+                    <p className="srv-eyebrow">Solutions · Excellence · Reliability</p>
+                    <h1 className="srv-hero-title">
+                        <span className="srv-ht-line">OUR</span>
+                        <span className="srv-ht-line srv-ht-accent">SERVICES</span>
+                    </h1>
+                    <p className="srv-hero-sub">
+                        From foundational civil works to intricate architectural designs, we provide
+                        end-to-end construction solutions tailored to the Philippine landscape.
+                    </p>
+                </div>
+
+                {/* Stat bar — mirrors homepage hero-stats */}
+                <div className="srv-hero-stats">
+                    {([
+                        { num: '4',    label: 'Service Areas' },
+                        { num: '30+',  label: 'Years in Industry' },
+                        { num: '100+', label: 'Active Workers' },
+                        { num: 'PCAB', label: 'General "A" Licensed' },
+                    ] as { num: string; label: string }[]).map((s, i, arr) => (
+                        <div key={i} className="srv-stat-group">
+                            <div className="srv-stat">
+                                <div className="srv-stat-num">{s.num}</div>
+                                <div className="srv-stat-label">{s.label}</div>
+                            </div>
+                            {i < arr.length - 1 && <div className="srv-stat-divider" />}
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* ── SERVICE SECTIONS ── */}
+            {services.map((svc) => (
+                <section
+                    key={svc.n}
+                    className={`srv-section ${svc.dark ? 'srv-section-dark' : 'srv-section-light'}`}
+                >
+                    <div className="srv-container">
+                        <div className={`srv-content-grid${svc.reverse ? ' srv-reverse' : ''}`}>
+
+                            {/* Text column */}
+                            <div className="srv-text">
+                                {/* Ghost service number */}
+                                <span className="srv-ghost-num">
+                                    {String(svc.n).padStart(2, '0')}
+                                </span>
+
+                                <div className="srv-label-row">
+                                    <span className="srv-label">{svc.label}</span>
+                                    <div className={`srv-rule${svc.dark ? '' : ' srv-rule-dark'}`} />
+                                </div>
+
+                                <h2 className={`srv-heading${svc.dark ? '' : ' srv-heading-dark'}`}>
+                                    {svc.heading}
+                                </h2>
+
+                                {/* Red accent underline */}
+                                <div className="srv-heading-rule" />
+
+                                <ul className={`srv-list${svc.dark ? '' : ' srv-list-dark'}`}>
+                                    {svc.items.map((item, i) => (
+                                        <li key={i}>{item}</li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {/* Media column */}
+                            <div className="srv-image-box">
+                                {svc.carousel ? (
+                                    <>
+                                        <Carousel images={svc.carousel} />
+                                        <p className="srv-img-caption">{svc.caption}</p>
+                                    </>
+                                ) : svc.image ? (
+                                    <div className={`srv-img-frame${svc.reverse ? ' srv-img-frame-right' : ''}`}>
+                                        <img
+                                            src={svc.image}
+                                            alt={svc.imageAlt ?? ''}
+                                            className="srv-main-img"
+                                        />
+                                        <div className="srv-img-accent-border" />
+                                    </div>
+                                ) : null}
+                            </div>
+
+                        </div>
                     </div>
-                    <div className="c1-image">
-                        <img src={image1} alt="" />
-                    </div>
+                </section>
+            ))}
+
+            {/* ── MARQUEE STRIP ── */}
+            <div className="srv-marquee-track" aria-hidden="true">
+                <div className="srv-marquee-inner">
+                    {[
+                        'Civil Works', 'Electrical Systems', 'Architectural Design',
+                        'Tower Erection', 'Waterproofing', 'Site Development',
+                        'Structured Cabling', 'Drainage & Sewer', 'Roofing Works',
+                        'Civil Works', 'Electrical Systems', 'Architectural Design',
+                        'Tower Erection', 'Waterproofing', 'Site Development',
+                    ].map((item, i) => (
+                        <span key={i} className="srv-marquee-item">
+                            {item}
+                            <span className="srv-marquee-dot">·</span>
+                        </span>
+                    ))}
                 </div>
             </div>
 
-            <div className="services-container2">
-                <div className="services-c2-inner">
-                    <div className="c2-image">
-                        <Carousel images={globeBaliuagImages} />
-                    </div>
-                    <div className="c2-electrical">
-                        <h2>Electrical Works</h2>
-                        <ul>
-                            <li>Lighting Fixtures</li>
-                            <li>Wiring Devices</li>
-                            <li>Environmental Alarm System</li>
-                            <li>Digital Transfer Switch</li>
-                            <li>Fencing Works</li>
-                            <li>Access Roads</li>
-                            <li>Store Outlets</li>
-                            <li>Tower Erection & Dismantling</li>
-                            <li>Structured Cabling</li>
-                            <li>Manual Transfer Switch</li>
-                            <li>Water Heater</li>
-                            <li>Electrical Conduits and Boxes</li>
-                            <li>Wires and Cables</li>
-                            <li>Conduits (IMC, RSC, EMT and PVC)</li>
-                            <li>Access Control System</li>
-                            <li>Pole Mounted Distribution Transformers</li>
-                            <li>Panel Boards and Circuit Breakers</li>
-                            <li>Transient Voltage Surge Suppressor</li>
-                            <li>Generators and Automatic Transfer Switch</li>
-                        </ul>
+            {/* ── CONTACT (pixel-for-pixel match with App.tsx) ── */}
+            <section className="contact-section" id="contact">
+                <div className="contact-bg-image" />
+                <div className="contact-bg-overlay" />
+                <div className="contact-inner">
+                    <p className="section-tag light" style={{ textAlign: 'center' }}>GET IN TOUCH</p>
+                    <h2 className="contact-heading">Contact Us Today</h2>
+                    <p className="contact-sub">
+                        Let's bring your vision to life together. Reach out to discuss your next project.
+                    </p>
+                    <div className="contact-cards">
+                        <div className="contact-card contact-card-wide">
+                            <img src={emailIcon} alt="Email" className="contact-icon" />
+                            <p className="contact-card-label">Email Us At</p>
+                            <a href="mailto:pci051@yahoo.com" className="contact-card-value link">
+                                pci051@yahoo.com
+                            </a>
+                            <p className="contact-card-note">We reply within 24 hours</p>
+                        </div>
+                        <div className="contact-card">
+                            <img src={phoneIcon} alt="Phone" className="contact-icon" />
+                            <p className="contact-card-label">Have Any Questions?</p>
+                            <p className="contact-card-value">(046) 894-9518</p>
+                        </div>
+                        <div className="contact-card">
+                            <img src={clockIcon} alt="Hours" className="contact-icon" />
+                            <p className="contact-card-label">Working Hours</p>
+                            <p className="contact-card-value">Mon – Sat<br />8:00 AM – 5:00 PM</p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div className="services-container3">
-                <div className="services-c3-inner">
-                    <div className="c3-end">
-                        <h2>Our End Products</h2>
-                        <ul>
-                            <li>Building Construction and Renovation</li>
-                            <li>School Buildings Residential Buildings</li>
-                            <li>Office / Business Center</li>
-                            <li>Commercial & Industrial Building Warehouses</li>
-                            <li>Installation / Rehabilitation of Genset and ATS</li>
-                            <li>Installation of Submersible Pumps</li>
-                            <li>Plant Improvements</li>
-                            <li>Provision of Grounding System</li>
-                            <li>Rehabilitation / Reconfiguration of Cabins, Hub Offices and Radio Rooms</li>
-                            <li>Sewer and Drainage Lines (Excavation and Pipe Laying)</li>
-                            <li>Shed / Waiting Shed</li>
-                            <li>Site Development and Physical Improvements</li>
-                            <li>Retaining Walls</li>
-                            <li>Fencing Works</li>
-                            <li>Access Roads</li>
-                            <li>Store Outlets</li>
-                            <li>Tower Erection & Dismantling</li>
-                        </ul>
-                    </div>
-                    <div className="c3-image">
-                        <Carousel images={gaisanoMactanImages} />
-                    </div>
-                </div>
-            </div>
-
-            <div className="services-container4">
-                <div className="services-c4-inner">
-                    <div className="c4-image">
-                        <img src={image4} alt="" />
-                    </div>
-                    <div className="c4-architectural">
-                        <h2>Architectural & Design Works</h2>
-                        <ul>
-                            <li>Schematic Design</li>
-                            <li>3D Modelling</li>
-                            <li>Rendered Works for Client Presentation</li>
-                            <li>Rendered Walkthrough (raw)</li>
-                            <li>Design Development</li>
-                            <li>Drawing Plans</li>
-                            <li>Technical Details</li>
-                            <li>Contract Documents</li>
-                            <li>Technical Specifications</li>
-                            <li>Working Drawings</li>
-                            <li>As-built Plans</li>
-                            <li>Site Supervision</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <div className="body-container5">
-                <div className="body-container5-inner">
-                    <div className="c5-contact">
-                        <div className="section1">
-                            <h3>Contact us today</h3>
-                            <p>Let's bring your vision to life together. Reach out to us to talk about your next project.</p>
-                        </div>
-                        <div className="section2">
-                            <img src={email} alt="email icon" />
-                            <a href="#">Pythagoras@gmail.com</a>
-                            <p>We Reply Within 24 Hours</p>
-                        </div>
-                        <div className="section3">
-                            <img src={phone} alt="phone icon" />
-                            <h4>Have any questions?</h4>
-                            <p>(+63)912 123 1234</p>
-                        </div>
-                        <div className="section4">
-                            <img src={clock} alt="clock icon" />
-                            <h4>Working hours</h4>
-                            <p>Mon to Sat 8:00AM - 5:00PM</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </main>
     );
 }
-
-export default Services;
