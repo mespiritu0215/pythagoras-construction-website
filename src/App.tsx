@@ -8,6 +8,7 @@ import clockIcon from './clock.png';
 import AboutUs from './AboutUs';
 import Services from './Services';
 import Projects from './Projects';
+import Contact from './ContactUs';
 import ProjectDetails from './ProjectDetails';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import STI from "./CompletedProjects/pages/STIBACOOR.png";
@@ -67,7 +68,7 @@ function App(): JSX.Element {
             <li><Link to="/services" onClick={closeMenu}>Services</Link></li>
             <li><Link to="/projects" onClick={closeMenu}>Projects</Link></li>
             <li><Link to="/about"    onClick={closeMenu}>About Us</Link></li>
-            <li><a href="#contact"   onClick={closeMenu}>Contact Us</a></li>
+            <li><Link to="/contact"  onClick={closeMenu}>Contact Us</Link></li>
           </ul>
         </nav>
       </header>
@@ -237,6 +238,7 @@ function App(): JSX.Element {
           <Route path="/services"     element={<Services />} />
           <Route path="/projects"     element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
+          <Route path="/contact"      element={<Contact />} />
 
         </Routes>
       </main>
