@@ -1,5 +1,6 @@
 import React, { useState, useEffect, JSX } from 'react';
 import logo from './logo.png';
+import './App.css';
 import abtusimg1 from './aboutus-img1.png';
 import emailIcon from './email.png';
 import phoneIcon from './phone.png';
@@ -111,7 +112,7 @@ function App(): JSX.Element {
                   </div>
                   <div className="stat-divider" />
                   <div className="stat">
-                    <div className="stat-num">Gov &amp; Private</div>
+                    <div className="stat-num">Private</div>
                     <div className="stat-label">Clients Served</div>
                   </div>
                 </div>
