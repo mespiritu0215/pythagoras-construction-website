@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import './AboutUs.css';
 import abtproj1 from './aboutproject-img1.jpg';
 import abtproj2 from './aboutproject-img2.jpg';
 import abtproj4 from './pyth5.jpg';
