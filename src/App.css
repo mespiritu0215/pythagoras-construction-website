@@ -555,6 +555,11 @@ main { flex: 1; }
 /* ─────────────────────────────────────────────────────────────
     ABOUT STRIP
 ───────────────────────────────────────────────────────────── */
+.black-text{
+  color:#000000;
+  font-weight: 700;;
+}
+
 .about-strip {
   background: var(--off-white);
   color: var(--dark);

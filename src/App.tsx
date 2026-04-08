@@ -112,7 +112,7 @@ function App(): JSX.Element {
                   </div>
                   <div className="stat-divider" />
                   <div className="stat">
-                    <div className="stat-num">Gov &amp; Private</div>
+                    <div className="stat-num">Private</div>
                     <div className="stat-label">Clients Served</div>
                   </div>
                 </div>
@@ -129,8 +129,7 @@ function App(): JSX.Element {
                     <p className="who-desc">
                       We are a team of experienced professionals dedicated to delivering quality
                       construction through collaboration, integrity, and hands-on expertise — from
-                      planning and cost estimation to project execution and supervision for both
-                      government and private clients.
+                      planning and cost estimation to project execution and supervision for private clients.
                     </p>
                     <Link to="/about" className="btn-primary btn-dark">Learn More</Link>
                   </div>
@@ -186,9 +185,9 @@ function App(): JSX.Element {
                     <p className="section-tag">ABOUT US</p>
                     <h2 className="about-strip-heading">Pythagoras Construction Company, Inc.</h2>
                     <p className="about-strip-desc">
-                      Pythagoras Construction, Inc. is a SEC-registered general contracting firm
+                      <span className='black-text'>Pythagoras Construction, Inc.</span> is a SEC-registered general contracting firm
                       established in 1993, providing construction and allied maintenance services
-                      to government and private clients. We deliver comprehensive solutions from
+                      to private clients. We deliver comprehensive solutions from
                       planning and cost estimation to project execution and supervision, backed by
                       a skilled professional team and over 100 construction workers. Formerly a
                       single proprietorship, the company is now a PCAB-licensed corporation

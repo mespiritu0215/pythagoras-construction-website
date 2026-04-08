@@ -157,7 +157,7 @@ export default function Projects() {
           </div>
           <div className="prj-stat-divider" />
           <div className="prj-stat">
-            <div className="prj-stat-num">Gov &amp; Private</div>
+            <div className="prj-stat-num">Private</div>
             <div className="prj-stat-label">Clients Served</div>
           </div>
         </div>
@@ -526,6 +526,7 @@ export default function Projects() {
           align-items: center;
           justify-content: center;
           transition: background 0.2s, border-color 0.2s, color 0.2s;
+          padding-bottom: 5px;
         }
         .prj-card:hover .prj-arrow-icon {
           background: #920000;
@@ -549,7 +550,7 @@ export default function Projects() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 0;
+          padding-bottom: 5px;
           transition: background 0.2s, border-color 0.2s;
         }
         .prj-arrow:hover { background: #920000; border-color: #920000; }
