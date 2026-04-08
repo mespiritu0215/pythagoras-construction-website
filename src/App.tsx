@@ -1,10 +1,10 @@
 import React, { useState, useEffect, JSX } from 'react';
 import logo from './logo.png';
+import './App.css';
 import abtusimg1 from './aboutus-img1.png';
 import emailIcon from './email.png';
 import phoneIcon from './phone.png';
 import clockIcon from './clock.png';
-import './App.css';
 import AboutUs from './AboutUs';
 import Services from './Services';
 import Projects from './Projects';
