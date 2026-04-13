@@ -31,8 +31,8 @@ const CONCERN_OPTIONS = [
 ];
 
 const RECIPIENT_MAP: Record<string, string> = {
-  job: 'constructionpythagoras14@gmail.com  <',
-  project: 'constructionpythagoras14@gmail.com <',
+  job: 'constructionpythagoras1@gmail.com',
+  project: 'constructionpythagoras1@gmail.com',
 };
 
 const SUBJECT_MAP: Record<string, string> = {
@@ -42,7 +42,7 @@ const SUBJECT_MAP: Record<string, string> = {
 
 /* ─────────────────────────────────────────────────────────────
    ENV VARIABLES
-   Add all four of these to your .env.local file:
+   Add these to your .env.local:
      REACT_APP_GOOGLE_CLIENT_ID=...
      REACT_APP_EMAILJS_PUBLIC_KEY=...
      REACT_APP_EMAILJS_SERVICE_ID=...
@@ -214,16 +214,6 @@ const css = `
 .cu-select option { background: #1a1919; color: #fff; }
 .cu-textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
 
-.cu-redirect-hint {
-  display: flex; align-items: center; gap: 8px;
-  padding: 10px 13px; background: rgba(146,0,0,0.08);
-  border-left: 2px solid #920000; margin-top: -6px;
-}
-.cu-redirect-hint-dot { width: 6px; height: 6px; background: #920000; border-radius: 50%; flex-shrink: 0; }
-.cu-redirect-hint p { margin: 0; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: rgba(255,255,255,0.45); }
-.cu-redirect-hint strong { color: rgba(255,255,255,0.7); font-weight: 700; }
-
-/* Error banner */
 .cu-error {
   padding: 12px 14px;
   background: rgba(180,0,0,0.12);
@@ -231,7 +221,6 @@ const css = `
 }
 .cu-error p { margin: 0; font-size: 13px; line-height: 1.55; color: rgba(255,140,140,0.95); }
 
-/* Submit button */
 .cu-submit {
   display: inline-flex; align-items: center; gap: 8px;
   background: #920000; color: #fff;
@@ -245,7 +234,6 @@ const css = `
 .cu-submit:hover:not(:disabled) { background: transparent; color: #920000; }
 .cu-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
-/* Spinner */
 .cu-spinner {
   width: 14px; height: 14px;
   border: 2px solid rgba(255,255,255,0.35);
@@ -254,7 +242,6 @@ const css = `
 }
 @keyframes cu-spin { to { transform: rotate(360deg); } }
 
-/* Success */
 .cu-success {
   display: flex; flex-direction: column; align-items: center;
   text-align: center; gap: 16px; padding: clamp(20px,3vw,36px) 0;
@@ -378,14 +365,7 @@ export default function ContactUs(): JSX.Element {
     setSendError('');
   };
 
-  /* ── Submit via EmailJS ──
-     Your EmailJS template must have these variables:
-       {{to_email}}   - recipient address
-       {{subject}}    - email subject line
-       {{from_name}}  - sender's full name
-       {{from_email}} - sender's Google email
-       {{message}}    - the message body
-  ── */
+  /* ── Submit via EmailJS ── */
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (!concern || !fullName.trim() || !message.trim()) return;
@@ -589,8 +569,6 @@ export default function ContactUs(): JSX.Element {
                       </option>
                     ))}
                   </select>
-
-                  
                 </div>
 
                 {/* Message */}
