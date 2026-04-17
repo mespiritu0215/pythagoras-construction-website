@@ -8,7 +8,6 @@ import phone from './phone.png';
 import clock from './clock.png';
 import background from './background.png';
 
-
 const values = [
   {
     num: "01",
@@ -45,7 +44,7 @@ function AboutUs() {
   }, []);
 
   useEffect(() => {
-    document.body.style.backgroundColor = "#0f0e0e";
+    document.body.style.backgroundColor = "#FDF6EE";
     return () => { document.body.style.backgroundColor = ""; };
   }, []);
 
@@ -165,7 +164,7 @@ function AboutUs() {
       <section className="abt-values-section">
         <div className="abt-values-inner">
           <div className="abt-values-header">
-            <p className="abt-section-tag abt-tag-light">WHAT DRIVES US</p>
+            <p className="abt-section-tag">WHAT DRIVES US</p>
             <h2 className="abt-values-heading">CORE VALUES</h2>
           </div>
           <div className="abt-values-layout">

@@ -11,6 +11,8 @@ import Contact from './ContactUs';
 import ProjectDetails from './ProjectDetails';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import STI from "./CompletedProjects/pages/STIBACOOR.png";
+import TEAM from "./CompletedProjects/pages/TEAMBUILDING.png";
+
 
 import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
 
@@ -148,10 +150,10 @@ function App(): JSX.Element {
                 <section className="projects-section">
                   <div className="projects-header">
                     <div>
-                      <p className="section-tag light">OUR PROJECTS</p>
+                      <p className="section-tag muted">OUR PROJECTS</p>
                       <h2 className="projects-heading">RECENTLY COMPLETED PROJECTS</h2>
                     </div>
-                    <Link to="/projects" className="btn-outline-light">ALL PROJECTS →</Link>
+                    <Link to="/projects" className="btn-outline-maroon">ALL PROJECTS →</Link>
                   </div>
 
                   <div className="projects-grid">
@@ -177,14 +179,14 @@ function App(): JSX.Element {
                 <section className="about-strip">
                   <div className="about-strip-inner">
                     <div className="about-strip-img">
-                      <img src={STI} alt="Our team" />
+                      <img src={TEAM} alt="Our team" />
                       <div className="about-img-border" />
                     </div>
                     <div className="about-strip-text">
                       <p className="section-tag">ABOUT US</p>
                       <h2 className="about-strip-heading">Pythagoras Construction Company, Inc.</h2>
                       <p className="about-strip-desc">
-                        <span className='black-text'>Pythagoras Construction, Inc.</span> is a SEC-registered general contracting firm
+                        <span className='bold-text'>Pythagoras Construction, Inc.</span> is a SEC-registered general contracting firm
                         established in 1993, providing construction and allied maintenance services
                         to private clients. We deliver comprehensive solutions from
                         planning and cost estimation to project execution and supervision, backed by

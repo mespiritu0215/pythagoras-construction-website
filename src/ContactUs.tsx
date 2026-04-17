@@ -40,14 +40,6 @@ const SUBJECT_MAP: Record<string, string> = {
   project: 'Construction Project Inquiry',
 };
 
-/* ─────────────────────────────────────────────────────────────
-   ENV VARIABLES
-   Add these to your .env.local:
-     REACT_APP_GOOGLE_CLIENT_ID=...
-     REACT_APP_EMAILJS_PUBLIC_KEY=...
-     REACT_APP_EMAILJS_SERVICE_ID=...
-     REACT_APP_EMAILJS_TEMPLATE_ID=...
-───────────────────────────────────────────────────────────── */
 const GOOGLE_CLIENT_ID    = process.env.REACT_APP_GOOGLE_CLIENT_ID    ?? '';
 const EMAILJS_PUBLIC_KEY  = process.env.REACT_APP_EMAILJS_PUBLIC_KEY  ?? '';
 const EMAILJS_SERVICE_ID  = process.env.REACT_APP_EMAILJS_SERVICE_ID  ?? '';
@@ -62,9 +54,9 @@ const css = `
 .cu-page {
   position: relative;
   min-height: 100vh;
-  background: #0f0e0e;
+  background: #FDF6EE;
   font-family: 'Barlow', sans-serif;
-  color: #fff;
+  color: #2C1810;
   overflow-x: hidden;
 }
 
@@ -77,7 +69,7 @@ const css = `
 }
 .cu-bg-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.88);
+  background: linear-gradient(135deg, rgba(43,8,0,0.94) 0%, rgba(74,0,0,0.90) 100%);
   pointer-events: none; z-index: 1;
 }
 
@@ -93,18 +85,18 @@ const css = `
   font-family: 'Barlow Condensed', sans-serif;
   font-size: clamp(10px,1.2vw,13px); font-weight: 700;
   letter-spacing: 4px; text-transform: uppercase;
-  color: #920000; margin: 0 0 14px;
+  color: #F0E6D6; opacity: 0.6; margin: 0 0 14px;
 }
 .cu-heading {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(42px,6vw,82px); line-height: 0.95;
-  letter-spacing: 2px; color: #fff;
+  letter-spacing: 2px; color: #FDF6EE;
   margin: 0 0 clamp(16px,2.5vw,28px);
 }
-.cu-heading span { color: #920000; }
+.cu-heading span { color: #F0E6D6; opacity: 0.72; }
 .cu-desc {
   font-size: clamp(13px,1.4vw,16px); line-height: 1.8;
-  color: rgba(255,255,255,0.5);
+  color: rgba(253,246,238,0.5);
   margin: 0 0 clamp(32px,5vw,52px); max-width: 420px;
 }
 
@@ -112,25 +104,26 @@ const css = `
 .cu-info-item { display: flex; align-items: flex-start; gap: 14px; }
 .cu-info-icon {
   width: 38px; height: 38px;
-  border: 1px solid rgba(146,0,0,0.4);
+  border: 1px solid rgba(240,230,214,0.28);
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; background: rgba(146,0,0,0.08);
+  flex-shrink: 0; background: rgba(240,230,214,0.08);
 }
-.cu-info-icon svg { width: 16px; height: 16px; fill: #920000; }
+.cu-info-icon svg { width: 16px; height: 16px; fill: rgba(253,246,238,0.75); }
 .cu-info-text-label {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px; font-weight: 700;
   letter-spacing: 2.5px; text-transform: uppercase;
-  color: #920000; margin: 0 0 3px;
+  color: rgba(240,230,214,0.55); margin: 0 0 3px;
 }
-.cu-info-text-value { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.55; margin: 0; }
-.cu-info-text-value a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
-.cu-info-text-value a:hover { color: #fff; }
+.cu-info-text-value { font-size: 14px; color: rgba(253,246,238,0.75); line-height: 1.55; margin: 0; }
+.cu-info-text-value a { color: rgba(253,246,238,0.75); text-decoration: none; transition: color 0.2s; }
+.cu-info-text-value a:hover { color: #FDF6EE; }
 
 .cu-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
+  background: #FFFFFF;
+  border: 1px solid #E8D8C4;
   padding: clamp(28px,4vw,48px);
+  box-shadow: 0 8px 32px rgba(107,0,0,0.08);
 }
 
 .cu-auth-gate {
@@ -139,17 +132,18 @@ const css = `
 }
 .cu-auth-lock {
   width: 56px; height: 56px;
-  border: 1px solid rgba(146,0,0,0.35);
+  border: 1px solid rgba(107,0,0,0.22);
   display: flex; align-items: center; justify-content: center;
-  background: rgba(146,0,0,0.08);
+  background: rgba(107,0,0,0.05);
 }
-.cu-auth-lock svg { width: 24px; height: 24px; fill: #920000; }
+.cu-auth-lock svg { width: 24px; height: 24px; fill: #6B0000; }
 .cu-auth-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(22px,3vw,32px); letter-spacing: 1px; color: #fff; margin: 0;
+  font-size: clamp(22px,3vw,32px); letter-spacing: 1px;
+  color: #2C1810; margin: 0;
 }
 .cu-auth-sub {
-  font-size: 14px; color: rgba(255,255,255,0.45);
+  font-size: 14px; color: #5C4033;
   line-height: 1.7; margin: 0; max-width: 320px;
 }
 .cu-google-btn-wrap { margin-top: 8px; display: flex; justify-content: center; }
@@ -158,28 +152,29 @@ const css = `
   display: flex; align-items: center; gap: 10px;
   margin-bottom: clamp(20px,3vw,32px);
   padding-bottom: clamp(16px,2.5vw,24px);
-  border-bottom: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid #E8D8C4;
 }
 .cu-user-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  border: 2px solid rgba(146,0,0,0.5); object-fit: cover;
+  border: 2px solid rgba(107,0,0,0.3); object-fit: cover;
 }
 .cu-user-name {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #fff; margin: 0;
+  font-size: 13px; font-weight: 700; letter-spacing: 1px;
+  color: #2C1810; margin: 0;
 }
-.cu-user-email { font-size: 11px; color: rgba(255,255,255,0.4); margin: 0; }
+.cu-user-email { font-size: 11px; color: #9A8F85; margin: 0; }
 .cu-sign-out {
   margin-left: auto; background: none;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.45);
+  border: 1px solid #E8D8C4;
+  color: #9A8F85;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px; font-weight: 700;
   letter-spacing: 1.5px; text-transform: uppercase;
   padding: 5px 12px; cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
-.cu-sign-out:hover { color: #fff; border-color: rgba(255,255,255,0.35); }
+.cu-sign-out:hover { color: #6B0000; border-color: rgba(107,0,0,0.35); }
 
 .cu-form { display: flex; flex-direction: column; gap: clamp(16px,2vw,22px); }
 .cu-field { display: flex; flex-direction: column; gap: 7px; }
@@ -187,57 +182,57 @@ const css = `
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px; font-weight: 700;
   letter-spacing: 2.5px; text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+  color: #9A8F85;
 }
-.cu-label span { color: #920000; margin-left: 2px; }
+.cu-label span { color: #6B0000; margin-left: 2px; }
 
 .cu-input, .cu-select, .cu-textarea {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #fff; font-family: 'Barlow', sans-serif;
+  background: #FDF6EE;
+  border: 1px solid #E8D8C4;
+  color: #2C1810; font-family: 'Barlow', sans-serif;
   font-size: 14px; padding: 12px 14px; outline: none;
   transition: border-color 0.2s, background 0.2s;
   width: 100%; box-sizing: border-box;
   border-radius: 0; -webkit-appearance: none;
 }
-.cu-input::placeholder, .cu-textarea::placeholder { color: rgba(255,255,255,0.25); }
+.cu-input::placeholder, .cu-textarea::placeholder { color: #9A8F85; }
 .cu-input:focus, .cu-select:focus, .cu-textarea:focus {
-  border-color: rgba(146,0,0,0.7); background: rgba(146,0,0,0.05);
+  border-color: rgba(107,0,0,0.45); background: #FFFFFF;
 }
-.cu-input:read-only { color: rgba(255,255,255,0.45); cursor: default; }
+.cu-input:read-only { color: #9A8F85; cursor: default; }
 .cu-select {
   appearance: none; -webkit-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.35)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A8F85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 14px center;
   padding-right: 36px; cursor: pointer;
 }
-.cu-select option { background: #1a1919; color: #fff; }
+.cu-select option { background: #FFFFFF; color: #2C1810; }
 .cu-textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
 
 .cu-error {
   padding: 12px 14px;
-  background: rgba(180,0,0,0.12);
-  border: 1px solid rgba(180,0,0,0.4);
+  background: rgba(107,0,0,0.05);
+  border: 1px solid rgba(107,0,0,0.22);
 }
-.cu-error p { margin: 0; font-size: 13px; line-height: 1.55; color: rgba(255,140,140,0.95); }
+.cu-error p { margin: 0; font-size: 13px; line-height: 1.55; color: #6B0000; }
 
 .cu-submit {
   display: inline-flex; align-items: center; gap: 8px;
-  background: #920000; color: #fff;
+  background: #6B0000; color: #FDF6EE;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700; font-size: 13px;
   letter-spacing: 2px; text-transform: uppercase;
-  padding: 15px 36px; border: 2px solid #920000;
+  padding: 15px 36px; border: 2px solid #6B0000;
   cursor: pointer; transition: background 0.2s, color 0.2s;
   align-self: flex-start; margin-top: 4px;
 }
-.cu-submit:hover:not(:disabled) { background: transparent; color: #920000; }
+.cu-submit:hover:not(:disabled) { background: transparent; color: #6B0000; }
 .cu-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .cu-spinner {
   width: 14px; height: 14px;
-  border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #fff; border-radius: 50%;
+  border: 2px solid rgba(253,246,238,0.35);
+  border-top-color: #FDF6EE; border-radius: 50%;
   animation: cu-spin 0.7s linear infinite;
 }
 @keyframes cu-spin { to { transform: rotate(360deg); } }
@@ -248,20 +243,24 @@ const css = `
 }
 .cu-success-icon {
   width: 56px; height: 56px;
-  background: rgba(146,0,0,0.12); border: 1px solid rgba(146,0,0,0.4);
+  background: rgba(107,0,0,0.07); border: 1px solid rgba(107,0,0,0.22);
   display: flex; align-items: center; justify-content: center;
 }
 .cu-success-icon svg { width: 24px; height: 24px; }
-.cu-success-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(22px,3vw,30px); letter-spacing: 1.5px; color: #fff; margin: 0; }
-.cu-success-sub { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.7; margin: 0; }
+.cu-success-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(22px,3vw,30px); letter-spacing: 1.5px;
+  color: #2C1810; margin: 0;
+}
+.cu-success-sub { font-size: 14px; color: #5C4033; line-height: 1.7; margin: 0; }
 .cu-success-another {
-  background: none; border: 1px solid rgba(146,0,0,0.5);
-  color: #920000; font-family: 'Barlow Condensed', sans-serif;
+  background: none; border: 1px solid rgba(107,0,0,0.32);
+  color: #6B0000; font-family: 'Barlow Condensed', sans-serif;
   font-size: 12px; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; padding: 10px 24px; cursor: pointer;
   transition: background 0.2s, color 0.2s; margin-top: 8px;
 }
-.cu-success-another:hover { background: rgba(146,0,0,0.1); color: #b50000; }
+.cu-success-another:hover { background: rgba(107,0,0,0.06); color: #8B0000; }
 
 @media (max-width: 860px) {
   .cu-inner { grid-template-columns: 1fr; gap: 52px; padding-top: clamp(100px,16vw,130px); }
@@ -289,7 +288,6 @@ export default function ContactUs(): JSX.Element {
   const googleBtnRef   = useRef<HTMLDivElement>(null);
   const gsiInitialized = useRef(false);
 
-  /* ── Inject CSS once ── */
   useEffect(() => {
     if (styleInjected) return;
     const style = document.createElement('style');
@@ -298,7 +296,6 @@ export default function ContactUs(): JSX.Element {
     setStyleInjected(true);
   }, [styleInjected]);
 
-  /* ── Load GSI script ── */
   useEffect(() => {
     if (document.getElementById('google-gsi-script')) return;
     const script = document.createElement('script');
@@ -309,7 +306,6 @@ export default function ContactUs(): JSX.Element {
     document.body.appendChild(script);
   }, []);
 
-  /* ── Init Google & render button ── */
   useEffect(() => {
     if (user) return;
     gsiInitialized.current = false;
@@ -355,7 +351,6 @@ export default function ContactUs(): JSX.Element {
     return () => clearInterval(interval);
   }, [user]);
 
-  /* ── Sign out ── */
   const handleSignOut = (): void => {
     setUser(null);
     setFullName('');
@@ -365,7 +360,6 @@ export default function ContactUs(): JSX.Element {
     setSendError('');
   };
 
-  /* ── Submit via EmailJS ── */
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (!concern || !fullName.trim() || !message.trim()) return;
@@ -428,12 +422,11 @@ export default function ContactUs(): JSX.Element {
     </svg>
   );
   const IconCheck = (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#920000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#6B0000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   );
 
-  /* ── Render ── */
   return (
     <div className="cu-page">
       <div className="cu-bg" />
@@ -483,7 +476,6 @@ export default function ContactUs(): JSX.Element {
         {/* RIGHT: Card */}
         <div className="cu-card">
 
-          {/* Not signed in */}
           {!user && (
             <div className="cu-auth-gate">
               <div className="cu-auth-lock">{IconLock}</div>
@@ -498,7 +490,6 @@ export default function ContactUs(): JSX.Element {
             </div>
           )}
 
-          {/* Signed in + success */}
           {user && submitted && (
             <div className="cu-success">
               <div className="cu-user-pill">
@@ -521,7 +512,6 @@ export default function ContactUs(): JSX.Element {
             </div>
           )}
 
-          {/* Signed in + form */}
           {user && !submitted && (
             <>
               <div className="cu-user-pill">
@@ -535,7 +525,6 @@ export default function ContactUs(): JSX.Element {
 
               <form className="cu-form" onSubmit={handleSubmit} noValidate>
 
-                {/* Full Name */}
                 <div className="cu-field">
                   <label className="cu-label" htmlFor="cu-fullname">
                     Full Name <span>*</span>
@@ -551,7 +540,6 @@ export default function ContactUs(): JSX.Element {
                   />
                 </div>
 
-                {/* Concern */}
                 <div className="cu-field">
                   <label className="cu-label" htmlFor="cu-concern">
                     Nature of Concern <span>*</span>
@@ -571,7 +559,6 @@ export default function ContactUs(): JSX.Element {
                   </select>
                 </div>
 
-                {/* Message */}
                 <div className="cu-field">
                   <label className="cu-label" htmlFor="cu-message">
                     Message <span>*</span>
@@ -592,7 +579,6 @@ export default function ContactUs(): JSX.Element {
                   />
                 </div>
 
-                {/* Error */}
                 {sendError && (
                   <div className="cu-error">
                     <p>{sendError}</p>

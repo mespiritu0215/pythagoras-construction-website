@@ -1,31 +1,29 @@
-/* ─────────────────────────────────────────────────────────────
-   ABOUT US  — Alternate Layout
-   Same design system as App.css (Bebas Neue + Barlow, dark theme)
-   New structure: split hero, tall panels, interactive value tabs
-───────────────────────────────────────────────────────────── */
-
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
 
 :root {
-  --red:          #920000;
-  --red-hover:    #b50000;
-  --dark:         #0f0e0e;
-  --dark2:        #181717;
-  --off-white:    #f4eeea;
-  --cream:        #fefbf2;
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-body:    'Barlow', sans-serif;
-  --font-cond:    'Barlow Condensed', sans-serif;
-  --section-pad:  clamp(60px, 8vw, 120px);
-  --side-pad:     clamp(20px, 6vw, 80px);
-  --max-w:        1280px;
+  --maroon:        #6B0000;
+  --maroon-hover:  #8B0000;
+  --maroon-deep:   #4A0000;
+  --cream:         #FDF6EE;
+  --cream-dark:    #F0E6D6;
+  --cream-darker:  #E8D8C4;
+  --white:         #FFFFFF;
+  --warm-gray:     #9A8F85;
+  --text-dark:     #2C1810;
+  --text-mid:      #5C4033;
+  --font-display:  'Bebas Neue', sans-serif;
+  --font-body:     'Barlow', sans-serif;
+  --font-cond:     'Barlow Condensed', sans-serif;
+  --section-pad:   clamp(60px, 8vw, 120px);
+  --side-pad:      clamp(20px, 6vw, 80px);
+  --max-w:         1280px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
 .abt-page {
-  background: var(--dark);
-  color: #fff;
+  background: var(--cream);
+  color: var(--text-dark);
   overflow-x: hidden;
 }
 
@@ -38,31 +36,10 @@
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--red);
+  color: var(--maroon);
   margin: 0 0 12px;
 }
-.abt-tag-light { color: rgba(255, 255, 255, 0.4); }
-
-.abt-btn-primary {
-  display: inline-block;
-  background: var(--red);
-  color: #fff;
-  font-family: var(--font-cond);
-  font-weight: 700;
-  font-size: clamp(11px, 1.2vw, 13px);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 14px 32px;
-  border: 2px solid var(--red);
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: background 0.2s, color 0.2s;
-}
-.abt-btn-primary:hover {
-  background: transparent;
-  color: var(--red);
-}
+.abt-tag-light { color: rgba(253,246,238,0.45); }
 
 /* ─────────────────────────────────────────────────────────────
    HERO — vertical split (text left, slider right)
@@ -76,11 +53,11 @@
 
 /* LEFT PANEL */
 .abt-hero-left {
-  background: var(--dark);
+  background: var(--white);
   display: flex;
   align-items: center;
   padding: clamp(40px, 6vw, 80px) var(--side-pad);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid var(--cream-dark);
 }
 
 .abt-hero-left-inner {
@@ -99,7 +76,8 @@
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--red);
+  color: var(--maroon);
+  opacity: 0.65;
   margin: 0 0 clamp(14px, 2vw, 24px);
 }
 
@@ -108,7 +86,7 @@
   font-size: clamp(44px, 7vw, 100px);
   line-height: 0.92;
   letter-spacing: 2px;
-  color: #fff;
+  color: var(--text-dark);
   margin: 0 0 clamp(20px, 3vw, 32px);
   display: flex;
   flex-direction: column;
@@ -121,12 +99,12 @@
 .abt-ht-line:nth-child(4) { animation: abtFadeUp 0.7s 0.34s ease both; }
 .abt-ht-line:nth-child(5) { animation: abtFadeUp 0.7s 0.42s ease both; }
 .abt-ht-line:nth-child(6) { animation: abtFadeUp 0.7s 0.50s ease both; }
-.abt-ht-accent { color: var(--red); }
+.abt-ht-accent { color: var(--maroon); }
 
 .abt-hero-divider {
   width: 48px;
   height: 2px;
-  background: var(--red);
+  background: var(--maroon);
   margin-bottom: clamp(16px, 2.5vw, 28px);
   animation: abtFadeUp 0.7s 0.52s ease both;
 }
@@ -135,11 +113,11 @@
   font-family: var(--font-body);
   font-size: clamp(13px, 1.4vw, 15px);
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-mid);
   margin: 0 0 clamp(28px, 4vw, 44px);
   animation: abtFadeUp 0.7s 0.56s ease both;
 }
-.abt-hero-sub strong { color: #fff; font-weight: 600; }
+.abt-hero-sub strong { color: var(--text-dark); font-weight: 700; }
 
 /* Stats row inside hero */
 .abt-hero-stats {
@@ -160,7 +138,7 @@
 .abt-stat-num {
   font-family: var(--font-display);
   font-size: clamp(22px, 3vw, 36px);
-  color: var(--red);
+  color: var(--maroon);
   letter-spacing: 1px;
 }
 
@@ -169,13 +147,13 @@
   font-size: clamp(9px, 1vw, 11px);
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--warm-gray);
 }
 
 .abt-stat-divider {
   width: 1px;
   height: 36px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--cream-darker);
   margin-right: clamp(20px, 3vw, 36px);
   flex-shrink: 0;
 }
@@ -220,18 +198,18 @@
 .abt-counter-current {
   font-family: var(--font-display);
   font-size: 28px;
-  color: #fff;
+  color: var(--cream);
   letter-spacing: 1px;
 }
 .abt-counter-sep {
   width: 28px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(253,246,238,0.5);
 }
 .abt-counter-total {
   font-family: var(--font-display);
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(253,246,238,0.4);
 }
 
 /* Dot nav — bottom center */
@@ -249,13 +227,13 @@
   height: 7px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(253,246,238,0.38);
   cursor: pointer;
   padding: 0;
   transition: background 0.2s, transform 0.2s;
 }
 .abt-dot-active {
-  background: var(--red);
+  background: var(--cream);
   transform: scale(1.35);
 }
 
@@ -269,7 +247,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: rgba(15, 14, 14, 0.75);
+  background: rgba(43,8,0,0.72);
   backdrop-filter: blur(6px);
   z-index: 4;
 }
@@ -279,7 +257,7 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(253,246,238,0.62);
 }
 .abt-visit-chip {
   font-family: var(--font-cond);
@@ -287,13 +265,13 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  background: var(--red);
-  color: #fff;
+  background: var(--maroon);
+  color: var(--cream);
   padding: 8px 22px;
   text-decoration: none;
   transition: background 0.2s;
 }
-.abt-visit-chip:hover { background: var(--red-hover); }
+.abt-visit-chip:hover { background: var(--maroon-hover); }
 
 /* Red accent bar on right edge */
 .abt-hero-accent-bar {
@@ -302,7 +280,7 @@
   right: 0;
   width: 4px;
   height: 100%;
-  background: var(--red);
+  background: var(--maroon);
   z-index: 5;
 }
 
@@ -310,7 +288,7 @@
    WHO WE ARE — 3 equal tall panels
 ───────────────────────────────────────────────────────────── */
 .abt-who-section {
-  background: var(--off-white);
+  background: var(--cream-dark);
   padding: var(--section-pad) var(--side-pad);
 }
 
@@ -326,7 +304,7 @@
 .abt-who-heading {
   font-family: var(--font-display);
   font-size: clamp(34px, 5vw, 64px);
-  color: var(--dark);
+  color: var(--text-dark);
   letter-spacing: 2px;
   margin: 0;
   font-style: italic;
@@ -347,44 +325,46 @@
 }
 .abt-who-panel:hover { transform: translateY(-4px); }
 
-/* All three panels are solid dark cards — no more blending into bg */
-.abt-panel-dark  { background: #1a1919; border-top: 3px solid var(--red); }
-.abt-panel-red   { background: var(--red); border-top: 3px solid #fff; }
-.abt-panel-light { background: #2a2828; border-top: 3px solid var(--red); }
+.abt-panel-dark  { background: var(--maroon-deep); border-top: 3px solid var(--cream-darker); }
+.abt-panel-red   { background: var(--maroon);      border-top: 3px solid var(--cream); }
+.abt-panel-light { background: var(--white);        border-top: 3px solid var(--maroon); }
 
 .abt-panel-number {
   font-family: var(--font-display);
   font-size: clamp(52px, 7vw, 88px);
   line-height: 1;
-  color: rgba(255, 255, 255, 0.07);
+  color: rgba(253,246,238,0.07);
   margin-bottom: 16px;
   letter-spacing: 2px;
 }
+.abt-panel-light .abt-panel-number { color: rgba(107,0,0,0.07); }
 
 .abt-panel-title {
   font-family: var(--font-display);
   font-size: clamp(20px, 2.5vw, 30px);
   letter-spacing: 2px;
-  color: #fff;
+  color: var(--cream);
   margin: 0 0 clamp(14px, 2vw, 20px);
 }
+.abt-panel-light .abt-panel-title { color: var(--text-dark); }
 
 .abt-panel-text {
   font-family: var(--font-body);
   font-size: clamp(13px, 1.3vw, 15px);
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(253,246,238,0.62);
   margin: 0;
 }
-.abt-panel-red .abt-panel-text { color: rgba(255, 255, 255, 0.82); }
+.abt-panel-red .abt-panel-text   { color: rgba(253,246,238,0.84); }
+.abt-panel-light .abt-panel-text { color: var(--text-mid); }
 
 /* ─────────────────────────────────────────────────────────────
    CORE VALUES — interactive tab + content panel
 ───────────────────────────────────────────────────────────── */
 .abt-values-section {
-  background: var(--dark);
+  background: var(--white);
   padding: var(--section-pad) var(--side-pad);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--cream-dark);
 }
 
 .abt-values-inner {
@@ -399,7 +379,7 @@
 .abt-values-heading {
   font-family: var(--font-display);
   font-size: clamp(34px, 5vw, 64px);
-  color: #fff;
+  color: var(--text-dark);
   letter-spacing: 2px;
   margin: 0;
   font-style: italic;
@@ -423,8 +403,8 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--cream);
+  border: 1px solid var(--cream-dark);
   border-left: 3px solid transparent;
   padding: clamp(16px, 2vw, 22px) clamp(16px, 2vw, 24px);
   cursor: pointer;
@@ -433,24 +413,24 @@
   transition: background 0.2s, border-color 0.2s;
 }
 .abt-value-tab:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-left-color: rgba(146, 0, 0, 0.5);
+  background: var(--cream-dark);
+  border-left-color: rgba(107,0,0,0.4);
 }
 .abt-tab-active {
-  background: rgba(146, 0, 0, 0.1) !important;
-  border-left-color: var(--red) !important;
-  border-color: rgba(146, 0, 0, 0.3) !important;
+  background: rgba(107,0,0,0.06) !important;
+  border-left-color: var(--maroon) !important;
+  border-color: rgba(107,0,0,0.15) !important;
 }
 
 .abt-tab-num {
   font-family: var(--font-display);
   font-size: clamp(18px, 2vw, 26px);
-  color: rgba(255, 255, 255, 0.2);
+  color: var(--cream-darker);
   flex-shrink: 0;
   width: 36px;
   transition: color 0.2s;
 }
-.abt-tab-active .abt-tab-num { color: var(--red); }
+.abt-tab-active .abt-tab-num { color: var(--maroon); }
 
 .abt-tab-title {
   font-family: var(--font-cond);
@@ -458,25 +438,25 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--warm-gray);
   flex: 1;
   transition: color 0.2s;
 }
-.abt-tab-active .abt-tab-title { color: #fff; }
+.abt-tab-active .abt-tab-title { color: var(--text-dark); }
 
 .abt-tab-arrow {
   font-size: 16px;
-  color: rgba(255, 255, 255, 0.25);
+  color: var(--cream-darker);
   flex-shrink: 0;
   transition: color 0.2s;
 }
-.abt-tab-active .abt-tab-arrow { color: var(--red); }
+.abt-tab-active .abt-tab-arrow { color: var(--maroon); }
 
 /* Content panel */
 .abt-values-panel {
   padding: clamp(32px, 4vw, 52px);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--cream);
+  border: 1px solid var(--cream-dark);
   min-height: 280px;
   position: relative;
 }
@@ -484,7 +464,7 @@
 .abt-values-panel-num {
   font-family: var(--font-display);
   font-size: clamp(64px, 9vw, 120px);
-  color: rgba(146, 0, 0, 0.15);
+  color: rgba(107,0,0,0.07);
   line-height: 1;
   margin-bottom: 8px;
   letter-spacing: 3px;
@@ -493,7 +473,7 @@
 .abt-values-panel-title {
   font-family: var(--font-display);
   font-size: clamp(28px, 4vw, 52px);
-  color: #fff;
+  color: var(--text-dark);
   letter-spacing: 2px;
   margin: 0 0 clamp(14px, 2vw, 20px);
 }
@@ -502,7 +482,7 @@
   font-family: var(--font-body);
   font-size: clamp(14px, 1.4vw, 16px);
   line-height: 1.85;
-  color: rgba(255, 255, 255, 0.55);
+  color: var(--text-mid);
   margin: 0 0 clamp(24px, 3vw, 36px);
   max-width: 480px;
 }
@@ -510,7 +490,7 @@
 .abt-values-panel-line {
   width: 48px;
   height: 2px;
-  background: var(--red);
+  background: var(--maroon);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -518,7 +498,7 @@
 ───────────────────────────────────────────────────────────── */
 .abt-contact-section {
   position: relative;
-  background: var(--dark);
+  background: var(--maroon-deep);
   padding: var(--section-pad) var(--side-pad) calc(var(--section-pad) * 1.2);
   overflow: hidden;
 }
@@ -535,7 +515,7 @@
 .abt-contact-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.90);
+  background: rgba(43,8,0,0.93);
   pointer-events: none;
 }
 
@@ -550,14 +530,14 @@
 .abt-contact-heading {
   font-family: var(--font-display);
   font-size: clamp(36px, 5.5vw, 72px);
-  color: #fff;
+  color: var(--cream);
   letter-spacing: 2px;
   margin: 0 0 clamp(10px, 1.5vw, 16px);
 }
 
 .abt-contact-sub {
   font-size: clamp(13px, 1.4vw, 16px);
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(253,246,238,0.44);
   margin: 0 auto clamp(40px, 6vw, 70px);
   max-width: 480px;
   line-height: 1.7;
@@ -571,8 +551,8 @@
 }
 
 .abt-contact-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(253,246,238,0.06);
+  border: 1px solid rgba(253,246,238,0.11);
   padding: clamp(24px, 3.5vw, 40px) clamp(20px, 2.5vw, 32px);
   display: flex;
   flex-direction: column;
@@ -584,8 +564,8 @@
   transition: background 0.2s, border-color 0.2s;
 }
 .abt-contact-card:hover {
-  background: rgba(146, 0, 0, 0.12);
-  border-color: rgba(146, 0, 0, 0.4);
+  background: rgba(253,246,238,0.10);
+  border-color: rgba(253,246,238,0.22);
 }
 .abt-card-wide { max-width: 320px; }
 
@@ -593,6 +573,8 @@
   width: clamp(32px, 4vw, 44px);
   height: clamp(32px, 4vw, 44px);
   margin-bottom: 8px;
+  filter: brightness(0) invert(1) sepia(1) saturate(0) brightness(2);
+  opacity: 0.75;
 }
 
 .abt-contact-label {
@@ -601,13 +583,13 @@
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--red);
+  color: rgba(253,246,238,0.42);
   margin: 0;
 }
 
 .abt-contact-value {
   font-size: clamp(12px, 1.3vw, 15px);
-  color: #fff;
+  color: var(--cream);
   margin: 0;
   line-height: 1.65;
   text-align: center;
@@ -616,7 +598,7 @@ a.abt-contact-value.abt-link { text-decoration: underline; }
 
 .abt-contact-note {
   font-size: clamp(10px, 1vw, 12px);
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(253,246,238,0.28);
   margin: 0;
 }
 
@@ -624,40 +606,17 @@ a.abt-contact-value.abt-link { text-decoration: underline; }
    RESPONSIVE
 ───────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .abt-hero {
-    grid-template-columns: 1fr;
-    min-height: auto;
-  }
+  .abt-hero { grid-template-columns: 1fr; min-height: auto; }
   .abt-hero-left {
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--cream-dark);
     padding: clamp(100px, 14vw, 140px) var(--side-pad) clamp(40px, 6vw, 60px);
   }
-  .abt-hero-right {
-    height: 55vw;
-    min-height: 320px;
-    max-height: 520px;
-  }
-  .abt-hero-accent-bar {
-    width: 100%;
-    height: 4px;
-    top: auto;
-    bottom: 0;
-    right: 0;
-  }
-  .abt-who-panels {
-    grid-template-columns: 1fr;
-    gap: 3px;
-  }
-  .abt-values-layout {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
+  .abt-hero-right { height: 55vw; min-height: 320px; max-height: 520px; }
+  .abt-hero-accent-bar { width: 100%; height: 4px; top: auto; bottom: 0; right: 0; }
+  .abt-who-panels { grid-template-columns: 1fr; gap: 3px; }
+  .abt-values-layout { grid-template-columns: 1fr; gap: 24px; }
   .abt-values-panel { min-height: auto; }
-  .abt-clients-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 @media (max-width: 640px) {
