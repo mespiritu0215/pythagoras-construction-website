@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/pythagoras-construction-website/static/css/main.f9d576e8.css",
-    "main.js": "/pythagoras-construction-website/static/js/main.a4bf00cf.js",
+    "main.css": "/pythagoras-construction-website/static/css/main.c036693e.css",
+    "main.js": "/pythagoras-construction-website/static/js/main.00e99287.js",
     "static/js/453.f1e47077.chunk.js": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js",
     "static/media/GlobeMaasin3.png": "/pythagoras-construction-website/static/media/GlobeMaasin3.e193125226097c86cc95.png",
     "static/media/GlobeMaasin2.png": "/pythagoras-construction-website/static/media/GlobeMaasin2.6bc3256f1e585832e23f.png",
     "static/media/GlobeMaasin1.png": "/pythagoras-construction-website/static/media/GlobeMaasin1.ec0b19e72251f5f42787.png",
     "static/media/GlobeMaasin4.png": "/pythagoras-construction-website/static/media/GlobeMaasin4.c41b8d68265eb47651da.png",
+    "static/media/TEAMBUILDING.png": "/pythagoras-construction-website/static/media/TEAMBUILDING.1a53832f2ab4bab830d0.png",
     "static/media/serv-img1.png": "/pythagoras-construction-website/static/media/serv-img1.0cb89cc06d3937be391d.png",
     "static/media/serv-img4.png": "/pythagoras-construction-website/static/media/serv-img4.f636c8753b7d63d8e02b.png",
-    "static/media/STIBACOOR.png": "/pythagoras-construction-website/static/media/STIBACOOR.2355bc1941482a89d8e1.png",
     "static/media/GlobeBaliuag8.png": "/pythagoras-construction-website/static/media/GlobeBaliuag8.c8581a971870b3a3e550.png",
     "static/media/SMCM1.png": "/pythagoras-construction-website/static/media/SMCM1.44a7051ec4cf9974ba6c.png",
     "static/media/GlobeBaliuag14.png": "/pythagoras-construction-website/static/media/GlobeBaliuag14.a9cc9df21b9d7b61fabb.png",
@@ -83,12 +83,12 @@
     "static/media/email.png": "/pythagoras-construction-website/static/media/email.507c9bcb6b551310f9db.png",
     "static/media/clock.png": "/pythagoras-construction-website/static/media/clock.74edf6622a92d7a263db.png",
     "index.html": "/pythagoras-construction-website/index.html",
-    "main.f9d576e8.css.map": "/pythagoras-construction-website/static/css/main.f9d576e8.css.map",
-    "main.a4bf00cf.js.map": "/pythagoras-construction-website/static/js/main.a4bf00cf.js.map",
+    "main.c036693e.css.map": "/pythagoras-construction-website/static/css/main.c036693e.css.map",
+    "main.00e99287.js.map": "/pythagoras-construction-website/static/js/main.00e99287.js.map",
     "453.f1e47077.chunk.js.map": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f9d576e8.css",
-    "static/js/main.a4bf00cf.js"
+    "static/css/main.c036693e.css",
+    "static/js/main.00e99287.js"
   ]
 }
