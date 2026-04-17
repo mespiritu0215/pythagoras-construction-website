@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/pythagoras-construction-website/static/css/main.0d18ba59.css",
-    "main.js": "/pythagoras-construction-website/static/js/main.98ce89ab.js",
+    "main.js": "/pythagoras-construction-website/static/js/main.9a547891.js",
     "static/js/453.f1e47077.chunk.js": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js",
     "static/media/GlobeMaasin3.png": "/pythagoras-construction-website/static/media/GlobeMaasin3.e193125226097c86cc95.png",
     "static/media/GlobeMaasin2.png": "/pythagoras-construction-website/static/media/GlobeMaasin2.6bc3256f1e585832e23f.png",
@@ -120,11 +120,11 @@
     "static/media/clock.png": "/pythagoras-construction-website/static/media/clock.74edf6622a92d7a263db.png",
     "index.html": "/pythagoras-construction-website/index.html",
     "main.0d18ba59.css.map": "/pythagoras-construction-website/static/css/main.0d18ba59.css.map",
-    "main.98ce89ab.js.map": "/pythagoras-construction-website/static/js/main.98ce89ab.js.map",
+    "main.9a547891.js.map": "/pythagoras-construction-website/static/js/main.9a547891.js.map",
     "453.f1e47077.chunk.js.map": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.0d18ba59.css",
-    "static/js/main.98ce89ab.js"
+    "static/js/main.9a547891.js"
   ]
 }
