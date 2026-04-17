@@ -46,12 +46,6 @@
 ───────────────────────────────────────────────────────────── */
 
 /* When NOT scrolled (at top), force maroon background */
-#abt-page ~ * .App-header:not(.scrolled),
-.abt-page .App-header:not(.scrolled) {
-  background: var(--maroon) !important;
-}
-
-/* Global override: target App-header directly when on about page */
 body:has(.abt-page) .App-header:not(.scrolled) {
   background: var(--maroon) !important;
 }
@@ -74,9 +68,30 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   background: var(--cream) !important;
 }
 
-/* Remove the old black override for nav links on this page */
-#abt-page .nav-links li a {
-  color: rgba(253, 246, 238, 0.85);
+/* ─────────────────────────────────────────────────────────────
+   MOBILE NAV FIX — solid dark dropdown, always visible
+───────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  /* Force the mobile nav panel to be solid maroon-deep on this page */
+  body:has(.abt-page) .nav-links {
+    background: var(--maroon-deep) !important;
+    border: 1px solid rgba(253, 246, 238, 0.15) !important;
+    box-shadow: 0 10px 40px rgba(43, 8, 0, 0.5) !important;
+  }
+
+  /* Nav links inside mobile panel — cream colored, always readable */
+  body:has(.abt-page) .nav-links li a {
+    color: var(--cream) !important;
+    font-size: 20px;
+  }
+  body:has(.abt-page) .nav-links li a:hover {
+    color: rgba(253, 246, 238, 0.65) !important;
+  }
+
+  /* Backdrop — slightly darker on this page for contrast */
+  body:has(.abt-page) .nav-backdrop {
+    background: rgba(43, 8, 0, 0.6) !important;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────────

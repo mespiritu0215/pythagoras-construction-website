@@ -203,7 +203,7 @@ function AboutUs() {
             <div className="abt-contact-card abt-card-wide">
               <img src={email} alt="Email" className="abt-contact-icon" />
               <p className="abt-contact-label">Email Us At</p>
-              <a href="mailto:pci051@yahoo.com" className="abt-contact-value abt-link">pci051@yahoo.com</a>
+              <a href="mailto:pci1051@yahoo.com" className="abt-contact-value abt-link">pci1051@yahoo.com</a>
               <p className="abt-contact-note">We reply within 24 hours</p>
             </div>
             <div className="abt-contact-card">

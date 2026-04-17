@@ -384,7 +384,7 @@ export default function ContactUs(): JSX.Element {
     } catch (err: unknown) {
       console.error('EmailJS error:', err);
       setSendError(
-        'Failed to send your message. Please try again or contact us directly at pci051@yahoo.com.'
+        'Failed to send your message. Please try again or contact us directly at pci1051@yahoo.com.'
       );
     } finally {
       setSending(false);
@@ -452,7 +452,7 @@ export default function ContactUs(): JSX.Element {
               <div>
                 <p className="cu-info-text-label">Email Us At</p>
                 <p className="cu-info-text-value">
-                  <a href="mailto:pci051@yahoo.com">pci051@yahoo.com</a>
+                  <a href="mailto:pci1051@yahoo.com">pci1051@yahoo.com</a>
                 </p>
               </div>
             </div>

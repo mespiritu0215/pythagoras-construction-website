@@ -308,8 +308,8 @@ export default function Services(): JSX.Element {
             <div className="contact-card contact-card-wide">
               <img src={emailIcon} alt="Email" className="contact-icon" />
               <p className="contact-card-label">Email Us At</p>
-              <a href="mailto:pci051@yahoo.com" className="contact-card-value link">
-                pci051@yahoo.com
+              <a href="mailto:pci1051@yahoo.com" className="contact-card-value link">
+                pci1051@yahoo.com
               </a>
               <p className="contact-card-note">We reply within 24 hours</p>
             </div>

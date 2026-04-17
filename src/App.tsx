@@ -10,14 +10,13 @@ import Projects from './Projects';
 import Contact from './ContactUs';
 import ProjectDetails from './ProjectDetails';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import STI from "./CompletedProjects/pages/STIBACOOR.png";
 import TEAM from "./CompletedProjects/pages/TEAMBUILDING.png";
 
 
 import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
 
-const whoImg1 = ALL_PROJECTS[5]?.images[2] ?? ALL_PROJECTS[0].cover;
-const whoImg2 = ALL_PROJECTS[5]?.images[0] ?? ALL_PROJECTS[0].cover;
+const whoImg1 = ALL_PROJECTS[17]?.images[1] ?? ALL_PROJECTS[0].cover;
+const whoImg2 = ALL_PROJECTS[18]?.images[0] ?? ALL_PROJECTS[0].cover;
 
 function ScrollToTop(): null {
   const { pathname } = useLocation();

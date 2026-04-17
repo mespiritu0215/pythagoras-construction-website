@@ -1,7 +1,5 @@
 // ─────────────────────────────────────────────────────────────
 //  src/projectsData.ts
-//  CREATE THIS FILE in your src/ folder.
-//  All image imports live here once — never duplicated again.
 // ─────────────────────────────────────────────────────────────
 
 import AyalaCebuSmart1 from "./CompletedProjects/AyalaCebu/AyalaCebuSmart1.png";
@@ -81,6 +79,55 @@ import SMCM1 from "./CompletedProjects/SMCM/SMCM1.png";
 import SMCM2 from "./CompletedProjects/SMCM/SMCM2.png";
 import SMCM3 from "./CompletedProjects/SMCM/SMCM3.png";
 
+import AVIATION1 from "./CompletedProjects/1AVIATION/1AVIATION1.png";
+import AVIATION2 from "./CompletedProjects/1AVIATION/1AVIATION2.png";
+import AVIATION3 from "./CompletedProjects/1AVIATION/1AVIATION3.png";
+import AVIATION4 from "./CompletedProjects/1AVIATION/1AVIATION4.png";
+
+import CardonaRizal1 from "./CompletedProjects/CardonaRizal/CardonaRizal1.png";
+import CardonaRizal2 from "./CompletedProjects/CardonaRizal/CardonaRizal2.png";
+import CardonaRizal3 from "./CompletedProjects/CardonaRizal/CardonaRizal3.png";
+import CardonaRizal4 from "./CompletedProjects/CardonaRizal/CardonaRizal4.png";
+
+import MOCHMC1 from "./CompletedProjects/MOCHMC/MOCHMC1.png";
+import MOCHMC2 from "./CompletedProjects/MOCHMC/MOCHMC2.png";
+import MOCHMC3 from "./CompletedProjects/MOCHMC/MOCHMC3.png";
+
+import ModelUnit1 from "./CompletedProjects/ModelUnitsDasma/ModelUnit1.png";
+import ModelUnit2 from "./CompletedProjects/ModelUnitsDasma/ModelUnit2.png";
+
+import NCDC1 from "./CompletedProjects/NCDCORMOC/NCDC1.png";
+import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
+import NCDC3 from "./CompletedProjects/NCDCORMOC/NCDC3.png";
+import NCDC4 from "./CompletedProjects/NCDCORMOC/NCDC4.png";
+
+import PetronBatangas1 from "./CompletedProjects/PetronBatangas/PetronBatangas1.png";
+import PetronBatangas2 from "./CompletedProjects/PetronBatangas/PetronBatangas2.png";
+import PetronBatangas3 from "./CompletedProjects/PetronBatangas/PetronBatangas3.png";
+
+import PetronBohol1 from "./CompletedProjects/PetronBohol/PetronBohol1.png";
+import PetronBohol2 from "./CompletedProjects/PetronBohol/PetronBohol2.png";
+
+import pldtcdo1 from "./CompletedProjects/pldtcdo/pldtcdo1.png";
+import pldtcdo2 from "./CompletedProjects/pldtcdo/pldtcdo2.png";
+import pldtcdo3 from "./CompletedProjects/pldtcdo/pldtcdo3.png";
+
+import PLDTCotabato1 from "./CompletedProjects/PLDTCotabato/PLDTCotabato1.png";
+import PLDTCotabato2 from "./CompletedProjects/PLDTCotabato/PLDTCotabato2.png";
+import PLDTCotabato3 from "./CompletedProjects/PLDTCotabato/PLDTCotabato3.png";
+import PLDTCotabato4 from "./CompletedProjects/PLDTCotabato/PLDTCotabato4.png";
+
+import SanjosMarket1 from "./CompletedProjects/SanjosMarket/SanjosMarket1.png";
+import SanjosMarket2 from "./CompletedProjects/SanjosMarket/SanjosMarket2.png";
+import SanjosMarket3 from "./CompletedProjects/SanjosMarket/SanjosMarket3.png";
+import SanjosMarket4 from "./CompletedProjects/SanjosMarket/SanjosMarket4.png";
+
+import WaterTankCalamba1 from "./CompletedProjects/WaterTankCalamba/WaterTankCalamba1.png";
+import WaterTankCalamba2 from "./CompletedProjects/WaterTankCalamba/WaterTankCalamba2.png";
+
+import WaterTankPampanga1 from "./CompletedProjects/WaterTankPampanga/WaterTankPampanga1.png";
+import WaterTankPampanga2 from "./CompletedProjects/WaterTankPampanga/WaterTankPampanga2.png";
+
 // ── Types ──────────────────────────────────────────────────────
 
 export type ProjectData = {
@@ -99,6 +146,7 @@ export type CategoryGroup = {
 // ── Master list ────────────────────────────────────────────────
 
 export const ALL_PROJECTS: ProjectData[] = [
+  // ── Office Renovations ──
   {
     id: 1,
     title: "Ayala Cebu Smart",
@@ -144,9 +192,26 @@ export const ALL_PROJECTS: ProjectData[] = [
       SMLegaspiSmart7,  SMLegaspiSmart8,  SMLegaspiSmart9,
       SMLegaspiSmart10, SMLegaspiSmart11, SMLegaspiSmart12,
     ],
-  },
+  }, 
   {
     id: 5,
+    title: "PLDT CDO",
+    category: "Office Renovations",
+    cover: pldtcdo1,
+    images: [pldtcdo1, pldtcdo2, pldtcdo3],
+  },
+  {
+    id: 6,
+    title: "PLDT Cotabato",
+    category: "Office Renovations",
+    cover: PLDTCotabato1,
+    images: [PLDTCotabato1, PLDTCotabato2, PLDTCotabato3, PLDTCotabato4],
+  },
+
+
+  // ── Electricals ──
+  {
+    id: 7,
     title: "Globe Baliuag",
     category: "Electricals",
     cover: GlobeBaliuag1,
@@ -159,18 +224,92 @@ export const ALL_PROJECTS: ProjectData[] = [
     ],
   },
   {
-    id: 6,
+    id: 8,
     title: "Globe Maasin",
     category: "Electricals",
     cover: GlobeMaasin1,
     images: [GlobeMaasin1, GlobeMaasin2, GlobeMaasin3, GlobeMaasin4, GlobeMaasin5],
   },
+ 
+  // ── Commercial ──
   {
-    id: 7,
+    id: 9,
     title: "SM City Masinag",
     category: "Commercial",
     cover: SMCM1,
     images: [SMCM1, SMCM2, SMCM3],
+  },
+  {
+    id: 10,
+    title: "1Aviation",
+    category: "Commercial",
+    cover: AVIATION1,
+    images: [AVIATION1, AVIATION2, AVIATION3, AVIATION4],
+  },
+  {
+    id: 11,
+    title: "Cardona Rizal",
+    category: "Commercial",
+    cover: CardonaRizal1,
+    images: [CardonaRizal1, CardonaRizal2, CardonaRizal3, CardonaRizal4],
+  },
+  {
+    id: 12,
+    title: "MOC HMC",
+    category: "Commercial",
+    cover: MOCHMC1,
+    images: [MOCHMC1, MOCHMC2, MOCHMC3],
+  },
+  {
+    id: 13,
+    title: "Model Units Dasmarinas",
+    category: "Commercial",
+    cover: ModelUnit1,
+    images: [ModelUnit1, ModelUnit2],
+  },
+  {
+    id: 14,
+    title: "NCDC Ormoc",
+    category: "Commercial",
+    cover: NCDC1,
+    images: [NCDC1, NCDC2, NCDC3, NCDC4],
+  },
+  {
+    id: 15,
+    title: "Petron Batangas",
+    category: "Commercial",
+    cover: PetronBatangas1,
+    images: [PetronBatangas1, PetronBatangas2, PetronBatangas3],
+  },
+  {
+    id: 16,
+    title: "Petron Bohol",
+    category: "Commercial",
+    cover: PetronBohol1,
+    images: [PetronBohol1, PetronBohol2],
+  },
+  {
+    id: 17,
+    title: "San Jose Market",
+    category: "Commercial",
+    cover: SanjosMarket1,
+    images: [SanjosMarket1, SanjosMarket2, SanjosMarket3, SanjosMarket4],
+  },
+
+  // ── Civil Works ──
+  {
+    id: 18,
+    title: "Water Tank Calamba",
+    category: "Civil Works",
+    cover: WaterTankCalamba1,
+    images: [WaterTankCalamba1, WaterTankCalamba2],
+  },
+  {
+    id: 19,
+    title: "Water Tank Pampanga",
+    category: "Civil Works",
+    cover: WaterTankPampanga1,
+    images: [WaterTankPampanga1, WaterTankPampanga2],
   },
 ];
 
@@ -188,6 +327,10 @@ export const CATEGORIES: CategoryGroup[] = [
   {
     label: "Commercial",
     projects: ALL_PROJECTS.filter((p) => p.category === "Commercial"),
+  },
+  {
+    label: "Civil Works",
+    projects: ALL_PROJECTS.filter((p) => p.category === "Civil Works"),
   },
 ];
 
