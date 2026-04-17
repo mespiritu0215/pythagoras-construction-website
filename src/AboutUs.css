@@ -42,13 +42,50 @@
 .abt-tag-light { color: rgba(253,246,238,0.45); }
 
 /* ─────────────────────────────────────────────────────────────
+   NAVBAR OVERRIDES — maroon when at top, normal when scrolled
+───────────────────────────────────────────────────────────── */
+
+/* When NOT scrolled (at top), force maroon background */
+#abt-page ~ * .App-header:not(.scrolled),
+.abt-page .App-header:not(.scrolled) {
+  background: var(--maroon) !important;
+}
+
+/* Global override: target App-header directly when on about page */
+body:has(.abt-page) .App-header:not(.scrolled) {
+  background: var(--maroon) !important;
+}
+
+/* Nav links stay cream on maroon bg */
+body:has(.abt-page) .App-header:not(.scrolled) .nav-links li a {
+  color: rgba(253, 246, 238, 0.85) !important;
+}
+body:has(.abt-page) .App-header:not(.scrolled) .nav-links li a:hover {
+  color: var(--cream) !important;
+}
+
+/* Brand name stays cream on maroon */
+body:has(.abt-page) .App-header:not(.scrolled) .brand-name {
+  color: var(--cream) !important;
+}
+
+/* Hamburger bars stay cream on maroon */
+body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
+  background: var(--cream) !important;
+}
+
+/* Remove the old black override for nav links on this page */
+#abt-page .nav-links li a {
+  color: rgba(253, 246, 238, 0.85);
+}
+
+/* ─────────────────────────────────────────────────────────────
    HERO — vertical split (text left, slider right)
 ───────────────────────────────────────────────────────────── */
 .abt-hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
   min-height: 100svh;
-  padding-top: 70px;
 }
 
 /* LEFT PANEL */
