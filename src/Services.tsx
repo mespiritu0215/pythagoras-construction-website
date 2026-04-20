@@ -33,6 +33,14 @@ import GlobeBaliuag10 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag10.png"
 import GlobeBaliuag11 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag11.png";
 import GlobeBaliuag12 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag12.png";
 
+import MOCHMC1 from "./CompletedProjects/MOCHMC/MOCHMC1.png";
+import MOCHMC2 from "./CompletedProjects/MOCHMC/MOCHMC2.png";
+import MOCHMC3 from "./CompletedProjects/MOCHMC/MOCHMC3.png";
+
+import PoiFeston1 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres1.png";
+import PoiFeston2 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres2.png";
+import PoiFeston3 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres3.png";
+
 const globeBaliuagImages: string[] = [
   GlobeBaliuag1, GlobeBaliuag2, GlobeBaliuag3, GlobeBaliuag4, GlobeBaliuag5,
   GlobeBaliuag6, GlobeBaliuag7, GlobeBaliuag8, GlobeBaliuag9, GlobeBaliuag10,
@@ -43,6 +51,14 @@ const gaisanoMactanImages: string[] = [
   GaisanoMactanSmart1, GaisanoMactanSmart2, GaisanoMactanSmart3, GaisanoMactanSmart4,
   GaisanoMactanSmart5, GaisanoMactanSmart6, GaisanoMactanSmart7, GaisanoMactanSmart8,
   GaisanoMactanSmart9, GaisanoMactanSmart10, GaisanoMactanSmart11, GaisanoMactanSmart12,
+];
+
+const MOCHMCImages: string[] = [
+  MOCHMC1, MOCHMC2, MOCHMC3,
+];
+
+const poiFestonImages: string[] = [
+  PoiFeston1, PoiFeston2, PoiFeston3,
 ];
 
 interface CarouselProps { images: string[]; }
@@ -122,8 +138,8 @@ const services: ServiceData[] = [
       'Plumbing, Pipefitting & Drilling',
       'Metal Works & Masonry',
     ],
-    image: image1,
-    imageAlt: 'Civil Works',
+    carousel: MOCHMCImages,
+    caption: 'Featured: MOCHMC Hospital Project',
     dark: true,
     reverse: false,
   },
@@ -172,8 +188,8 @@ const services: ServiceData[] = [
       'As-built Plans & Technical Specs',
       'Contract Documents & Site Supervision',
     ],
-    image: image4,
-    imageAlt: 'Design Works',
+    carousel: poiFestonImages,
+    caption: 'Featured: Poi Feston San Andres Project',
     dark: false,
     reverse: true,
   },
