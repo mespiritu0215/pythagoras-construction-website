@@ -1,15 +1,16 @@
 {
   "files": {
     "main.css": "/pythagoras-construction-website/static/css/main.dc3cdfde.css",
-    "main.js": "/pythagoras-construction-website/static/js/main.acc6763d.js",
+    "main.js": "/pythagoras-construction-website/static/js/main.9fbc1206.js",
     "static/js/453.f1e47077.chunk.js": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js",
     "static/media/GlobeMaasin3.png": "/pythagoras-construction-website/static/media/GlobeMaasin3.e193125226097c86cc95.png",
     "static/media/GlobeMaasin2.png": "/pythagoras-construction-website/static/media/GlobeMaasin2.6bc3256f1e585832e23f.png",
     "static/media/GlobeMaasin1.png": "/pythagoras-construction-website/static/media/GlobeMaasin1.ec0b19e72251f5f42787.png",
     "static/media/GlobeMaasin4.png": "/pythagoras-construction-website/static/media/GlobeMaasin4.c41b8d68265eb47651da.png",
     "static/media/TEAMBUILDING.png": "/pythagoras-construction-website/static/media/TEAMBUILDING.1a53832f2ab4bab830d0.png",
-    "static/media/serv-img1.png": "/pythagoras-construction-website/static/media/serv-img1.0cb89cc06d3937be391d.png",
-    "static/media/serv-img4.png": "/pythagoras-construction-website/static/media/serv-img4.f636c8753b7d63d8e02b.png",
+    "static/media/PoiFestonSanAndres1.png": "/pythagoras-construction-website/static/media/PoiFestonSanAndres1.b92cc73dde0c9eb4cde9.png",
+    "static/media/PoiFestonSanAndres2.png": "/pythagoras-construction-website/static/media/PoiFestonSanAndres2.b58de153536c54d23d44.png",
+    "static/media/PoiFestonSanAndres3.png": "/pythagoras-construction-website/static/media/PoiFestonSanAndres3.6e2f77f572b1b66ffc3f.png",
     "static/media/GlobeBaliuag8.png": "/pythagoras-construction-website/static/media/GlobeBaliuag8.c8581a971870b3a3e550.png",
     "static/media/PetronBohol2.png": "/pythagoras-construction-website/static/media/PetronBohol2.43d1a311a6cc41d672bc.png",
     "static/media/NCDC1.png": "/pythagoras-construction-website/static/media/NCDC1.06ef53a1234372907db9.png",
@@ -17,6 +18,7 @@
     "static/media/GlobeBaliuag14.png": "/pythagoras-construction-website/static/media/GlobeBaliuag14.a9cc9df21b9d7b61fabb.png",
     "static/media/GlobeBaliuag13.png": "/pythagoras-construction-website/static/media/GlobeBaliuag13.51f47b98de8b33fd0298.png",
     "static/media/GlobeMaasin5.png": "/pythagoras-construction-website/static/media/GlobeMaasin5.a087c926f87afec58fdf.png",
+    "static/media/MOCHMC3.png": "/pythagoras-construction-website/static/media/MOCHMC3.724d06168d1c85d4551c.png",
     "static/media/CardonaRizal4.png": "/pythagoras-construction-website/static/media/CardonaRizal4.4d2629a4dc064d75741a.png",
     "static/media/PetronBatangas2.png": "/pythagoras-construction-website/static/media/PetronBatangas2.80a094856c8ef460e193.png",
     "static/media/SanjosMarket1.png": "/pythagoras-construction-website/static/media/SanjosMarket1.80e88a83ef12ad867bcc.png",
@@ -120,11 +122,11 @@
     "static/media/clock.png": "/pythagoras-construction-website/static/media/clock.74edf6622a92d7a263db.png",
     "index.html": "/pythagoras-construction-website/index.html",
     "main.dc3cdfde.css.map": "/pythagoras-construction-website/static/css/main.dc3cdfde.css.map",
-    "main.acc6763d.js.map": "/pythagoras-construction-website/static/js/main.acc6763d.js.map",
+    "main.9fbc1206.js.map": "/pythagoras-construction-website/static/js/main.9fbc1206.js.map",
     "453.f1e47077.chunk.js.map": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.dc3cdfde.css",
-    "static/js/main.acc6763d.js"
+    "static/js/main.9fbc1206.js"
   ]
 }
