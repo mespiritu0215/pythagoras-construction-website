@@ -363,7 +363,7 @@ export default function ProjectDetails() {
           display: flex; gap: 6px; overflow-x: auto;
           padding: 10px 16px 4px; max-width: 100%;
           scrollbar-width: thin; scrollbar-color: #6B0000 transparent;
-          flex-shrink: 0;
+          flex-shrink: 0;  
         }
         .pd-lb-thumbs::-webkit-scrollbar { height: 3px; }
         .pd-lb-thumbs::-webkit-scrollbar-thumb { background: #6B0000; border-radius: 2px; }

@@ -212,13 +212,14 @@ function App(): JSX.Element {
                       <div className="contact-card contact-card-wide">
                         <img src={emailIcon} alt="Email" className="contact-icon" />
                         <p className="contact-card-label">Email Us At</p>
-                        <a href="mailto:pci1051@yahoo.com" className="contact-card-value link">pci1051@yahoo.com</a>
+                        <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">pci1051@yahoo.com.ph</a>
                         <p className="contact-card-note">We reply within 24 hours</p>
                       </div>
                       <div className="contact-card">
                         <img src={phoneIcon} alt="Phone" className="contact-icon" />
                         <p className="contact-card-label">Have Any Questions?</p>
-                        <p className="contact-card-value">(046) 894-9518</p>
+                        <p className="contact-card-value">(046) 894-9518 / (046) 238-4166</p>
+                        <p className="contact-card-value">+63 927 572 4505 (Mobile)</p>
                       </div>
                       <div className="contact-card">
                         <img src={clockIcon} alt="Hours" className="contact-icon" />
@@ -260,6 +261,7 @@ function App(): JSX.Element {
               <div className="footer-info-item">
                 <div className="footer-label">Telephone</div>
                 <div>(046) 894-9518 / (046) 238-4166</div>
+                  <div>+63 927 572 4505 (Mobile)</div>
               </div>
               <div className="footer-info-item">
                 <div className="footer-label">Email</div>

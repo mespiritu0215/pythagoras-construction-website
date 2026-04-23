@@ -203,13 +203,14 @@ function AboutUs() {
             <div className="abt-contact-card abt-card-wide">
               <img src={email} alt="Email" className="abt-contact-icon" />
               <p className="abt-contact-label">Email Us At</p>
-              <a href="mailto:pci1051@yahoo.com" className="abt-contact-value abt-link">pci1051@yahoo.com</a>
+              <a href="mailto:pci1051@yahoo.com" className="abt-contact-value abt-link">pci1051@yahoo.com.ph</a>
               <p className="abt-contact-note">We reply within 24 hours</p>
             </div>
             <div className="abt-contact-card">
               <img src={phone} alt="Phone" className="abt-contact-icon" />
               <p className="abt-contact-label">Have Any Questions?</p>
-              <p className="abt-contact-value">(046) 894-9518</p>
+              <p className="abt-contact-value">(046) 894-9518 / (046) 238-4166</p>
+              <p className="abt-contact-value">+63 927 572 4505 (Mobile)</p>
             </div>
             <div className="abt-contact-card">
               <img src={clock} alt="Hours" className="abt-contact-icon" />

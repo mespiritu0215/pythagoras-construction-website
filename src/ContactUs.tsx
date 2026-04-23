@@ -452,7 +452,7 @@ export default function ContactUs(): JSX.Element {
               <div>
                 <p className="cu-info-text-label">Email Us At</p>
                 <p className="cu-info-text-value">
-                  <a href="mailto:pci1051@yahoo.com">pci1051@yahoo.com</a>
+                  <a href="mailto:pci1051@yahoo.com.ph">pci1051@yahoo.com.ph</a>
                 </p>
               </div>
             </div>
@@ -461,6 +461,7 @@ export default function ContactUs(): JSX.Element {
               <div>
                 <p className="cu-info-text-label">Phone</p>
                 <p className="cu-info-text-value">(046) 894-9518 / (046) 238-4166</p>
+                <p className="cu-info-text-value">+63 927 572 4505 (Mobile)</p>
               </div>
             </div>
             <div className="cu-info-item">

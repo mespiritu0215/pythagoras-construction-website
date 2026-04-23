@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, JSX } from 'react';
-import './Services.css';
+import './Services.css';   
 
 import image1 from './serv-img1.png';
 import image4 from './serv-img4.png';
@@ -324,8 +324,8 @@ export default function Services(): JSX.Element {
             <div className="contact-card contact-card-wide">
               <img src={emailIcon} alt="Email" className="contact-icon" />
               <p className="contact-card-label">Email Us At</p>
-              <a href="mailto:pci1051@yahoo.com" className="contact-card-value link">
-                pci1051@yahoo.com
+              <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">
+                pci1051@yahoo.com.ph
               </a>
               <p className="contact-card-note">We reply within 24 hours</p>
             </div>
@@ -333,6 +333,7 @@ export default function Services(): JSX.Element {
               <img src={phoneIcon} alt="Phone" className="contact-icon" />
               <p className="contact-card-label">Have Any Questions?</p>
               <p className="contact-card-value">(046) 894-9518</p>
+              <p className="contact-card-value">+63 927 572 4505 (Mobile)</p>
             </div>
             <div className="contact-card">
               <img src={clockIcon} alt="Hours" className="contact-icon" />
