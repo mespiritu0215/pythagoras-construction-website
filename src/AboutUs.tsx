@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./AboutUs.css";
 import abtproj1 from './aboutproject-img1.jpg';
 import abtproj2 from './aboutproject-img2.jpg';
-import abtproj4 from './pyth5.jpg';
+import abtproj4 from './pyth3.jpg';
 import email from './email.png';
 import phone from './phone.png';
 import clock from './clock.png';
@@ -32,7 +32,7 @@ const values = [
 ];
 
 function AboutUs() {
-  const images = [abtproj1, abtproj2, abtproj4];
+  const images = [abtproj4, abtproj1, abtproj2];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeValue, setActiveValue] = useState(0);
 
