@@ -115,7 +115,7 @@ export const ALL_PROJECTS: ProjectData[] = [
   {
     id: 2,
     title: "Gaisano Mactan — Smart Store Development",
-    category: "Electrical",
+    category: "Renovations/Construction",
     cover: Gaisano1,
     images: [Gaisano1, Gaisano2, Gaisano3, Gaisano4, Gaisano5, Gaisano6,
              Gaisano7, Gaisano8, Gaisano9, Gaisano10, Gaisano11, Gaisano12],
@@ -209,10 +209,7 @@ export const FEATURED_PROJECTS = ALL_PROJECTS.filter(p =>
 
 // ── Category groups for Projects page ───────────────────────
 export const CATEGORIES: CategoryGroup[] = [
-  {
-    label: "Ongoing Projects",
-    projects: ALL_PROJECTS.filter(p => p.category === "Ongoing"),
-  },
+ 
   {
     label: "Civil Works",
     projects: ALL_PROJECTS.filter(p => p.category === "Civil Works"),
@@ -224,5 +221,9 @@ export const CATEGORIES: CategoryGroup[] = [
   {
     label: "Renovations / Construction",
     projects: ALL_PROJECTS.filter(p => p.category === "Renovations/Construction"),
+  },
+   {
+    label: "Ongoing Projects",
+    projects: ALL_PROJECTS.filter(p => p.category === "Ongoing"),
   },
 ];
