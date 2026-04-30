@@ -121,12 +121,26 @@ import SanjosMarket1 from "./CompletedProjects/SanjosMarket/SanjosMarket1.png";
 import SanjosMarket2 from "./CompletedProjects/SanjosMarket/SanjosMarket2.png";
 import SanjosMarket3 from "./CompletedProjects/SanjosMarket/SanjosMarket3.png";
 import SanjosMarket4 from "./CompletedProjects/SanjosMarket/SanjosMarket4.png";
+import SanjosMarket5 from "./CompletedProjects/SanjosMarket/SanjosMarket5.jpg";
+import SanjosMarket6 from "./CompletedProjects/SanjosMarket/SanjosMarket6.jpg";
+import SanjosMarket7 from "./CompletedProjects/SanjosMarket/SanjosMarket7.jpg";
+import SanjosMarket8 from "./CompletedProjects/SanjosMarket/SanjosMarket8.jpg";
+import SanjosMarket9 from "./CompletedProjects/SanjosMarket/SanjosMarket9.jpg";
+import SanjosMarket10 from "./CompletedProjects/SanjosMarket/SanjosMarket10.jpg";
 
 import WaterTankCalamba1 from "./CompletedProjects/WaterTankCalamba/WaterTankCalamba1.png";
 import WaterTankCalamba2 from "./CompletedProjects/WaterTankCalamba/WaterTankCalamba2.png";
 
 import WaterTankPampanga1 from "./CompletedProjects/WaterTankPampanga/WaterTankPampanga1.png";
 import WaterTankPampanga2 from "./CompletedProjects/WaterTankPampanga/WaterTankPampanga2.png";
+
+import SchoolSanFernando1 from "./CompletedProjects/SanFernandoElementarySchool/1.jpg"
+import SchoolSanFernando2 from "./CompletedProjects/SanFernandoElementarySchool/2.jpg"
+import SchoolSanFernando3 from "./CompletedProjects/SanFernandoElementarySchool/3.jpg"
+import SchoolSanFernando4 from "./CompletedProjects/SanFernandoElementarySchool/4.jpg"
+import SchoolSanFernando5 from "./CompletedProjects/SanFernandoElementarySchool/5.jpg"
+import SchoolSanFernando6 from "./CompletedProjects/SanFernandoElementarySchool/6.jpg"
+import SchoolSanFernando7 from "./CompletedProjects/SanFernandoElementarySchool/7.jpg"
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -292,8 +306,8 @@ export const ALL_PROJECTS: ProjectData[] = [
     id: 17,
     title: "San Jose Market",
     category: "Commercial",
-    cover: SanjosMarket1,
-    images: [SanjosMarket1, SanjosMarket2, SanjosMarket3, SanjosMarket4],
+    cover: SanjosMarket5,
+    images: [SanjosMarket5, SanjosMarket6, SanjosMarket9, SanjosMarket10],
   },
 
   // ── Civil Works ──
@@ -311,6 +325,15 @@ export const ALL_PROJECTS: ProjectData[] = [
     cover: WaterTankPampanga1,
     images: [WaterTankPampanga1, WaterTankPampanga2],
   },
+  {
+    id: 20,
+    title: "San Fernando Elementary School",
+    category: "Civil Works",
+    cover: SchoolSanFernando7,
+    images: [
+      SchoolSanFernando7, SchoolSanFernando6, SchoolSanFernando5, SchoolSanFernando3,
+      SchoolSanFernando2, SchoolSanFernando1, SchoolSanFernando4],
+  }
 ];
 
 // ── Grouped for the Projects page ─────────────────────────────
