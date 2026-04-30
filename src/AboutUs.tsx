@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import "./AboutUs.css";
-import abtproj1 from './aboutproject-img1.jpg';
-import abtproj2 from './aboutproject-img2.jpg';
-import abtproj4 from './pyth3.jpg';
+import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
+import NCDC5 from "./CompletedProjects/NCDCORMOC/NCDC5.png";
+import NCDC6 from "./CompletedProjects/NCDCORMOC/NCDC6.png";
 import email from './email.png';
 import phone from './phone.png';
 import clock from './clock.png';
@@ -32,7 +32,7 @@ const values = [
 ];
 
 function AboutUs() {
-  const images = [abtproj4, abtproj1, abtproj2];
+  const images = [NCDC6, NCDC5, NCDC2];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeValue, setActiveValue] = useState(0);
 

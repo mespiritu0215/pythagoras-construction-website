@@ -3,68 +3,70 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ALL_PROJECTS } from './Projectsdata';
 
 export default function ProjectDetails() {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const project = ALL_PROJECTS.find((p) => p.id === Number(id));
+  const { id }     = useParams<{ id: string }>();
+  const navigate   = useNavigate();
+  const project    = ALL_PROJECTS.find((p) => p.id === Number(id));
 
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const [lightboxVisible, setLightboxVisible] = useState(false);
+  // ── Carousel state ───────────────────────────────────────
+  // Always show exactly 3 images; cycle through them automatically
+  const carouselImages = project ? project.images.slice(0, 3) : [];
+  const [activeIdx, setActiveIdx]   = useState(0);
+  const [animDir,   setAnimDir]     = useState<'left'|'right'>('right');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const touchStartX = useRef<number | null>(null);
-  const touchStartY = useRef<number | null>(null);
+  const goTo = useCallback((next: number, dir: 'left'|'right' = 'right') => {
+    if (isAnimating) return;
+    setAnimDir(dir);
+    setIsAnimating(true);
+    setTimeout(() => {
+      setActiveIdx(next);
+      setIsAnimating(false);
+    }, 420);
+  }, [isAnimating]);
 
-  const openLightbox = (i: number) => {
-    setLightboxIndex(i);
-    setLightboxVisible(true);
+  const advance = useCallback(() => {
+    setActiveIdx(prev => {
+      const next = (prev + 1) % carouselImages.length;
+      setAnimDir('right');
+      return next;
+    });
+  }, [carouselImages.length]);
+
+  // Auto-play every 3.5s
+  useEffect(() => {
+    if (!project) return;
+    intervalRef.current = setInterval(advance, 3500);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [advance, project]);
+
+  const handlePrev = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    const prev = (activeIdx - 1 + carouselImages.length) % carouselImages.length;
+    goTo(prev, 'left');
+    intervalRef.current = setInterval(advance, 3500);
   };
 
-  const closeLightbox = () => {
-    setLightboxVisible(false);
-    setTimeout(() => setLightboxIndex(null), 280);
+  const handleNext = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    const next = (activeIdx + 1) % carouselImages.length;
+    goTo(next, 'right');
+    intervalRef.current = setInterval(advance, 3500);
   };
 
-  const lightboxPrev = useCallback(() => {
-    if (lightboxIndex === null || !project) return;
-    setLightboxIndex((lightboxIndex - 1 + project.images.length) % project.images.length);
-  }, [lightboxIndex, project]);
-
-  const lightboxNext = useCallback(() => {
-    if (lightboxIndex === null || !project) return;
-    setLightboxIndex((lightboxIndex + 1) % project.images.length);
-  }, [lightboxIndex, project]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || touchStartY.current === null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    const dy = e.changedTouches[0].clientY - touchStartY.current;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-      dx < 0 ? lightboxNext() : lightboxPrev();
-    }
-    touchStartX.current = null;
-    touchStartY.current = null;
+  const handleDot = (i: number) => {
+    if (i === activeIdx) return;
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    goTo(i, i > activeIdx ? 'right' : 'left');
+    intervalRef.current = setInterval(advance, 3500);
   };
 
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (lightboxIndex === null) return;
-      if (e.key === 'ArrowLeft')  lightboxPrev();
-      if (e.key === 'ArrowRight') lightboxNext();
-      if (e.key === 'Escape')     closeLightbox();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [lightboxIndex, lightboxPrev, lightboxNext]);
+    document.body.style.background = '#FDF6EE';
+    return () => { document.body.style.background = ''; };
+  }, []);
 
-  useEffect(() => {
-    document.body.style.overflow = lightboxVisible ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [lightboxVisible]);
-
+  // ── Not found ────────────────────────────────────────────
   if (!project) {
     return (
       <div className="pd-not-found">
@@ -74,164 +76,216 @@ export default function ProjectDetails() {
     );
   }
 
-  const remainder    = project.images.length % 3;
-  const lastRowStart = project.images.length - remainder;
-  const tileClass    = (i: number) =>
-    remainder === 2 && i >= lastRowStart ? 'pd-tile pd-tile-wide' : 'pd-tile';
-
   return (
     <div className="pd-page">
 
+      {/* ── HERO HEADER ─────────────────────────────────── */}
       <section className="pd-hero">
         <div className="pd-hero-bg" />
         <div className="pd-hero-overlay" />
-
         <div className="pd-hero-inner">
           <button className="pd-back-btn" onClick={() => navigate('/projects')}>
             ← Back to Projects
           </button>
-
           <div className="pd-hero-meta">
-            <span className="pd-badge">{project.category}</span>
+            <div className="pd-meta-top">
+              <span className="pd-badge">{project.category}</span>
+              {project.ongoing && <span className="pd-badge pd-badge-ongoing">● Ongoing</span>}
+            </div>
             <h1 className="pd-title">{project.title}</h1>
-            <p className="pd-count">
-              <span className="pd-count-num">{project.images.length}</span> photographs
-            </p>
+            {project.location && (
+              <p className="pd-location">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                {project.location}
+              </p>
+            )}
           </div>
         </div>
-
         <div className="pd-hero-rule" />
       </section>
 
-      {/* ── GALLERY ── */}
-      <div className="pd-gallery">
-        {project.images.map((img, i) => (
-          <div key={i} className={tileClass(i)} onClick={() => openLightbox(i)}>
-            <img src={img} alt={`${project.title} photo ${i + 1}`} />
-            <div className="pd-tile-overlay">
-              <span className="pd-tile-icon">⊕</span>
+      {/* ── MAIN CONTENT ────────────────────────────────── */}
+      <div className="pd-main">
+
+        {/* ── CAROUSEL ──────────────────────────────────── */}
+        <div className="pd-carousel-wrap">
+          <div className="pd-carousel">
+
+            {/* Track */}
+            <div
+              className={`pd-carousel-track ${isAnimating ? (animDir === 'right' ? 'slide-out-left' : 'slide-out-right') : ''}`}
+            >
+              <img
+                key={activeIdx}
+                src={carouselImages[activeIdx]}
+                alt={`${project.title} — photo ${activeIdx + 1}`}
+                className="pd-carousel-img"
+              />
+            </div>
+
+            {/* Prev / Next */}
+            {carouselImages.length > 1 && (
+              <>
+                <button className="pd-car-btn pd-car-prev" onClick={handlePrev} aria-label="Previous">
+                  ‹
+                </button>
+                <button className="pd-car-btn pd-car-next" onClick={handleNext} aria-label="Next">
+                  ›
+                </button>
+              </>
+            )}
+
+            {/* Counter */}
+            <div className="pd-car-counter">
+              {activeIdx + 1} <span>/</span> {carouselImages.length}
+            </div>
+
+            {/* Dots */}
+            {carouselImages.length > 1 && (
+              <div className="pd-car-dots">
+                {carouselImages.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`pd-car-dot${i === activeIdx ? ' active' : ''}`}
+                    onClick={() => handleDot(i)}
+                    aria-label={`Go to image ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Thumbnail strip */}
+          {carouselImages.length > 1 && (
+            <div className="pd-thumbs">
+              {carouselImages.map((img, i) => (
+                <button
+                  key={i}
+                  className={`pd-thumb${i === activeIdx ? ' active' : ''}`}
+                  onClick={() => handleDot(i)}
+                >
+                  <img src={img} alt={`Thumb ${i + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── PROJECT INFO ───────────────────────────────── */}
+        <div className="pd-info">
+
+          <div className="pd-info-header">
+            <p className="pd-info-tag">PROJECT DETAILS</p>
+            <h2 className="pd-info-title">{project.title}</h2>
+            <div className="pd-info-divider" />
+          </div>
+
+          <p className="pd-description">{project.description}</p>
+
+          <div className="pd-meta-grid">
+            {project.client && (
+              <div className="pd-meta-item">
+                <span className="pd-meta-label">Client</span>
+                <span className="pd-meta-value">{project.client}</span>
+              </div>
+            )}
+            {project.location && (
+              <div className="pd-meta-item">
+                <span className="pd-meta-label">Location</span>
+                <span className="pd-meta-value">{project.location}</span>
+              </div>
+            )}
+            {project.completion && (
+              <div className="pd-meta-item">
+                <span className="pd-meta-label">Completion</span>
+                <span className="pd-meta-value">{project.completion}</span>
+              </div>
+            )}
+            {project.amount && (
+              <div className="pd-meta-item">
+                <span className="pd-meta-label">Project Value</span>
+                <span className="pd-meta-value">{project.amount}</span>
+              </div>
+            )}
+            <div className="pd-meta-item">
+              <span className="pd-meta-label">Category</span>
+              <span className="pd-meta-value">{project.category}</span>
+            </div>
+            <div className="pd-meta-item">
+              <span className="pd-meta-label">Status</span>
+              <span className={`pd-meta-value ${project.ongoing ? 'status-ongoing' : 'status-done'}`}>
+                {project.ongoing ? '● In Progress' : '✓ Completed'}
+              </span>
             </div>
           </div>
-        ))}
+
+          <button className="pd-cta" onClick={() => navigate('/contact')}>
+            Inquire About This Project →
+          </button>
+        </div>
+
       </div>
 
-      {/* ── LIGHTBOX ── */}
-      {lightboxIndex !== null && (
-        <div
-          className={`pd-lightbox${lightboxVisible ? ' pd-lightbox-on' : ''}`}
-          onClick={closeLightbox}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <button className="pd-lb-close" onClick={closeLightbox} aria-label="Close">✕</button>
-
-          <div className="pd-lb-counter">
-            {lightboxIndex + 1} / {project.images.length}
-          </div>
-
-          <button
-            className="pd-lb-nav pd-lb-prev"
-            onClick={(e) => { e.stopPropagation(); lightboxPrev(); }}
-            aria-label="Previous"
-          >‹</button>
-
-          <div className="pd-lb-img-wrap" onClick={(e) => e.stopPropagation()}>
-            <img
-              key={lightboxIndex}
-              src={project.images[lightboxIndex]}
-              alt={`${project.title} ${lightboxIndex + 1}`}
-              className="pd-lb-img"
-            />
-          </div>
-
-          <button
-            className="pd-lb-nav pd-lb-next"
-            onClick={(e) => { e.stopPropagation(); lightboxNext(); }}
-            aria-label="Next"
-          >›</button>
-
-          <div className="pd-lb-swipe-hint">swipe to navigate</div>
-
-          <div className="pd-lb-thumbs" onClick={(e) => e.stopPropagation()}>
-            {project.images.map((img, i) => (
-              <img
-                key={i}
-                src={img}
-                alt={`thumb ${i + 1}`}
-                className={`pd-lb-thumb${i === lightboxIndex ? ' pd-lb-thumb-on' : ''}`}
-                onClick={() => setLightboxIndex(i)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── STYLES ── */}
+      {/* ── STYLES ────────────────────────────────────────── */}
       <style>{`
 
+        /* Page */
         .pd-page {
           min-height: 100vh;
-          padding-bottom: 80px;
           background: #FDF6EE;
+          padding-bottom: 100px;
         }
 
+        /* ── Hero ── */
         .pd-hero {
           position: relative;
           overflow: hidden;
-          min-height: clamp(260px, 38vw, 440px);
+          min-height: clamp(220px, 32vw, 380px);
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
         }
-
         .pd-hero-bg {
           position: absolute; inset: 0;
           background-image: url('background.png');
           background-size: cover;
           background-position: center 60%;
-          background-repeat: no-repeat;
           pointer-events: none;
         }
-
         .pd-hero-overlay {
           position: absolute; inset: 0;
           background: linear-gradient(135deg, rgba(43,8,0,0.94) 0%, rgba(74,0,0,0.90) 60%, rgba(107,0,0,0.85) 100%);
           pointer-events: none;
         }
-
         .pd-hero-inner {
           position: relative; z-index: 2;
           max-width: 1280px; width: 100%; margin: 0 auto;
-          padding: clamp(96px,13vw,160px) clamp(20px,6vw,80px) clamp(36px,5vw,52px);
+          padding: clamp(90px,13vw,150px) clamp(20px,6vw,80px) clamp(32px,4vw,48px);
           display: flex; flex-direction: column;
-          gap: clamp(20px,3vw,32px);
+          gap: clamp(16px,2.5vw,24px);
           animation: pdFadeUp 0.8s ease both;
         }
-
         @keyframes pdFadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-
         .pd-back-btn {
           display: inline-flex; align-items: center; gap: 8px;
           background: transparent;
-          border: 2px solid rgba(253,246,238,0.45);
-          color: rgba(253,246,238,0.85);
+          border: 2px solid rgba(253,246,238,0.4);
+          color: rgba(253,246,238,0.82);
           font-family: 'Barlow Condensed', sans-serif;
           font-size: clamp(10px,1.1vw,13px); font-weight: 700;
           letter-spacing: 2px; text-transform: uppercase;
-          padding: 10px 22px; cursor: pointer;
-          white-space: nowrap; align-self: flex-start;
-          transition: background 0.2s, color 0.2s, border-color 0.2s;
+          padding: 9px 20px; cursor: pointer; align-self: flex-start;
+          transition: all 0.2s;
         }
-        .pd-back-btn:hover {
-          background: rgba(253,246,238,0.12);
-          color: #FDF6EE;
-          border-color: rgba(253,246,238,0.7);
-        }
+        .pd-back-btn:hover { background: rgba(253,246,238,0.1); color: #FDF6EE; border-color: rgba(253,246,238,0.65); }
 
-        .pd-hero-meta { display: flex; flex-direction: column; gap: 8px; }
+        .pd-hero-meta { display: flex; flex-direction: column; gap: 10px; }
+        .pd-meta-top  { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
         .pd-badge {
           font-family: 'Barlow Condensed', sans-serif;
@@ -240,149 +294,205 @@ export default function ProjectDetails() {
           color: #FDF6EE; background: #6B0000;
           padding: 4px 14px; align-self: flex-start;
         }
+        .pd-badge-ongoing {
+          background: transparent;
+          border: 1px solid rgba(253,246,238,0.45);
+          color: rgba(253,246,238,0.8);
+        }
 
         .pd-title {
           font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(36px,6vw,80px); color: #FDF6EE;
-          margin: 0; line-height: 0.95; letter-spacing: 2px;
-          animation: pdFadeUp 0.8s 0.12s ease both;
+          font-size: clamp(30px,5vw,68px); color: #FDF6EE;
+          margin: 0; line-height: 0.96; letter-spacing: 2px;
         }
-
-        .pd-count {
+        .pd-location {
+          display: flex; align-items: center; gap: 6px;
           font-family: 'Barlow Condensed', sans-serif;
-          font-size: clamp(10px,1.1vw,13px); letter-spacing: 3px;
-          text-transform: uppercase; color: rgba(253,246,238,0.38);
+          font-size: clamp(11px,1.2vw,13px); letter-spacing: 2px;
+          text-transform: uppercase; color: rgba(253,246,238,0.45);
           margin: 0;
         }
-        .pd-count-num {
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(18px,2vw,26px); color: #F0E6D6;
-          letter-spacing: 1px; vertical-align: middle; margin-right: 4px;
-        }
-
+        .pd-location svg { flex-shrink: 0; opacity: 0.6; }
         .pd-hero-rule {
           position: relative; z-index: 2; height: 1px;
           background: linear-gradient(to right, #6B0000, rgba(107,0,0,0.2), transparent);
         }
 
-        /* Gallery */
-        .pd-gallery {
+        /* ── Main layout ── */
+        .pd-main {
+          max-width: 1280px; margin: 0 auto;
+          padding: clamp(40px,6vw,80px) clamp(20px,6vw,80px);
           display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          grid-auto-rows: clamp(160px,20vw,280px);
-          gap: 6px;
-          padding: 6px clamp(20px,6vw,80px) 0;
+          grid-template-columns: 1fr 420px;
+          gap: clamp(40px,6vw,80px);
+          align-items: start;
         }
 
-        .pd-tile {
-          grid-column: span 2;
-          position: relative; overflow: hidden;
-          cursor: pointer; background: #E8D8C4;
-        }
-        .pd-tile-wide { grid-column: span 3; }
+        /* ── Carousel ── */
+        .pd-carousel-wrap { display: flex; flex-direction: column; gap: 12px; }
 
-        .pd-tile img {
+        .pd-carousel {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 10;
+          overflow: hidden;
+          background: #E8D8C4;
+          box-shadow: 0 20px 60px rgba(107,0,0,0.12);
+        }
+
+        .pd-carousel-track {
+          width: 100%; height: 100%;
+          transition: transform 0.42s cubic-bezier(0.4,0,0.2,1),
+                      opacity  0.42s ease;
+        }
+        .pd-carousel-track.slide-out-left  { animation: slideOutLeft  0.42s ease forwards; }
+        .pd-carousel-track.slide-out-right { animation: slideOutRight 0.42s ease forwards; }
+
+        @keyframes slideOutLeft {
+          0%   { transform: translateX(0);     opacity: 1; }
+          100% { transform: translateX(-6%);   opacity: 0; }
+        }
+        @keyframes slideOutRight {
+          0%   { transform: translateX(0);    opacity: 1; }
+          100% { transform: translateX(6%);   opacity: 0; }
+        }
+
+        .pd-carousel-img {
           width: 100%; height: 100%;
           object-fit: cover; object-position: center;
-          display: block; transition: transform 0.45s ease;
+          display: block;
+          animation: imgFadeIn 0.42s ease forwards;
         }
-        .pd-tile:hover img { transform: scale(1.06); }
-
-        .pd-tile-overlay {
-          position: absolute; inset: 0;
-          background: rgba(107,0,0,0);
-          display: flex; align-items: center; justify-content: center;
-          transition: background 0.3s;
-        }
-        .pd-tile:hover .pd-tile-overlay { background: rgba(107,0,0,0.30); }
-        .pd-tile-icon {
-          font-size: 32px; color: #FDF6EE; opacity: 0;
-          transform: scale(0.7);
-          transition: opacity 0.25s, transform 0.25s;
-        }
-        .pd-tile:hover .pd-tile-icon { opacity: 1; transform: scale(1); }
-
-        /* Lightbox */
-        .pd-lightbox {
-          position: fixed; inset: 0; z-index: 2000;
-          background: rgba(43,8,0,0.97);
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          opacity: 0; transition: opacity 0.28s ease; padding: 16px;
-        }
-        .pd-lightbox-on { opacity: 1; }
-
-        .pd-lb-close {
-          position: absolute; top: 18px; right: 22px;
-          background: none; border: none;
-          color: rgba(253,246,238,0.55); font-size: 26px;
-          cursor: pointer; z-index: 10; line-height: 1;
-          padding: 4px 8px; transition: color 0.2s;
-        }
-        .pd-lb-close:hover { color: #FDF6EE; }
-
-        .pd-lb-counter {
-          position: absolute; top: 22px; left: 50%;
-          transform: translateX(-50%);
-          font-family: 'Barlow Condensed', sans-serif;
-          font-size: 11px; font-weight: 700;
-          letter-spacing: 3px; text-transform: uppercase;
-          color: rgba(253,246,238,0.38);
-        }
-
-        .pd-lb-img-wrap {
-          flex: 1; display: flex; align-items: center; justify-content: center;
-          width: 100%; max-height: calc(100vh - 160px);
-          padding: 48px 80px 8px;
-        }
-        .pd-lb-img {
-          max-width: 100%; max-height: 100%;
-          object-fit: contain;
-          box-shadow: 0 8px 48px rgba(43,8,0,0.9);
-          animation: pd-fadein 0.22s ease;
-        }
-        @keyframes pd-fadein {
-          from { opacity: 0; transform: scale(0.97); }
+        @keyframes imgFadeIn {
+          from { opacity: 0; transform: scale(1.02); }
           to   { opacity: 1; transform: scale(1); }
         }
 
-        .pd-lb-nav {
+        /* Prev / Next buttons */
+        .pd-car-btn {
           position: absolute; top: 50%; transform: translateY(-50%);
-          background: rgba(107,0,0,0.8); border: none; color: #FDF6EE;
-          font-size: 36px; width: 52px; height: 52px; border-radius: 50%;
-          cursor: pointer; display: flex; align-items: center;
-          justify-content: center; z-index: 10;
-          transition: background 0.2s, transform 0.2s;
-          padding: 0; line-height: 1;
+          width: 48px; height: 48px; border-radius: 50%;
+          background: rgba(253,246,238,0.92);
+          border: none; color: #6B0000;
+          font-size: 30px; line-height: 1; padding-bottom: 4px;
+          cursor: pointer; z-index: 5;
+          display: flex; align-items: center; justify-content: center;
+          transition: background 0.2s, color 0.2s, transform 0.2s;
+          box-shadow: 0 4px 16px rgba(107,0,0,0.15);
         }
-        .pd-lb-nav:hover { background: #6B0000; transform: translateY(-50%) scale(1.08); }
-        .pd-lb-prev { left: 16px; }
-        .pd-lb-next { right: 16px; }
+        .pd-car-btn:hover { background: #6B0000; color: #FDF6EE; transform: translateY(-50%) scale(1.08); }
+        .pd-car-prev { left: 16px; }
+        .pd-car-next { right: 16px; }
 
-        .pd-lb-thumbs {
-          display: flex; gap: 6px; overflow-x: auto;
-          padding: 10px 16px 4px; max-width: 100%;
-          scrollbar-width: thin; scrollbar-color: #6B0000 transparent;
-          flex-shrink: 0;  
-        }
-        .pd-lb-thumbs::-webkit-scrollbar { height: 3px; }
-        .pd-lb-thumbs::-webkit-scrollbar-thumb { background: #6B0000; border-radius: 2px; }
-
-        .pd-lb-thumb {
-          width: 60px; height: 44px; object-fit: cover;
-          cursor: pointer; opacity: 0.38; border: 2px solid transparent;
-          flex-shrink: 0; transition: opacity 0.2s, border-color 0.2s;
-        }
-        .pd-lb-thumb:hover { opacity: 0.75; }
-        .pd-lb-thumb-on { opacity: 1; border-color: #6B0000; }
-
-        .pd-lb-swipe-hint {
-          display: none; position: absolute; bottom: 70px; left: 50%;
-          transform: translateX(-50%);
+        /* Counter */
+        .pd-car-counter {
+          position: absolute; top: 14px; right: 16px;
           font-family: 'Barlow Condensed', sans-serif;
-          font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-          color: rgba(253,246,238,0.22); white-space: nowrap; pointer-events: none;
+          font-size: 13px; font-weight: 700; letter-spacing: 2px;
+          color: rgba(253,246,238,0.8); z-index: 5;
+          background: rgba(43,8,0,0.45); padding: 4px 10px;
+          backdrop-filter: blur(4px);
         }
+        .pd-car-counter span { opacity: 0.45; margin: 0 2px; }
+
+        /* Dots */
+        .pd-car-dots {
+          position: absolute; bottom: 14px; left: 50%;
+          transform: translateX(-50%);
+          display: flex; gap: 8px; z-index: 5;
+        }
+        .pd-car-dot {
+          width: 8px; height: 8px; border-radius: 50%;
+          border: none; background: rgba(253,246,238,0.4);
+          cursor: pointer; padding: 0;
+          transition: background 0.25s, transform 0.25s;
+        }
+        .pd-car-dot.active { background: #FDF6EE; transform: scale(1.3); }
+
+        /* Thumbnails */
+        .pd-thumbs {
+          display: flex; gap: 8px;
+        }
+        .pd-thumb {
+          flex: 1; aspect-ratio: 16/10;
+          padding: 0; border: 3px solid transparent;
+          overflow: hidden; cursor: pointer;
+          transition: border-color 0.2s, opacity 0.2s;
+          opacity: 0.55; background: none;
+        }
+        .pd-thumb.active { border-color: #6B0000; opacity: 1; }
+        .pd-thumb:hover { opacity: 0.85; }
+        .pd-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* ── Project Info Panel ── */
+        .pd-info {
+          display: flex; flex-direction: column; gap: clamp(20px,3vw,32px);
+          position: sticky; top: 90px;
+        }
+
+        .pd-info-header { display: flex; flex-direction: column; gap: 10px; }
+
+        .pd-info-tag {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: clamp(10px,1.1vw,12px); font-weight: 700;
+          letter-spacing: 4px; text-transform: uppercase;
+          color: #6B0000; margin: 0;
+        }
+        .pd-info-title {
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(24px,3vw,40px);
+          color: #2C1810; letter-spacing: 1px;
+          line-height: 1; margin: 0;
+        }
+        .pd-info-divider {
+          width: 48px; height: 2px; background: #6B0000;
+        }
+
+        .pd-description {
+          font-family: 'Barlow', sans-serif;
+          font-size: clamp(13px,1.3vw,15px);
+          line-height: 1.85; color: #5C4033; margin: 0;
+        }
+
+        /* Meta grid */
+        .pd-meta-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1px;
+          background: #E8D8C4;
+          border: 1px solid #E8D8C4;
+        }
+        .pd-meta-item {
+          display: flex; flex-direction: column; gap: 4px;
+          padding: 14px 16px;
+          background: #FFFFFF;
+        }
+        .pd-meta-label {
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 10px; font-weight: 700;
+          letter-spacing: 2.5px; text-transform: uppercase;
+          color: #9A8F85;
+        }
+        .pd-meta-value {
+          font-family: 'Barlow', sans-serif;
+          font-size: clamp(12px,1.2vw,14px); font-weight: 600;
+          color: #2C1810; line-height: 1.4;
+        }
+        .status-ongoing { color: #6B0000; }
+        .status-done    { color: #3a6b3a; }
+
+        /* CTA */
+        .pd-cta {
+          display: inline-flex; align-items: center;
+          background: #6B0000; color: #FDF6EE;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-weight: 700; font-size: 13px;
+          letter-spacing: 2px; text-transform: uppercase;
+          padding: 15px 28px; border: 2px solid #6B0000;
+          cursor: pointer; transition: background 0.2s, color 0.2s;
+          align-self: flex-start;
+        }
+        .pd-cta:hover { background: transparent; color: #6B0000; }
 
         /* Not found */
         .pd-not-found { padding: 80px; text-align: center; color: #6B0000; font-size: 20px; }
@@ -395,50 +505,24 @@ export default function ProjectDetails() {
           letter-spacing: 2px; text-transform: uppercase;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-          .pd-hero-inner { padding-top: clamp(90px,16vw,130px); }
-          .pd-gallery {
-            grid-template-columns: repeat(4, 1fr);
-            grid-auto-rows: clamp(120px,18vw,200px);
-            padding-left: clamp(12px,3vw,24px);
-            padding-right: clamp(12px,3vw,24px);
-          }
-          .pd-tile { grid-column: span 2; }
-          .pd-tile-wide { grid-column: span 2; }
-          .pd-lb-img-wrap { padding: 48px 16px 8px; }
-          .pd-lb-nav { display: none; }
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+          .pd-main { grid-template-columns: 1fr; }
+          .pd-info { position: static; }
         }
         @media (max-width: 860px) {
-          .pd-hero-inner { padding-top: clamp(100px,18vw,140px); }
+          .pd-hero-inner { padding-top: clamp(96px,18vw,130px); }
         }
-        @media (max-width: 480px) {
-          .pd-hero { min-height: clamp(220px,55vw,320px); }
-          .pd-hero-inner { padding-top: clamp(96px,22vw,120px); padding-left: 16px; padding-right: 16px; gap: 16px; }
-          .pd-gallery {
-            grid-template-columns: repeat(2, 1fr);
-            grid-auto-rows: clamp(110px,35vw,160px);
-            padding-left: 8px; padding-right: 8px; gap: 4px;
-          }
-          .pd-tile { grid-column: span 1; }
-          .pd-tile-wide { grid-column: span 1; }
-          .pd-lb-img-wrap { padding: 40px 16px 4px; }
-          .pd-lb-nav { display: none; }
-          .pd-lb-swipe-hint { display: block; }
-          .pd-lb-thumb { width: 48px; height: 36px; }
-        }
-        @media (max-width: 380px) {
-          .pd-title { font-size: clamp(30px,11vw,48px); }
+        @media (max-width: 600px) {
+          .pd-meta-grid { grid-template-columns: 1fr; }
+          .pd-car-btn { width: 38px; height: 38px; font-size: 24px; }
+          .pd-car-prev { left: 8px; }
+          .pd-car-next { right: 8px; }
         }
         @media (min-width: 1600px) {
           .pd-hero-inner { padding-left: 100px; padding-right: 100px; }
-          .pd-gallery    { padding-left: 100px; padding-right: 100px; }
+          .pd-main { padding-left: 100px; padding-right: 100px; }
         }
-        @media (min-width: 2000px) {
-          .pd-hero-inner { max-width: 1600px; padding-left: 120px; padding-right: 120px; }
-          .pd-gallery    { padding-left: 120px; padding-right: 120px; }
-        }
-
       `}</style>
     </div>
   );
