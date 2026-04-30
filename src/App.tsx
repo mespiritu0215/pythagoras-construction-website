@@ -27,12 +27,6 @@ import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC6.png";
 
 const HERO_SLIDES = [
   {
-    img: HeroImg1,
-    label: "Civil Works",
-    title: "NCDC Ormoc",
-    sub: "Core Data Center · Globe · Ormoc, Leyte",
-  },
-  {
     img: HeroImg2,
     label: "Architectural",
     title: "San Andres POI Festoon",
@@ -49,6 +43,12 @@ const HERO_SLIDES = [
     label: "Civil Works",
     title: "NCDC Ormoc",
     sub: "New Core Data Center · Globe · Leyte",
+  },
+  {
+    img: HeroImg1,
+    label: "Civil Works",
+    title: "NCDC Ormoc",
+    sub: "Core Data Center · Globe · Ormoc, Leyte",
   },
   {
     img: HeroImg5,

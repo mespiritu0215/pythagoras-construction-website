@@ -134,7 +134,6 @@ export const ALL_PROJECTS: ProjectData[] = [
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     location: "Brgy. Bantique, Ormoc City, Leyte",
     client: "Globe",
-    completion: "March 2024",
   },
 
   // ── Renovations / Construction ───────────────────────────
@@ -147,7 +146,6 @@ export const ALL_PROJECTS: ProjectData[] = [
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     location: "Along Domestic Road, Pasay City",
     client: "1Aviation",
-    completion: "September 2024",
   },
   {
     id: 5,
@@ -158,7 +156,6 @@ export const ALL_PROJECTS: ProjectData[] = [
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     location: "San Fernando, Pampanga",
     client: "San Fernando City Government",
-    completion: "tanong kay maam"
   },
 
   // ── Ongoing ─────────────────────────────────────────────
