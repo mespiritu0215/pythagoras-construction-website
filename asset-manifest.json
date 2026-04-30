@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/pythagoras-construction-website/static/css/main.20b91561.css",
-    "main.js": "/pythagoras-construction-website/static/js/main.6c45c0cd.js",
+    "main.js": "/pythagoras-construction-website/static/js/main.df12ab41.js",
     "static/js/453.f1e47077.chunk.js": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js",
     "static/media/TEAMBUILDING.png": "/pythagoras-construction-website/static/media/TEAMBUILDING.1a53832f2ab4bab830d0.png",
     "static/media/PoiFestonSanAndres1.png": "/pythagoras-construction-website/static/media/PoiFestonSanAndres1.b92cc73dde0c9eb4cde9.png",
@@ -62,11 +62,11 @@
     "static/media/clock.png": "/pythagoras-construction-website/static/media/clock.74edf6622a92d7a263db.png",
     "index.html": "/pythagoras-construction-website/index.html",
     "main.20b91561.css.map": "/pythagoras-construction-website/static/css/main.20b91561.css.map",
-    "main.6c45c0cd.js.map": "/pythagoras-construction-website/static/js/main.6c45c0cd.js.map",
+    "main.df12ab41.js.map": "/pythagoras-construction-website/static/js/main.df12ab41.js.map",
     "453.f1e47077.chunk.js.map": "/pythagoras-construction-website/static/js/453.f1e47077.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.20b91561.css",
-    "static/js/main.6c45c0cd.js"
+    "static/js/main.df12ab41.js"
   ]
 }
