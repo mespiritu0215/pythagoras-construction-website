@@ -1,37 +1,17 @@
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import './Services.css';   
 
-import image1 from './serv-img1.png';
-import image4 from './serv-img4.png';
 import emailIcon from './email.png';
 import phoneIcon from './phone.png';
 import clockIcon from './clock.png';
 
-import GaisanoMactanSmart1 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart1.jpg";
-import GaisanoMactanSmart2 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart2.jpg";
-import GaisanoMactanSmart3 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart3.jpg";
-import GaisanoMactanSmart4 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart4.jpg";
-import GaisanoMactanSmart5 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart5.jpg";
-import GaisanoMactanSmart6 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart6.jpg";
-import GaisanoMactanSmart7 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart7.jpg";
-import GaisanoMactanSmart8 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart8.jpg";
-import GaisanoMactanSmart9 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart9.jpg";
-import GaisanoMactanSmart10 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart10.jpg";
-import GaisanoMactanSmart11 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart11.jpg";
-import GaisanoMactanSmart12 from "./CompletedProjects/GaisanoMactan/GaisanoMactanSmart12.jpg";
+import SMLegaspiSmart1 from "./CompletedProjects/SMLegaspi/SMLegaspiSmart1.jpg";
+import SMLegaspiSmart4 from "./CompletedProjects/SMLegaspi/SMLegaspiSmart4.jpg";
+import SMLegaspiSmart7 from "./CompletedProjects/SMLegaspi/SMLegaspiSmart7.jpg";
 
-import GlobeBaliuag1 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag1.png";
-import GlobeBaliuag2 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag2.png";
-import GlobeBaliuag3 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag3.png";
-import GlobeBaliuag4 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag4.png";
-import GlobeBaliuag5 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag5.png";
-import GlobeBaliuag6 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag6.png";
-import GlobeBaliuag7 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag7.png";
-import GlobeBaliuag8 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag8.png";
-import GlobeBaliuag9 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag9.png";
-import GlobeBaliuag10 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag10.png";
-import GlobeBaliuag11 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag11.png";
-import GlobeBaliuag12 from "./CompletedProjects/GlobeBaliuag/GlobeBaliuag12.png";
+import GlobeCalbayog1 from "./CompletedProjects/GlobeCalbayog/1.jpg";
+import GlobeCalbayog12 from "./CompletedProjects/GlobeCalbayog/12.jpg";
+import GlobeCalbayog16 from "./CompletedProjects/GlobeCalbayog/16.jpg";
 
 import MOCHMC1 from "./CompletedProjects/MOCHMC/MOCHMC1.png";
 import MOCHMC2 from "./CompletedProjects/MOCHMC/MOCHMC2.png";
@@ -41,16 +21,12 @@ import PoiFeston1 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndre
 import PoiFeston2 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres2.png";
 import PoiFeston3 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres3.png";
 
-const globeBaliuagImages: string[] = [
-  GlobeBaliuag1, GlobeBaliuag2, GlobeBaliuag3, GlobeBaliuag4, GlobeBaliuag5,
-  GlobeBaliuag6, GlobeBaliuag7, GlobeBaliuag8, GlobeBaliuag9, GlobeBaliuag10,
-  GlobeBaliuag11, GlobeBaliuag12,
+const GlobeCalbayogImages: string[] = [
+  GlobeCalbayog1, GlobeCalbayog12, GlobeCalbayog16,
 ];
 
-const gaisanoMactanImages: string[] = [
-  GaisanoMactanSmart1, GaisanoMactanSmart2, GaisanoMactanSmart3, GaisanoMactanSmart4,
-  GaisanoMactanSmart5, GaisanoMactanSmart6, GaisanoMactanSmart7, GaisanoMactanSmart8,
-  GaisanoMactanSmart9, GaisanoMactanSmart10, GaisanoMactanSmart11, GaisanoMactanSmart12,
+const SMLegaspiImages: string[] = [
+  SMLegaspiSmart1, SMLegaspiSmart4, SMLegaspiSmart7,
 ];
 
 const MOCHMCImages: string[] = [
@@ -155,8 +131,8 @@ const services: ServiceData[] = [
       'Generators & ATS Installation',
       'Panel Boards & Circuit Breakers',
     ],
-    carousel: globeBaliuagImages,
-    caption: 'Featured: Globe Baliuag Electrical Project',
+    carousel: GlobeCalbayogImages,
+    caption: 'Featured: Globe Calbayog Electrical Project',
     dark: false,
     reverse: true,
   },
@@ -172,8 +148,8 @@ const services: ServiceData[] = [
       'Sewer and Drainage Lines',
       'Site Development',
     ],
-    carousel: gaisanoMactanImages,
-    caption: 'Featured: Gaisano Mactan Development',
+    carousel: SMLegaspiImages,
+    caption: 'Featured: SMLegaspi Smart Communications',
     dark: true,
     reverse: false,
   },
