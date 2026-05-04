@@ -239,16 +239,6 @@ export const ALL_PROJECTS: ProjectData[] = [
     client: "Manila Water Company Inc.",
   },
   {
-    id: 8,
-    title: "Petron Bohol",
-    category: "Civil Works",
-    cover: PetronBohol3,
-    images: [PetronBohol1, PetronBohol2, PetronBohol3],
-    description: "TEMPORARY DESCRIPTION: Waiting for the actual project description from PCI.",
-    location: "Tagbilaran City, Bohol",
-    client: "Petron Corporation",
-  },
-  {
     id: 9,
     title: "Petron Bohol",
     category: "Civil Works",
