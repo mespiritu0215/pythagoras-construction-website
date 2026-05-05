@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import "./AboutUs.css";
-import abtproj1 from './aboutproject-img1.jpg';
-import abtproj2 from './aboutproject-img2.jpg';
-import abtproj4 from './pyth3.jpg';
+import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
+import NCDC5 from "./CompletedProjects/NCDCORMOC/NCDC5.png";
+import NCDC6 from "./CompletedProjects/NCDCORMOC/NCDC6.png";
 import email from './email.png';
 import phone from './phone.png';
 import clock from './clock.png';
 import background from './background.png';
+import SirBong from './Profiles/SirBong.png';
 
 const values = [
   {
@@ -31,10 +32,34 @@ const values = [
   },
 ];
 
+const departments = [
+  {
+    key: "EMS",
+    label: "EMS",
+    desc: "Specializes in medium rise tower construction, overseeing structural works, equipment deployment, and mechanical systems for multi-storey building projects.",
+  },
+  {
+    key: "IRG",
+    label: "IRG",
+    desc: "Handles residential renovations and commercial store outlet fit-outs, delivering quality finishes and efficient turnaround for both private and retail clients.",
+  },
+  {
+    key: "JCA",
+    label: "JCA",
+    desc: "Covers low-rise to medium-rise building construction, pipe laying, and waterworks — ensuring reliable civil and utility infrastructure across project sites.",
+  },
+  {
+    key: "ADM",
+    label: "ADMIN",
+    desc: "Handles finance, HR, procurement, compliance, and all corporate administrative functions that support every project team.",
+  },
+];
+
 function AboutUs() {
-  const images = [abtproj4, abtproj1, abtproj2];
+  const images = [NCDC6, NCDC5, NCDC2];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeValue, setActiveValue] = useState(0);
+  const [activeDept, setActiveDept] = useState<string | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -51,7 +76,7 @@ function AboutUs() {
   return (
     <div className="abt-page">
 
-      {/* ── HERO: vertical split ── */}
+      {/* ── HERO ── */}
       <section className="abt-hero">
         <div className="abt-hero-left">
           <div className="abt-hero-left-inner">
@@ -123,7 +148,7 @@ function AboutUs() {
         </div>
       </section>
 
-      {/* ── WHO WE ARE: 3 tall panels ── */}
+      {/* ── WHO WE ARE ── */}
       <section className="abt-who-section">
         <div className="abt-who-inner">
           <div className="abt-who-header">
@@ -160,7 +185,128 @@ function AboutUs() {
         </div>
       </section>
 
-      {/* ── CORE VALUES: interactive tabs ── */}
+      {/* ── FOUNDER STORY ── */}
+      <section className="abt-founder-section">
+        <div className="abt-founder-inner">
+          {/* Left: photo placeholder + quote strip */}
+          <div className="abt-founder-media">
+            <div className="abt-founder-photo-wrap">
+              <img src={SirBong} alt="Founder" className="abt-founder-photo" />
+              <div className="abt-founder-photo-accent" />
+            </div>
+            <div className="abt-founder-quote-strip">
+              <span className="abt-quote-mark">"</span>
+              <p className="abt-quote-text">
+                Building is not just about structures — it is about leaving a legacy for the next generation.
+              </p>
+              <p className="abt-quote-attr">— Founder, Pythagoras Construction, Inc.</p>
+            </div>
+          </div>
+
+          {/* Right: story text */}
+          <div className="abt-founder-content">
+            <p className="abt-section-tag">OUR STORY</p>
+            <h2 className="abt-founder-heading">ENGR. FERDINAND GARDUQUE</h2>
+            <div className="abt-founder-divider" />
+            <p className="abt-founder-body">
+              Pythagoras Construction, Inc. was founded in 1993 with a singular purpose: to build
+              structures that stand the test of time while uplifting the communities they serve.
+              What began as a small contracting venture grew steadily through decades of hard work,
+              discipline, and an unwavering commitment to quality.
+            </p>
+            <p className="abt-founder-body">
+              The founder envisioned a construction firm where craftsmanship, integrity, and
+              innovation go hand in hand — a company that treats every client project as if it were
+              their own. From humble beginnings, Pythagoras Construction built its reputation
+              project by project, client by client, earning the trust of both government agencies
+              and private institutions across the country.
+            </p>
+            <p className="abt-founder-body">
+              Today, with PCAB General "A" licensure and over 30 years of proven track record,
+              the company continues to honor that founding vision — building not just structures,
+              but better communities.
+            </p>
+            <div className="abt-founder-badge-row">
+              <div className="abt-founder-badge">
+                <span className="abt-badge-year">1993</span>
+                <span className="abt-badge-label">Year Founded</span>
+              </div>
+              <div className="abt-founder-badge">
+                <span className="abt-badge-year">SEC</span>
+                <span className="abt-badge-label">Registered</span>
+              </div>
+              <div className="abt-founder-badge">
+                <span className="abt-badge-year">PCAB</span>
+                <span className="abt-badge-label">General "A"</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ORG CHART ── */}
+      <section className="abt-org-section">
+        <div className="abt-org-inner">
+          <div className="abt-org-header">
+            <p className="abt-section-tag">HOW WE'RE BUILT</p>
+            <h2 className="abt-org-heading">OUR ORGANIZATION</h2>
+            <p className="abt-org-sub">
+              A streamlined structure designed for accountability, efficiency, and excellence in every project we undertake.
+            </p>
+          </div>
+
+          <div className="abt-org-chart">
+            {/* President */}
+            <div className="abt-org-president-row">
+              <div className="abt-org-card abt-org-card--president">
+                <div className="abt-org-card-label">PRESIDENT</div>
+                <div className="abt-org-card-sub">Chief Executive Officer</div>
+              </div>
+            </div>
+
+            {/* SVG connector: trunk + horizontal bar + four drops */}
+            <div className="abt-org-connectors" aria-hidden="true">
+              <svg width="100%" height="64" preserveAspectRatio="none">
+                <line x1="50%" y1="0"  x2="50%"    y2="32" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="12.5%" y1="32" x2="87.5%" y2="32" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="12.5%" y1="32" x2="12.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="37.5%" y1="32" x2="37.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="62.5%" y1="32" x2="62.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+                <line x1="87.5%" y1="32" x2="87.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
+              </svg>
+            </div>
+
+            {/* Department cards */}
+            <div className="abt-org-dept-row">
+              {departments.map((dept) => (
+                <button
+                  key={dept.key}
+                  className={`abt-org-card abt-org-card--dept${activeDept === dept.key ? ' abt-org-card--active' : ''}`}
+                  onClick={() => setActiveDept(activeDept === dept.key ? null : dept.key)}
+                >
+                  <div className="abt-org-card-label">{dept.label}</div>
+                  <div className="abt-org-card-sub">{dept.full}</div>
+                  <div className="abt-org-card-chevron">{activeDept === dept.key ? '▲' : '▼'}</div>
+                </button>
+              ))}
+            </div>
+
+            {/* Expandable detail */}
+            {activeDept && (
+              <div className="abt-org-detail">
+                {departments.filter(d => d.key === activeDept).map(dept => (
+                  <div key={dept.key} className="abt-org-detail-inner">
+                    <p className="abt-org-detail-title">{dept.full}</p>
+                    <p className="abt-org-detail-desc">{dept.desc}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CORE VALUES ── */}
       <section className="abt-values-section">
         <div className="abt-values-inner">
           <div className="abt-values-header">
