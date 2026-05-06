@@ -7,7 +7,7 @@ import email from './email.png';
 import phone from './phone.png';
 import clock from './clock.png';
 import background from './background.png';
-import SirBong from './Profiles/SirBong.png';
+import SirBong from './Profiles/SirBong2.jpeg';
 
 const values = [
   {
