@@ -239,7 +239,7 @@ export const ALL_PROJECTS: ProjectData[] = [
     client: "Manila Water Company Inc.",
   },
   {
-    id: 9,
+    id: 9 ,
     title: "Petron Bohol",
     category: "Civil Works",
     cover: PetronBohol3,

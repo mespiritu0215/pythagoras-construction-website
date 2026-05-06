@@ -244,68 +244,6 @@ function AboutUs() {
         </div>
       </section>
 
-      {/* ── ORG CHART ── */}
-      <section className="abt-org-section">
-        <div className="abt-org-inner">
-          <div className="abt-org-header">
-            <p className="abt-section-tag">HOW WE'RE BUILT</p>
-            <h2 className="abt-org-heading">OUR ORGANIZATION</h2>
-            <p className="abt-org-sub">
-              A streamlined structure designed for accountability, efficiency, and excellence in every project we undertake.
-            </p>
-          </div>
-
-          <div className="abt-org-chart">
-            {/* President */}
-            <div className="abt-org-president-row">
-              <div className="abt-org-card abt-org-card--president">
-                <div className="abt-org-card-label">PRESIDENT</div>
-                <div className="abt-org-card-sub">Chief Executive Officer</div>
-              </div>
-            </div>
-
-            {/* SVG connector: trunk + horizontal bar + four drops */}
-            <div className="abt-org-connectors" aria-hidden="true">
-              <svg width="100%" height="64" preserveAspectRatio="none">
-                <line x1="50%" y1="0"  x2="50%"    y2="32" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="12.5%" y1="32" x2="87.5%" y2="32" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="12.5%" y1="32" x2="12.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="37.5%" y1="32" x2="37.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="62.5%" y1="32" x2="62.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-                <line x1="87.5%" y1="32" x2="87.5%" y2="64" stroke="#6B0000" strokeWidth="1.5" strokeOpacity="0.4" />
-              </svg>
-            </div>
-
-            {/* Department cards */}
-            <div className="abt-org-dept-row">
-              {departments.map((dept) => (
-                <button
-                  key={dept.key}
-                  className={`abt-org-card abt-org-card--dept${activeDept === dept.key ? ' abt-org-card--active' : ''}`}
-                  onClick={() => setActiveDept(activeDept === dept.key ? null : dept.key)}
-                >
-                  <div className="abt-org-card-label">{dept.label}</div>
-                  <div className="abt-org-card-sub">{dept.full}</div>
-                  <div className="abt-org-card-chevron">{activeDept === dept.key ? '▲' : '▼'}</div>
-                </button>
-              ))}
-            </div>
-
-            {/* Expandable detail */}
-            {activeDept && (
-              <div className="abt-org-detail">
-                {departments.filter(d => d.key === activeDept).map(dept => (
-                  <div key={dept.key} className="abt-org-detail-inner">
-                    <p className="abt-org-detail-title">{dept.full}</p>
-                    <p className="abt-org-detail-desc">{dept.desc}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* ── CORE VALUES ── */}
       <section className="abt-values-section">
         <div className="abt-values-inner">

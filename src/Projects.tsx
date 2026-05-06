@@ -149,7 +149,7 @@ export default function Projects() {
           <div className="prj-stat-divider" />
           <div className="prj-stat">
             <div className="prj-stat-num">100+</div>
-            <div className="prj-stat-label">Projects Delivered</div>
+            <div className="prj-stat-label">Active Workers</div>
           </div>
           <div className="prj-stat-divider" />
           <div className="prj-stat">
