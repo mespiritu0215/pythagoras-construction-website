@@ -32,29 +32,6 @@ const values = [
   },
 ];
 
-const departments = [
-  {
-    key: "EMS",
-    label: "EMS",
-    desc: "Specializes in medium rise tower construction, overseeing structural works, equipment deployment, and mechanical systems for multi-storey building projects.",
-  },
-  {
-    key: "IRG",
-    label: "IRG",
-    desc: "Handles residential renovations and commercial store outlet fit-outs, delivering quality finishes and efficient turnaround for both private and retail clients.",
-  },
-  {
-    key: "JCA",
-    label: "JCA",
-    desc: "Covers low-rise to medium-rise building construction, pipe laying, and waterworks — ensuring reliable civil and utility infrastructure across project sites.",
-  },
-  {
-    key: "ADM",
-    label: "ADMIN",
-    desc: "Handles finance, HR, procurement, compliance, and all corporate administrative functions that support every project team.",
-  },
-];
-
 function AboutUs() {
   const images = [NCDC6, NCDC5, NCDC2];
   const [currentIndex, setCurrentIndex] = useState(0);

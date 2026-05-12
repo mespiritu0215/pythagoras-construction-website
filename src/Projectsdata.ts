@@ -348,7 +348,6 @@ export const ALL_PROJECTS: ProjectData[] = [
     location: "Cagayan De Oro, Mindanao",
     client: "PLDT",
   },
-
   // ── Ongoing ─────────────────────────────────────────────
   {
     id: 101,
