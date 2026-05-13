@@ -202,6 +202,7 @@ main { flex: 1; }
   transition: color 0.2s;
 }
 .App-header.scrolled .nav-links li a { color: var(--text-mid); }
+.App-header.scrolled .nav-links li a:hover::after { background: var(--maroon); }
 .nav-links li a:hover { color: var(--cream); }
 .App-header.scrolled .nav-links li a:hover { color: var(--maroon); }
 .nav-links li a::after {
@@ -211,7 +212,7 @@ main { flex: 1; }
   left: 14px;
   width: 0;
   height: 1px;
-  background: var(--maroon);
+  background: var(--cream);
   transition: width 0.25s ease;
 }
 .nav-links li a:hover::after { width: calc(100% - 28px); }
