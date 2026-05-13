@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./AboutUs.css";
 import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import NCDC5 from "./CompletedProjects/NCDCORMOC/NCDC5.png";
@@ -8,6 +8,15 @@ import phone from './phone.png';
 import clock from './clock.png';
 import background from './background.png';
 import SirBong from './Profiles/SirBong2.jpeg';
+import award1 from './Awards/award1.png';
+import award2 from './Awards/award2.png';
+import award3 from './Awards/award3.png';
+import award4 from './Awards/award4.png';
+import award5 from './Awards/award5.png';
+import award6 from './Awards/award6.png';
+import award7 from './Awards/award7.png';
+import award8 from './Awards/award8.png';
+import award9 from './Awards/award9.png';
 
 const values = [
   {
@@ -37,6 +46,55 @@ function AboutUs() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeValue, setActiveValue] = useState(0);
   const [activeDept, setActiveDept] = useState<string | null>(null);
+
+  const awardImages = [award1, award2, award3, award4, award5, award6, award7, award8, award9];
+  const [awardIndex, setAwardIndex] = useState(0);
+  const [awardPaused, setAwardPaused] = useState(false);
+  const [lightboxImg, setLightboxImg] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartX = useRef(0);
+  const dragDelta = useRef(0);
+  const visibleCount = 3;
+  const maxAwardIndex = awardImages.length - visibleCount;
+
+  const prevAward = () => setAwardIndex((prev) => Math.max(prev - 1, 0));
+  const nextAward = () => setAwardIndex((prev) => Math.min(prev + 1, maxAwardIndex));
+
+  // Auto-advance
+  useEffect(() => {
+    if (awardPaused) return;
+    const id = setInterval(() => {
+      setAwardIndex((prev) => (prev >= maxAwardIndex ? 0 : prev + 1));
+    }, 3200);
+    return () => clearInterval(id);
+  }, [awardPaused, maxAwardIndex]);
+
+  // Lightbox keyboard close
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxImg(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // Drag handlers
+  const onDragStart = (clientX: number) => {
+    setIsDragging(true);
+    dragStartX.current = clientX;
+    dragDelta.current = 0;
+  };
+  const onDragMove = (clientX: number) => {
+    if (!isDragging) return;
+    dragDelta.current = clientX - dragStartX.current;
+  };
+  const onDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    if (dragDelta.current < -50) nextAward();
+    else if (dragDelta.current > 50) prevAward();
+    dragDelta.current = 0;
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -247,6 +305,115 @@ function AboutUs() {
               <h3 className="abt-values-panel-title">{values[activeValue].title}</h3>
               <p className="abt-values-panel-text">{values[activeValue].text}</p>
               <div className="abt-values-panel-line" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── AWARDS ── */}
+      <section className="abt-awards-section">
+        {/* Lightbox */}
+        {lightboxImg && (
+          <div className="abt-lightbox" onClick={() => setLightboxImg(null)}>
+            <button className="abt-lightbox-close" aria-label="Close">✕</button>
+            <div className="abt-lightbox-frame" onClick={(e) => e.stopPropagation()}>
+              <img src={lightboxImg} alt="Award" className="abt-lightbox-img" />
+            </div>
+          </div>
+        )}
+
+        <div className="abt-awards-inner">
+          {/* Header */}
+          <div className="abt-awards-header">
+            <p className="abt-section-tag">RECOGNITION & HONORS</p>
+            <h2 className="abt-awards-heading">AWARDS</h2>
+            <div className="abt-awards-heading-bar" />
+            <p className="abt-awards-subtext">
+              Proud recipients of recognition across multiple years —
+              a testament to our consistent performance and partnership.
+            </p>
+          </div>
+
+          {/* Slider */}
+          <div
+            className="abt-awards-slider-root"
+            onMouseEnter={() => setAwardPaused(true)}
+            onMouseLeave={() => setAwardPaused(false)}
+            onMouseDown={(e) => onDragStart(e.clientX)}
+            onMouseMove={(e) => onDragMove(e.clientX)}
+            onMouseUp={onDragEnd}
+            onTouchStart={(e) => onDragStart(e.touches[0].clientX)}
+            onTouchMove={(e) => onDragMove(e.touches[0].clientX)}
+            onTouchEnd={onDragEnd}
+          >
+            {/* Progress bar */}
+            <div className="abt-awards-progress-bar">
+              <div
+                className="abt-awards-progress-fill"
+                style={{ width: `${((awardIndex + visibleCount) / awardImages.length) * 100}%` }}
+              />
+            </div>
+
+            {/* Counter + arrows row */}
+            <div className="abt-awards-controls">
+              <span className="abt-awards-counter">
+                <span className="abt-awards-counter-cur">{String(awardIndex + 1).padStart(2, '0')}–{String(Math.min(awardIndex + visibleCount, awardImages.length)).padStart(2, '0')}</span>
+                <span className="abt-awards-counter-sep" />
+                <span className="abt-awards-counter-tot">{String(awardImages.length).padStart(2, '0')}</span>
+              </span>
+              <div className="abt-awards-arrows">
+                <button
+                  className="abt-awards-arrow"
+                  onClick={prevAward}
+                  disabled={awardIndex === 0}
+                  aria-label="Previous"
+                >
+                  ←
+                </button>
+                <button
+                  className="abt-awards-arrow"
+                  onClick={nextAward}
+                  disabled={awardIndex === maxAwardIndex}
+                  aria-label="Next"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+
+            {/* Viewport */}
+            <div className="abt-awards-viewport">
+              <div
+                className="abt-awards-track"
+                style={{ transform: `translateX(-${awardIndex * (100 / visibleCount)}%)` }}
+              >
+                {awardImages.map((img, i) => (
+                  <div key={i} className="abt-award-card">
+                    <button
+                      className="abt-award-img-wrap"
+                      onClick={() => setLightboxImg(img)}
+                      aria-label={`View award ${i + 1} in full`}
+                    >
+                      <img src={img} alt={`Award ${i + 1}`} className="abt-award-img" draggable={false} />
+                      <div className="abt-award-overlay">
+                        <span className="abt-award-zoom-icon">⊕</span>
+                      </div>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dot trail */}
+            <div className="abt-awards-dots">
+              {Array.from({ length: maxAwardIndex + 1 }).map((_, i) => (
+                <button
+                  key={i}
+                  className={`abt-awards-dot${awardIndex === i ? ' abt-awards-dot-active' : ''}`}
+                  onClick={() => setAwardIndex(i)}
+                  aria-label={`Go to group ${i + 1}`}
+                />
+              ))}
             </div>
           </div>
         </div>
