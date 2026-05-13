@@ -176,7 +176,7 @@ function AboutUs() {
             </div>
             <div className="abt-hero-slider-footer">
               <span>Our Projects</span>
-              <a href="/projects" className="abt-visit-chip">View All →</a>
+              <a href="#/projects" className="abt-visit-chip">View All →</a>
             </div>
           </div>
           <div className="abt-hero-accent-bar" />
