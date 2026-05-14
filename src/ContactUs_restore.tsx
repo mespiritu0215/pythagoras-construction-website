@@ -276,14 +276,7 @@ const css = `
    COMPONENT
 ───────────────────────────────────────────────────────────── */
 export default function ContactUs(): JSX.Element {
-  const [user, setUser]           = useState<GoogleUser | null>(() => {
-    try {
-      const stored = localStorage.getItem('cu_google_user');
-      return stored ? (JSON.parse(stored) as GoogleUser) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser]           = useState<GoogleUser | null>(null);
   const [fullName, setFullName]   = useState('');
   const [concern, setConcern]     = useState('');
   const [message, setMessage]     = useState('');
@@ -326,13 +319,11 @@ export default function ContactUs(): JSX.Element {
         callback: (response: { credential: string }) => {
           try {
             const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            const googleUser: GoogleUser = {
+            setUser({
               name: payload.name ?? '',
               email: payload.email ?? '',
               picture: payload.picture ?? '',
-            };
-            localStorage.setItem('cu_google_user', JSON.stringify(googleUser));
-            setUser(googleUser);
+            });
             setFullName(payload.name ?? '');
           } catch {
             alert('Sign-in failed. Please try again.');
@@ -361,7 +352,6 @@ export default function ContactUs(): JSX.Element {
   }, [user]);
 
   const handleSignOut = (): void => {
-    localStorage.removeItem('cu_google_user');
     setUser(null);
     setFullName('');
     setConcern('');
