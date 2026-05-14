@@ -652,7 +652,7 @@ function App(): JSX.Element {
         }
 
         /* ── Responsive ── */
-        @media (max-width: 1440px) {
+        @media (max-width: 2000px) {
           .hs-content-inner{ padding-bottom: 20px; }
           .hs-controls{ bottom: 130px; }
         }
