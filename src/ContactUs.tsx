@@ -1,5 +1,17 @@
+/**
+ * ContactUs.tsx  (Updated for admin system)
+ *
+ * Changes from original:
+ *  - Imports useAdmin from AdminContext
+ *  - On Google sign-in, sets the user in AdminContext so the admin bar
+ *    becomes visible site-wide if the email matches REACT_APP_ADMIN_EMAIL
+ *  - The contact form still works exactly as before
+ *  - Admin users see an "ADMIN ACCESS GRANTED" badge next to their name
+ */
+
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import emailjs from '@emailjs/browser';
+import { useAdmin } from './AdminContext';
 
 /* ─────────────────────────────────────────────────────────────
    TYPES
@@ -176,6 +188,16 @@ const css = `
 }
 .cu-sign-out:hover { color: #6B0000; border-color: rgba(107,0,0,0.35); }
 
+/* Admin badge */
+.cu-admin-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #6B0000; color: #FDF6EE;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; padding: 3px 8px;
+  margin-left: 4px; vertical-align: middle;
+}
+
 .cu-form { display: flex; flex-direction: column; gap: clamp(16px,2vw,22px); }
 .cu-field { display: flex; flex-direction: column; gap: 7px; }
 .cu-label {
@@ -276,14 +298,13 @@ const css = `
    COMPONENT
 ───────────────────────────────────────────────────────────── */
 export default function ContactUs(): JSX.Element {
-  const [user, setUser]           = useState<GoogleUser | null>(() => {
-    try {
-      const stored = localStorage.getItem('cu_google_user');
-      return stored ? (JSON.parse(stored) as GoogleUser) : null;
-    } catch {
-      return null;
-    }
-  });
+  // ── Admin context ──────────────────────────────────────────
+  const { user: adminUser, setUser: setAdminUser, isAdmin } = useAdmin();
+
+  // ── Local state (derives user from adminContext) ───────────
+  const user     = adminUser;
+  const setUser  = setAdminUser;
+
   const [fullName, setFullName]   = useState('');
   const [concern, setConcern]     = useState('');
   const [message, setMessage]     = useState('');
@@ -306,7 +327,7 @@ export default function ContactUs(): JSX.Element {
   useEffect(() => {
     if (document.getElementById('google-gsi-script')) return;
     const script = document.createElement('script');
-    script.id = 'google-gsi-script';
+    script.id  = 'google-gsi-script';
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
     script.defer = true;
@@ -326,13 +347,12 @@ export default function ContactUs(): JSX.Element {
         callback: (response: { credential: string }) => {
           try {
             const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            const googleUser: GoogleUser = {
-              name: payload.name ?? '',
-              email: payload.email ?? '',
+            // ── Set user in AdminContext (shared globally) ──────
+            setUser({
+              name:    payload.name    ?? '',
+              email:   payload.email   ?? '',
               picture: payload.picture ?? '',
-            };
-            localStorage.setItem('cu_google_user', JSON.stringify(googleUser));
-            setUser(googleUser);
+            });
             setFullName(payload.name ?? '');
           } catch {
             alert('Sign-in failed. Please try again.');
@@ -343,8 +363,8 @@ export default function ContactUs(): JSX.Element {
 
       window.google.accounts.id.renderButton(googleBtnRef.current, {
         theme: 'outline',
-        size: 'large',
-        text: 'signin_with',
+        size:  'large',
+        text:  'signin_with',
         shape: 'rectangular',
         width: 280,
       });
@@ -358,10 +378,14 @@ export default function ContactUs(): JSX.Element {
       if (tryInit()) clearInterval(interval);
     }, 300);
     return () => clearInterval(interval);
+  }, [user, setUser]);
+
+  // Sync fullName when user changes
+  useEffect(() => {
+    if (user) setFullName(prev => prev || user.name);
   }, [user]);
 
   const handleSignOut = (): void => {
-    localStorage.removeItem('cu_google_user');
     setUser(null);
     setFullName('');
     setConcern('');
@@ -394,7 +418,7 @@ export default function ContactUs(): JSX.Element {
     } catch (err: unknown) {
       console.error('EmailJS error:', err);
       setSendError(
-        'Failed to send your message. Please try again or contact us directly at pci1051@yahoo.com.'
+        'Failed to send your message. Please try again or contact us directly at pci1051@yahoo.com.ph'
       );
     } finally {
       setSending(false);
@@ -506,7 +530,12 @@ export default function ContactUs(): JSX.Element {
               <div className="cu-user-pill">
                 <img src={user.picture} alt={user.name} className="cu-user-avatar" />
                 <div>
-                  <p className="cu-user-name">{user.name}</p>
+                  <p className="cu-user-name">
+                    {user.name}
+                    {isAdmin && (
+                      <span className="cu-admin-badge">⚙ Admin</span>
+                    )}
+                  </p>
                   <p className="cu-user-email">{user.email}</p>
                 </div>
                 <button className="cu-sign-out" onClick={handleSignOut} type="button">Sign Out</button>
@@ -528,11 +557,30 @@ export default function ContactUs(): JSX.Element {
               <div className="cu-user-pill">
                 <img src={user.picture} alt={user.name} className="cu-user-avatar" />
                 <div>
-                  <p className="cu-user-name">{user.name}</p>
+                  <p className="cu-user-name">
+                    {user.name}
+                    {isAdmin && (
+                      <span className="cu-admin-badge">⚙ Admin</span>
+                    )}
+                  </p>
                   <p className="cu-user-email">{user.email}</p>
                 </div>
                 <button className="cu-sign-out" onClick={handleSignOut} type="button">Sign Out</button>
               </div>
+
+              {isAdmin && (
+                <div style={{
+                  background: 'rgba(107,0,0,0.05)',
+                  border: '1px solid rgba(107,0,0,0.18)',
+                  padding: '10px 14px',
+                  marginBottom: 20,
+                  fontFamily: 'Barlow Condensed, sans-serif',
+                  fontSize: 12, fontWeight: 700, letterSpacing: 2,
+                  textTransform: 'uppercase', color: '#6B0000',
+                }}>
+                  ⚙ Admin access granted — use the Edit Mode bar at the bottom of any page
+                </div>
+              )}
 
               <form className="cu-form" onSubmit={handleSubmit} noValidate>
 

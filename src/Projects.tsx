@@ -1,21 +1,77 @@
-import React, { useState, useRef, useEffect } from 'react';
+/**
+ * Projects.tsx  (Updated for admin system)
+ *
+ * Admin changes:
+ *  - When Edit Mode is ON, a "+ Add Project" button appears in the hero area
+ *  - Admin-added projects are merged into existing categories
+ *  - Admin-added project cards show a delete button in Edit Mode
+ *  - The hero subtitle is editable via EditableText
+ */
+
+import React, { useState, useRef, useEffect, JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES, CategoryGroup, ProjectData } from './Projectsdata';
+import { useAdmin, EditableText, AdminProject } from './AdminContext';
+import { AddProjectModal } from './AddProjectModal';
 import emailIcon from './email.png';
 import phoneIcon from './phone.png';
 import clockIcon from './clock.png';
 
+// ─────────────────────────────────────────────────────────────
+//  Merge static categories with admin-added projects
+// ─────────────────────────────────────────────────────────────
+
+function mergeWithAdminProjects(
+  staticCategories: CategoryGroup[],
+  adminProjects:   AdminProject[]
+): CategoryGroup[] {
+  if (!adminProjects.length) return staticCategories;
+
+  // Clone static categories
+  const merged: CategoryGroup[] = staticCategories.map(cat => ({
+    ...cat,
+    projects: [...cat.projects],
+  }));
+
+  for (const ap of adminProjects) {
+    // Find matching category by label
+    const match = merged.find(
+      c => c.label.toLowerCase() === ap.category.toLowerCase()
+    );
+    if (match) {
+      // Append admin project (cast to ProjectData — fields are compatible)
+      (match.projects as any[]).push(ap as unknown as ProjectData);
+    } else {
+      // Create a new category for unmatched admin projects
+      const existing = merged.find(c => c.label === 'Admin Projects');
+      if (existing) {
+        (existing.projects as any[]).push(ap as unknown as ProjectData);
+      } else {
+        merged.push({ label: 'Admin Projects', projects: [ap as unknown as ProjectData] });
+      }
+    }
+  }
+
+  return merged;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  PROJECT ROW
+// ─────────────────────────────────────────────────────────────
+
 type RowProps = {
-  category: CategoryGroup;
-  indexMap: Record<number, number>;
+  category:    CategoryGroup;
+  indexMap:    Record<number, number>;
   setIndexMap: React.Dispatch<React.SetStateAction<Record<number, number>>>;
-  isLight: boolean;
+  isLight:     boolean;
+  adminProjectIds: Set<number>;
 };
 
-function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
-  const navigate = useNavigate();
-  const trackRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<Record<number, ReturnType<typeof setInterval> | undefined>>({});
+function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds }: RowProps) {
+  const navigate    = useNavigate();
+  const { editMode, removeProject } = useAdmin();
+  const trackRef    = useRef<HTMLDivElement>(null);
+  const timerRef    = useRef<Record<number, ReturnType<typeof setInterval> | undefined>>({});
 
   const startCycle = (id: number, total: number) => {
     if (timerRef.current[id]) return;
@@ -37,7 +93,7 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
   const nudge = (dir: 'left' | 'right') => {
     if (!trackRef.current) return;
     const card = trackRef.current.querySelector<HTMLElement>('.prj-card');
-    const gap = 24;
+    const gap  = 24;
     const amount = card ? card.offsetWidth + gap : 400;
     trackRef.current.scrollBy({ left: dir === 'right' ? amount : -amount, behavior: 'smooth' });
   };
@@ -63,15 +119,17 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
 
           <div className="prj-track" ref={trackRef}>
             {category.projects.map((project: ProjectData) => {
-              const idx = indexMap[project.id] ?? 0;
+              const idx        = indexMap[project.id] ?? 0;
+              const isAdminPrj = adminProjectIds.has(project.id);
+
               return (
                 <div
                   key={project.id}
-                  className={`prj-card${isLight ? ' prj-card-light' : ''}`}
-                  onClick={() => navigate(`/projects/${project.id}`)}
+                  className={`prj-card${isLight ? ' prj-card-light' : ''}${isAdminPrj && editMode ? ' prj-card-admin-edit' : ''}`}
+                  onClick={() => !editMode && navigate(`/projects/${project.id}`)}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && navigate(`/projects/${project.id}`)}
+                  onKeyDown={(e) => !editMode && e.key === 'Enter' && navigate(`/projects/${project.id}`)}
                 >
                   <div
                     className="prj-carousel"
@@ -88,9 +146,36 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
                         className={`prj-img${i === idx ? ' prj-img-active' : ''}`}
                       />
                     ))}
-                    <div className="prj-overlay">
-                      <span className="prj-overlay-text">View Project →</span>
-                    </div>
+
+                    {/* In edit mode, no hover overlay; admin-added cards show delete */}
+                    {!editMode && (
+                      <div className="prj-overlay">
+                        <span className="prj-overlay-text">View Project →</span>
+                      </div>
+                    )}
+
+                    {/* Delete button for admin-added projects */}
+                    {editMode && isAdminPrj && (
+                      <button
+                        className="prj-admin-delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (window.confirm(`Delete "${project.title}"?`)) {
+                            removeProject(project.id);
+                          }
+                        }}
+                        type="button"
+                        title="Delete this project"
+                      >
+                        ✕ Delete
+                      </button>
+                    )}
+
+                    {/* Admin badge on admin-added projects */}
+                    {isAdminPrj && (
+                      <div className="prj-admin-badge">Admin Added</div>
+                    )}
+
                     <div className="prj-dots">
                       {project.images.map((_, i) => (
                         <span key={i} className={`prj-dot${i === idx ? ' prj-dot-on' : ''}`} />
@@ -103,7 +188,7 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
                       <p className="prj-cat-badge">{project.category}</p>
                       <p className={`prj-title${isLight ? ' prj-title-on-light' : ''}`}>{project.title}</p>
                     </div>
-                    <div className="prj-arrow-icon">→</div>
+                    {!editMode && <div className="prj-arrow-icon">→</div>}
                   </div>
                 </div>
               );
@@ -116,12 +201,30 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight }: RowProps) {
   );
 }
 
-export default function Projects() {
+// ─────────────────────────────────────────────────────────────
+//  MAIN COMPONENT
+// ─────────────────────────────────────────────────────────────
+
+export default function Projects(): JSX.Element {
+  const { isAdmin, editMode, adminProjects } = useAdmin();
+  const [showModal, setShowModal] = useState(false);
+
+  const mergedCategories = mergeWithAdminProjects(CATEGORIES, adminProjects);
+  const adminProjectIds  = new Set(adminProjects.map(p => p.id));
+
   const init: Record<number, number> = {};
-  CATEGORIES.forEach((cat) => cat.projects.forEach((p) => { init[p.id] = 0; }));
+  mergedCategories.forEach(cat => cat.projects.forEach(p => { init[p.id] = 0; }));
   const [indexMap, setIndexMap] = useState<Record<number, number>>(init);
 
-  const activeCategories = CATEGORIES.filter((c) => c.projects.length > 0);
+  // Update indexMap when admin projects change
+  useEffect(() => {
+    const newInit: Record<number, number> = {};
+    mergedCategories.forEach(cat => cat.projects.forEach(p => { newInit[p.id] = 0; }));
+    setIndexMap(newInit);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminProjects.length]);
+
+  const activeCategories = mergedCategories.filter(c => c.projects.length > 0);
 
   return (
     <>
@@ -135,10 +238,25 @@ export default function Projects() {
             <span className="prj-ht-line">OUR</span>
             <span className="prj-ht-line prj-ht-accent">PROJECTS</span>
           </h1>
-          <p className="prj-hero-sub">
+          <EditableText
+            adminKey="projects.hero.sub"
+            tag="p"
+            className="prj-hero-sub"
+          >
             A portfolio of completed construction and renovation projects across
             the Philippines — from office fit-outs to large-scale electrical installations.
-          </p>
+          </EditableText>
+
+          {/* ── ADD PROJECT button (admin edit mode only) ── */}
+          {isAdmin && editMode && (
+            <button
+              className="prj-add-btn"
+              onClick={() => setShowModal(true)}
+              type="button"
+            >
+              + Add New Project
+            </button>
+          )}
         </div>
 
         <div className="prj-hero-stats">
@@ -166,10 +284,11 @@ export default function Projects() {
           indexMap={indexMap}
           setIndexMap={setIndexMap}
           isLight={i % 2 === 0}
+          adminProjectIds={adminProjectIds}
         />
       ))}
 
-      {/* Contact section reuses App.css classes */}
+      {/* Contact section */}
       <section className="contact-section" id="contact">
         <div className="contact-bg-image" />
         <div className="contact-bg-overlay" />
@@ -201,7 +320,52 @@ export default function Projects() {
         </div>
       </section>
 
+      {/* Add Project Modal */}
+      {showModal && <AddProjectModal onClose={() => setShowModal(false)} />}
+
       <style>{`
+        /* ─── Add Project Button ─── */
+        .prj-add-btn {
+          margin-top: 24px;
+          display: inline-flex; align-items: center; gap: 8px;
+          background: #6B0000; color: #FDF6EE;
+          border: 2px solid #6B0000;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px; font-weight: 700;
+          letter-spacing: 2px; text-transform: uppercase;
+          padding: 13px 28px; cursor: pointer;
+          transition: background 0.2s, color 0.2s;
+          animation: prjFadeUp 0.4s ease both;
+        }
+        .prj-add-btn:hover { background: transparent; color: #FDF6EE; }
+
+        /* ─── Admin project card decorations ─── */
+        .prj-card-admin-edit {
+          outline: 2px dashed rgba(107,0,0,0.4);
+          cursor: default !important;
+        }
+
+        .prj-admin-badge {
+          position: absolute; top: 8px; left: 8px;
+          background: #6B0000; color: #FDF6EE;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 9px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; padding: 3px 8px; z-index: 5;
+        }
+
+        .prj-admin-delete {
+          position: absolute; top: 8px; right: 8px;
+          background: rgba(18,0,0,0.85); color: #FDF6EE;
+          border: 1px solid rgba(253,246,238,0.3);
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+          text-transform: uppercase; padding: 5px 10px;
+          cursor: pointer; z-index: 10;
+          transition: background 0.2s;
+        }
+        .prj-admin-delete:hover { background: #6B0000; border-color: #6B0000; }
+
+        /* ─── Original styles (unchanged) ─── */
         .prj-hero {
           position: relative;
           display: flex;
@@ -280,13 +444,10 @@ export default function Projects() {
           background: rgba(253,246,238,0.14);
           margin-right: clamp(24px,4vw,52px); flex-shrink: 0;
         }
-
-        /* Sections */
         .prj-section { width: 100%; padding: clamp(52px,7vw,96px) 0; }
         .prj-section-dark  { background: #F0E6D6; }
         .prj-section-light { background: #FFFFFF; }
         .prj-section-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px,6vw,80px); }
-
         .prj-row-header { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; }
         .prj-cat-label {
           font-family: 'Barlow Condensed', sans-serif;
@@ -299,7 +460,6 @@ export default function Projects() {
           flex: 1; height: 1px;
           background: linear-gradient(to right, rgba(107,0,0,0.45), transparent);
         }
-
         .prj-scroll-area { position: relative; }
         .prj-track {
           display: flex; gap: 24px;
@@ -308,7 +468,6 @@ export default function Projects() {
           padding: 4px 2px 18px; scrollbar-width: none;
         }
         .prj-track::-webkit-scrollbar { display: none; }
-
         .prj-card {
           flex: 0 0 calc((100% - 48px) / 3);
           scroll-snap-align: start; min-width: 0;
@@ -332,7 +491,6 @@ export default function Projects() {
           border-color: rgba(107,0,0,0.32);
           box-shadow: 0 8px 32px rgba(107,0,0,0.10);
         }
-
         .prj-carousel {
           position: relative; width: 100%; padding-top: 70%;
           overflow: hidden; background: #E8D8C4; flex-shrink: 0;
@@ -343,7 +501,6 @@ export default function Projects() {
           opacity: 0; transition: opacity 0.55s ease-in-out; display: block;
         }
         .prj-img-active { opacity: 1; }
-
         .prj-overlay {
           position: absolute; inset: 0;
           background: rgba(107,0,0,0);
@@ -359,7 +516,6 @@ export default function Projects() {
           transition: opacity 0.25s, transform 0.25s;
         }
         .prj-card:hover .prj-overlay-text { opacity: 1; transform: translateY(0); }
-
         .prj-dots {
           position: absolute; bottom: 9px; left: 50%;
           transform: translateX(-50%);
@@ -372,7 +528,6 @@ export default function Projects() {
           transition: background 0.3s;
         }
         .prj-dot-on { background: #FDF6EE; }
-
         .prj-footer {
           display: flex; align-items: center;
           justify-content: space-between; gap: 12px;
@@ -398,7 +553,6 @@ export default function Projects() {
           white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
         .prj-title-on-light { color: #2C1810; }
-
         .prj-arrow-icon {
           flex-shrink: 0; width: 36px; height: 36px;
           border-radius: 50%; border: 1px solid rgba(107,0,0,0.38);
@@ -410,7 +564,6 @@ export default function Projects() {
         .prj-card:hover .prj-arrow-icon {
           background: #6B0000; border-color: #6B0000; color: #FDF6EE;
         }
-
         .prj-arrow {
           position: absolute; top: 33%; transform: translateY(-50%);
           z-index: 10; width: 42px; height: 42px; border-radius: 50%;
