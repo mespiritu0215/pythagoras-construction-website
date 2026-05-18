@@ -209,9 +209,9 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
   // Build the full list of selectable projects (static + admin-added)
   const allAvailable = useMemo(() => {
     const staticOnes = ALL_PROJECTS
-      .filter(p => !deletedProjectIds.includes(p.id))
+      .filter(p => !(deletedProjectIds ?? []).includes(p.id))
       .map(p => {
-        const ov = projectOverrides[String(p.id)];
+        const ov = projectOverrides?.[String(p.id)];
         return {
           id:       String(p.id),
           title:    ov?.title    ?? p.title,
@@ -219,7 +219,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
           category: (p as any).category ?? '',
         };
       });
-    const adminOnes = adminProjects.map(p => ({
+    const adminOnes = (adminProjects ?? []).map(p => ({
       id:       String(p.id),
       title:    p.title,
       cover:    p.cover,
@@ -230,7 +230,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
 
   // Initialise selection from Firestore or fall back to current FEATURED_PROJECTS
   const [selected, setSelected] = useState<string[]>(() =>
-    featuredProjectIds.length > 0
+    (featuredProjectIds?.length ?? 0) > 0
       ? featuredProjectIds
       : FEATURED_PROJECTS.map(p => String(p.id))
   );
@@ -464,15 +464,15 @@ function AppInner(): JSX.Element {
   // ── Compute which projects appear in "Recently Completed" ──
   // Falls back to FEATURED_PROJECTS if admin hasn't chosen yet.
   const displayedProjects = useMemo(() => {
-    if (featuredProjectIds.length === 0) return FEATURED_PROJECTS as any[];
+    if (!featuredProjectIds?.length) return FEATURED_PROJECTS as any[];
 
     // Build a lookup map of all available projects
     const allMap = new Map<string, any>();
     ALL_PROJECTS.forEach(p => allMap.set(String(p.id), { ...p }));
-    adminProjects.forEach(p => allMap.set(String(p.id), { ...p }));
+    (adminProjects ?? []).forEach(p => allMap.set(String(p.id), { ...p }));
 
     return featuredProjectIds
-      .filter(id => !deletedProjectIds.includes(Number(id)))
+      .filter(id => !(deletedProjectIds ?? []).includes(Number(id)))
       .map(id => {
         const p = allMap.get(id);
         if (!p) return null;
