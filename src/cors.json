@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://mespiritu0215.github.io"],
+    "method": ["GET", "POST", "PUT", "DELETE", "HEAD"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]
