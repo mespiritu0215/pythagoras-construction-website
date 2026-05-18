@@ -15,9 +15,10 @@ import { useNavigate }  from 'react-router-dom';
 import { CATEGORIES, CategoryGroup, ProjectData } from './Projectsdata';
 import { useAdmin, EditableText, AdminProject, ProjectOverride } from './AdminContext';
 import { AddProjectModal } from './AddProjectModal';
-import emailIcon from './email.png';
-import phoneIcon  from './phone.png';
-import clockIcon  from './clock.png';
+import emailIcon   from './email.png';
+import phoneIcon   from './phone.png';
+import clockIcon   from './clock.png';
+import heroBgImg   from './background.png';
 
 // ─────────────────────────────────────────────────────────────
 //  HELPERS
@@ -303,7 +304,7 @@ export default function Projects(): JSX.Element {
     <>
       {/* ── HERO ── */}
       <section className="prj-hero">
-        <div className="prj-hero-bg" />
+        <div className="prj-hero-bg" style={{ backgroundImage: `url(${heroBgImg})` }} />
         <div className="prj-hero-overlay" />
 
         <div className="prj-hero-content">
@@ -467,7 +468,6 @@ export default function Projects(): JSX.Element {
         }
         .prj-hero-bg {
           position: absolute; inset: 0;
-          background-image: url('background.png');
           background-size: cover; background-position: center 60%;
         }
         .prj-hero-overlay {
