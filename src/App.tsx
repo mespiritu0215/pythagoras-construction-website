@@ -1,16 +1,18 @@
 /**
- * App.tsx  (Updated for admin system)
+ * App.tsx  (v3 — admin fixes)
  *
- * Changes from original:
- *  - <AdminProvider> wraps the entire app so all pages share admin state
- *  - <AdminBar> is placed inside the Router so it renders on every route
- *  - "Who We Are" section: heading, description, and both images are editable
- *  - "About Strip" section: heading, description, and team image are editable
- *  - All hero slide text/animations and routing are unchanged
+ * Fixes:
+ *  - AppInner now calls useAdmin() so edit-mode state is accessible
+ *  - "Recently Completed" projects are driven by featuredProjectIds from
+ *    Firestore — admin can choose which projects appear via a picker modal
+ *  - About-strip description is now editable (split into company name
+ *    bold span + EditableText for the rest)
+ *  - Contact section labels/values wrapped with EditableText
+ *  - useMemo added to efficiently derive displayedProjects
  */
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import React, { useState, useEffect, useRef, JSX } from 'react';
+import React, { useState, useEffect, useRef, useMemo, JSX } from 'react';
 import logo from './logo.png';
 import './App.css';
 import emailIcon from './email.png';
@@ -30,7 +32,7 @@ import HeroImg4 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import HeroImg5 from "./CompletedProjects/pages/TEAMBUILDING.png";
 
 import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
-import { AdminProvider, EditableText, EditableImage } from './AdminContext';
+import { AdminProvider, EditableText, EditableImage, useAdmin } from './AdminContext';
 import { AdminBar } from './AdminBar';
 
 const firebaseConfig = {
@@ -70,7 +72,7 @@ function ScrollToTop(): null {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  HERO SECTION (unchanged from original)
+//  HERO SECTION (unchanged)
 // ─────────────────────────────────────────────────────────────
 
 function HeroSection() {
@@ -189,12 +191,267 @@ function HeroSection() {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  APP
+//  FEATURED PROJECT PICKER MODAL
+//  Lets admin choose which projects appear in the "Recently
+//  Completed" section on the homepage. Selection is persisted
+//  to Firestore via setFeaturedProjectIds.
+// ─────────────────────────────────────────────────────────────
+
+function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
+  const {
+    adminProjects,
+    deletedProjectIds,
+    projectOverrides,
+    featuredProjectIds,
+    setFeaturedProjectIds,
+  } = useAdmin();
+
+  // Build the full list of selectable projects (static + admin-added)
+  const allAvailable = useMemo(() => {
+    const staticOnes = ALL_PROJECTS
+      .filter(p => !deletedProjectIds.includes(p.id))
+      .map(p => {
+        const ov = projectOverrides[String(p.id)];
+        return {
+          id:       String(p.id),
+          title:    ov?.title    ?? p.title,
+          cover:    ov?.cover    ?? p.cover,
+          category: (p as any).category ?? '',
+        };
+      });
+    const adminOnes = adminProjects.map(p => ({
+      id:       String(p.id),
+      title:    p.title,
+      cover:    p.cover,
+      category: p.category,
+    }));
+    return [...staticOnes, ...adminOnes];
+  }, [adminProjects, deletedProjectIds, projectOverrides]);
+
+  // Initialise selection from Firestore or fall back to current FEATURED_PROJECTS
+  const [selected, setSelected] = useState<string[]>(() =>
+    featuredProjectIds.length > 0
+      ? featuredProjectIds
+      : FEATURED_PROJECTS.map(p => String(p.id))
+  );
+  const [saving, setSaving] = useState(false);
+
+  const toggle = (id: string) => {
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await setFeaturedProjectIds(selected);
+      onClose();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // Close on backdrop click
+  const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div
+      onClick={handleBackdrop}
+      style={{
+        position:       'fixed', inset: 0,
+        background:     'rgba(18,0,0,0.88)',
+        zIndex:         99998,
+        display:        'flex',
+        alignItems:     'center',
+        justifyContent: 'center',
+        padding:        '20px',
+        overflowY:      'auto',
+      }}
+    >
+      <div style={{
+        background:   '#FDF6EE',
+        maxWidth:     960,
+        width:        '100%',
+        maxHeight:    '88vh',
+        overflowY:    'auto',
+        padding:      '32px',
+        fontFamily:   'Barlow Condensed, sans-serif',
+        position:     'relative',
+      }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+          <div>
+            <h2 style={{
+              fontFamily:    'Bebas Neue, sans-serif',
+              fontSize:      36, color: '#2C1810',
+              margin:        '0 0 6px', letterSpacing: 2,
+            }}>
+              CHOOSE FEATURED PROJECTS
+            </h2>
+            <p style={{ color: 'rgba(44,24,16,0.55)', fontSize: 13, margin: 0, letterSpacing: 1 }}>
+              {selected.length} selected · These appear in the "Recently Completed" section on the homepage
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'none', border: 'none',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
+              lineHeight: 1, padding: '4px 8px', flexShrink: 0,
+            }}
+            aria-label="Close"
+          >✕</button>
+        </div>
+
+        {/* Project grid */}
+        {allAvailable.length === 0 ? (
+          <p style={{ color: 'rgba(44,24,16,0.5)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
+            No projects available yet.
+          </p>
+        ) : (
+          <div style={{
+            display:             'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap:                 16,
+            marginBottom:        28,
+          }}>
+            {allAvailable.map(p => {
+              const isSel = selected.includes(p.id);
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => toggle(p.id)}
+                  style={{
+                    cursor:      'pointer',
+                    border:      isSel ? '3px solid #6B0000' : '2px solid rgba(107,0,0,0.15)',
+                    borderRadius: 2,
+                    overflow:    'hidden',
+                    position:    'relative',
+                    transition:  'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow:   isSel ? '0 4px 16px rgba(107,0,0,0.20)' : 'none',
+                    userSelect:  'none',
+                  }}
+                >
+                  {/* Cover image */}
+                  <div style={{ position: 'relative', paddingTop: '65%' }}>
+                    <img
+                      src={p.cover}
+                      alt={p.title}
+                      style={{
+                        position: 'absolute', inset: 0,
+                        width: '100%', height: '100%', objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                    {/* Selection overlay */}
+                    {isSel && (
+                      <div style={{
+                        position:       'absolute', inset: 0,
+                        background:     'rgba(107,0,0,0.38)',
+                        display:        'flex',
+                        alignItems:     'center',
+                        justifyContent: 'center',
+                      }}>
+                        <div style={{
+                          width:          32, height: 32,
+                          borderRadius:   '50%',
+                          background:     '#6B0000',
+                          color:          '#FDF6EE',
+                          display:        'flex',
+                          alignItems:     'center',
+                          justifyContent: 'center',
+                          fontSize:       18, fontWeight: 700,
+                        }}>✓</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  <div style={{
+                    padding:    '8px 10px 10px',
+                    background: isSel ? 'rgba(107,0,0,0.04)' : '#FFFFFF',
+                  }}>
+                    <p style={{
+                      fontSize:      10, letterSpacing: 2,
+                      color:         '#6B0000', margin: '0 0 2px',
+                      textTransform: 'uppercase',
+                    }}>{p.category}</p>
+                    <p style={{
+                      fontSize:     13, fontWeight: 700,
+                      color:        '#2C1810', margin: 0,
+                      letterSpacing: 0.5,
+                      whiteSpace:   'nowrap', overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}>{p.title}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => setSelected(FEATURED_PROJECTS.map(p => String(p.id)))}
+            style={{
+              background: 'transparent', border: '1px solid rgba(107,0,0,0.3)',
+              color: 'rgba(44,24,16,0.6)', fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
+              padding: '10px 20px', cursor: 'pointer',
+            }}
+            type="button"
+          >Reset to Default</button>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'transparent', border: '1px solid rgba(107,0,0,0.4)',
+              color: 'rgba(44,24,16,0.7)', fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
+              padding: '10px 24px', cursor: 'pointer',
+            }}
+            type="button"
+          >Cancel</button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            style={{
+              background: saving ? 'rgba(107,0,0,0.6)' : '#6B0000',
+              border: '1px solid #6B0000',
+              color: '#FDF6EE', fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
+              padding: '10px 28px', cursor: saving ? 'wait' : 'pointer',
+              transition: 'background 0.2s',
+            }}
+            type="button"
+          >{saving ? 'Saving…' : 'Save Selection'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+//  APP INNER
 // ─────────────────────────────────────────────────────────────
 
 function AppInner(): JSX.Element {
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+  const [showPicker, setShowPicker] = useState(false);
+
+  // Pull admin state so the home page can react to edit mode
+  const {
+    isAdmin,
+    editMode,
+    featuredProjectIds,
+    deletedProjectIds,
+    projectOverrides,
+    adminProjects,
+  } = useAdmin();
 
   useEffect(() => {
     const onScroll = (): void => setScrolled(window.scrollY > 40);
@@ -203,6 +460,36 @@ function AppInner(): JSX.Element {
   }, []);
 
   const closeMenu = (): void => setMenuOpen(false);
+
+  // ── Compute which projects appear in "Recently Completed" ──
+  // Falls back to FEATURED_PROJECTS if admin hasn't chosen yet.
+  const displayedProjects = useMemo(() => {
+    if (featuredProjectIds.length === 0) return FEATURED_PROJECTS as any[];
+
+    // Build a lookup map of all available projects
+    const allMap = new Map<string, any>();
+    ALL_PROJECTS.forEach(p => allMap.set(String(p.id), { ...p }));
+    adminProjects.forEach(p => allMap.set(String(p.id), { ...p }));
+
+    return featuredProjectIds
+      .filter(id => !deletedProjectIds.includes(Number(id)))
+      .map(id => {
+        const p = allMap.get(id);
+        if (!p) return null;
+        // Apply any field overrides for static projects
+        const ov = projectOverrides[id];
+        if (ov) {
+          return {
+            ...p,
+            ...Object.fromEntries(
+              Object.entries(ov).filter(([, v]) => v !== undefined)
+            ),
+          };
+        }
+        return p;
+      })
+      .filter(Boolean);
+  }, [featuredProjectIds, deletedProjectIds, projectOverrides, adminProjects]);
 
   return (
     <div className="App">
@@ -246,7 +533,7 @@ function AppInner(): JSX.Element {
             <>
               <HeroSection />
 
-              {/* WHO WE ARE — heading + desc editable, both images replaceable */}
+              {/* WHO WE ARE */}
               <section className="who-section">
                 <div className="who-inner">
                   <div className="who-text">
@@ -293,17 +580,47 @@ function AppInner(): JSX.Element {
                 </div>
               </section>
 
-              {/* RECENTLY COMPLETED PROJECTS (unchanged) */}
+              {/* RECENTLY COMPLETED PROJECTS */}
               <section className="projects-section">
                 <div className="projects-header">
                   <div>
                     <p className="section-tag muted">OUR PROJECTS</p>
                     <h2 className="projects-heading">RECENTLY COMPLETED PROJECTS</h2>
                   </div>
-                  <Link to="/projects" className="btn-outline-maroon">ALL PROJECTS →</Link>
+                  {/* Row: "Choose Projects" button (edit mode) + "All Projects" link */}
+                  <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                    {isAdmin && editMode && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPicker(true)}
+                        style={{
+                          background:    'transparent',
+                          border:        '1px solid #6B0000',
+                          color:         '#6B0000',
+                          fontFamily:    'Barlow Condensed, sans-serif',
+                          fontSize:      11, fontWeight: 700,
+                          letterSpacing: 2, textTransform: 'uppercase',
+                          padding:       '9px 18px', cursor: 'pointer',
+                          transition:    'background 0.2s, color 0.2s',
+                        }}
+                        onMouseEnter={e => {
+                          (e.currentTarget as HTMLButtonElement).style.background = '#6B0000';
+                          (e.currentTarget as HTMLButtonElement).style.color = '#FDF6EE';
+                        }}
+                        onMouseLeave={e => {
+                          (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                          (e.currentTarget as HTMLButtonElement).style.color = '#6B0000';
+                        }}
+                      >
+                        ⚙ Choose Projects
+                      </button>
+                    )}
+                    <Link to="/projects" className="btn-outline-maroon">ALL PROJECTS →</Link>
+                  </div>
                 </div>
+
                 <div className="projects-grid">
-                  {FEATURED_PROJECTS.map((proj) => (
+                  {displayedProjects.map((proj: any) => (
                     <Link key={proj.id} to={`/projects/${proj.id}`} className="project-card">
                       <img src={proj.cover} alt={proj.title} />
                       <div className="project-card-overlay">
@@ -317,7 +634,7 @@ function AppInner(): JSX.Element {
                 </div>
               </section>
 
-              {/* ABOUT STRIP — heading + desc editable, team image replaceable */}
+              {/* ABOUT STRIP */}
               <section className="about-strip">
                 <div className="about-strip-inner">
                   <div className="about-strip-img">
@@ -339,48 +656,66 @@ function AppInner(): JSX.Element {
                     >
                       Pythagoras Construction Company, Inc.
                     </EditableText>
+                    {/* Description: company name stays bold, rest is editable */}
                     <p className="about-strip-desc">
-                      {/* The bold span makes this non-trivially editable — left as static */}
-                      <span className="bold-text">Pythagoras Construction, Inc.</span> is a SEC-registered
-                      general contracting firm established in 1993, providing construction and allied
-                      maintenance services to private clients. We deliver comprehensive solutions from
-                      planning and cost estimation to project execution and supervision, backed by a
-                      skilled professional team and over 100 construction workers. Formerly a single
-                      proprietorship, the company is now a PCAB-licensed corporation classified under
-                      General "A."
+                      <span className="bold-text">Pythagoras Construction, Inc.</span>{' '}
+                      <EditableText adminKey="home.about.desc" tag="span">
+                        is a SEC-registered general contracting firm established in 1993, providing
+                        construction and allied maintenance services to private clients. We deliver
+                        comprehensive solutions from planning and cost estimation to project execution
+                        and supervision, backed by a skilled professional team and over 100 construction
+                        workers. Formerly a single proprietorship, the company is now a PCAB-licensed
+                        corporation classified under General "A."
+                      </EditableText>
                     </p>
                     <Link to="/about" className="btn-primary btn-dark">About Us</Link>
                   </div>
                 </div>
               </section>
 
-              {/* CONTACT (unchanged) */}
+              {/* CONTACT */}
               <section className="contact-section" id="contact">
                 <div className="contact-bg-image" />
                 <div className="contact-bg-overlay" />
                 <div className="contact-inner">
                   <p className="section-tag light" style={{ textAlign: 'center' }}>GET IN TOUCH</p>
-                  <h2 className="contact-heading">Contact Us Today</h2>
-                  <p className="contact-sub">
+                  <EditableText adminKey="home.contact.heading" tag="h2" className="contact-heading">
+                    Contact Us Today
+                  </EditableText>
+                  <EditableText adminKey="home.contact.sub" tag="p" className="contact-sub">
                     Let's bring your vision to life together. Reach out to discuss your next project.
-                  </p>
+                  </EditableText>
                   <div className="contact-cards">
                     <div className="contact-card contact-card-wide">
                       <img src={emailIcon} alt="Email" className="contact-icon" />
                       <p className="contact-card-label">Email Us At</p>
-                      <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">pci1051@yahoo.com.ph</a>
-                      <p className="contact-card-note">We reply within 24 hours</p>
+                      <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">
+                        <EditableText adminKey="home.contact.email" tag="span">
+                          pci1051@yahoo.com.ph
+                        </EditableText>
+                      </a>
+                      <EditableText adminKey="home.contact.email.note" tag="p" className="contact-card-note">
+                        We reply within 24 hours
+                      </EditableText>
                     </div>
                     <div className="contact-card">
                       <img src={phoneIcon} alt="Phone" className="contact-icon" />
-                      <p className="contact-card-label">Have Any Questions?</p>
-                      <p className="contact-card-value">(046) 894-9518</p>
-                      <p className="contact-card-value">+63 927 572 4505 (Mobile)</p>
+                      <EditableText adminKey="home.contact.phone.label" tag="p" className="contact-card-label">
+                        Have Any Questions?
+                      </EditableText>
+                      <EditableText adminKey="home.contact.phone1" tag="p" className="contact-card-value">
+                        (046) 894-9518
+                      </EditableText>
+                      <EditableText adminKey="home.contact.phone2" tag="p" className="contact-card-value">
+                        +63 927 572 4505 (Mobile)
+                      </EditableText>
                     </div>
                     <div className="contact-card">
                       <img src={clockIcon} alt="Hours" className="contact-icon" />
                       <p className="contact-card-label">Working Hours</p>
-                      <p className="contact-card-value">Mon – Sat<br />8:00 AM – 5:00 PM</p>
+                      <EditableText adminKey="home.contact.hours" tag="p" className="contact-card-value">
+                        Mon – Sat · 8:00 AM – 5:00 PM
+                      </EditableText>
                     </div>
                   </div>
                 </div>
@@ -397,7 +732,7 @@ function AppInner(): JSX.Element {
         </Routes>
       </main>
 
-      {/* ── FOOTER (unchanged) ── */}
+      {/* ── FOOTER ── */}
       <footer className="site-footer">
         <div className="footer-main">
           <div className="footer-brand">
@@ -410,15 +745,23 @@ function AppInner(): JSX.Element {
           <div className="footer-info">
             <div className="footer-info-item">
               <div className="footer-label">Address</div>
-              <div>B9 L15 Niog Rd. Meadowood Executive Village, Bacoor Cavite</div>
+              <EditableText adminKey="footer.address" tag="div">
+                B9 L15 Niog Rd. Meadowood Executive Village, Bacoor Cavite
+              </EditableText>
             </div>
             <div className="footer-info-item">
               <div className="footer-label">Telephone</div>
-              <div>(046) 894-9518 / (046) 238-4166</div>
+              <EditableText adminKey="footer.telephone" tag="div">
+                (046) 894-9518 / (046) 238-4166
+              </EditableText>
             </div>
             <div className="footer-info-item">
               <div className="footer-label">Email</div>
-              <a href="mailto:pci1051@yahoo.com.ph">pci1051@yahoo.com.ph</a>
+              <a href="mailto:pci1051@yahoo.com.ph">
+                <EditableText adminKey="footer.email" tag="span">
+                  pci1051@yahoo.com.ph
+                </EditableText>
+              </a>
             </div>
           </div>
         </div>
@@ -427,15 +770,18 @@ function AppInner(): JSX.Element {
         </div>
       </footer>
 
-      {/* ── ADMIN BAR (fixed bottom, admin-only) ── */}
+      {/* ── ADMIN BAR ── */}
       <AdminBar />
+
+      {/* ── FEATURED PROJECT PICKER MODAL ── */}
+      {showPicker && <FeaturedProjectPicker onClose={() => setShowPicker(false)} />}
 
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-//  ROOT — wrap everything in AdminProvider
+//  ROOT
 // ─────────────────────────────────────────────────────────────
 
 function App(): JSX.Element {
