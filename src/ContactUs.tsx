@@ -12,8 +12,6 @@
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import emailjs from '@emailjs/browser';
 import { useAdmin } from './AdminContext';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from './firebase';
 
 /* ─────────────────────────────────────────────────────────────
    TYPES
@@ -346,12 +344,9 @@ export default function ContactUs(): JSX.Element {
 
       window.google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
-        callback: async (response: { credential: string }) => {
+        callback: (response: { credential: string }) => {
           try {
             const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            // ── Sign into Firebase Auth so Storage rules see request.auth ──
-            const firebaseCred = GoogleAuthProvider.credential(response.credential);
-            await signInWithCredential(auth, firebaseCred);
             // ── Set user in AdminContext (shared globally) ──────
             setUser({
               name:    payload.name    ?? '',

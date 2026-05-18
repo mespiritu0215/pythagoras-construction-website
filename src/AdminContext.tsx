@@ -31,8 +31,7 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage';
-import { db, storage, auth } from './firebase';
-import { signOut as firebaseSignOut } from 'firebase/auth';
+import { db, storage } from './firebase';
 
 // ─────────────────────────────────────────────────────────────
 //  TYPES
@@ -174,10 +173,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const setUser = useCallback((u: GoogleUser | null) => {
     setUserRaw(u);
     writeUserCache(u);
-    if (!u) {
-      setEditMode(false);
-      firebaseSignOut(auth).catch(() => {});
-    }
+    if (!u) setEditMode(false);
   }, []);
 
   // ── Real-time Firestore listeners ──────────────────────────
