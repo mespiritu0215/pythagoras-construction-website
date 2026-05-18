@@ -8,7 +8,8 @@
  *  - "About Strip" section: heading, description, and team image are editable
  *  - All hero slide text/animations and routing are unchanged
  */
-
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import logo from './logo.png';
 import './App.css';
@@ -22,18 +23,30 @@ import Contact    from './ContactUs';
 import ProjectDetails from './ProjectDetails';
 import { HashRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import TEAMBUILDING from "./CompletedProjects/pages/TEAMBUILDING.png";
-
-import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
-import { AdminProvider, EditableText, EditableImage } from './AdminContext';
-import { AdminBar } from './AdminBar';
-
-// ── Hero showcase images ─────────────────────────────────────
 import HeroImg1 from "./CompletedProjects/NCDCORMOC/NCDC1.png";
 import HeroImg2 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres1.png";
 import HeroImg3 from "./CompletedProjects/BADOC/Badoc1.png";
 import HeroImg4 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import HeroImg5 from "./CompletedProjects/pages/TEAMBUILDING.png";
 
+import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
+import { AdminProvider, EditableText, EditableImage } from './AdminContext';
+import { AdminBar } from './AdminBar';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2H-AoQapaapnjz0ApdTPBIBWSCY9kTeo",
+  authDomain: "pci-website-ffd0a.firebaseapp.com",
+  projectId: "pci-website-ffd0a",
+  storageBucket: "pci-website-ffd0a.firebasestorage.app",
+  messagingSenderId: "456963084749",
+  appId: "1:456963084749:web:0adedcf546dec892f9b484",
+  measurementId: "G-NDR19V6EV8"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+// ── Hero showcase images ─────────────────────────────────────
 const HERO_SLIDES = [
   { img: HeroImg2, label: "Architectural",      title: "San Andres POI Festoon", sub: "San Andres, Catanduanes" },
   { img: HeroImg3, label: "Architectural",      title: "Badoc POI Festoon",      sub: "Badoc, Ilocos Norte" },

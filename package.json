@@ -13,6 +13,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
+    "firebase": "^12.13.0",
     "framer-motion": "^12.37.0",
     "lucide-react": "^0.577.0",
     "react": "^19.2.4",
