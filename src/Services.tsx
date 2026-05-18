@@ -93,14 +93,20 @@ function Carousel({ images, adminKeyBase }: CarouselProps): JSX.Element {
     >
       {images.map((img, i) => {
         // Use admin override if available, else original
-        const adminKey  = `${adminKeyBase}.${i}`;
+        const adminKey   = `${adminKeyBase}.${i}`;
         const displaySrc = getImg(adminKey) ?? img;
+        const isActive   = i === current;
 
         return editMode ? (
-          // In edit mode, wrap each image with EditableImage
+          // In edit mode: only the visible slide receives pointer events
           <div
             key={i}
-            style={{ position: 'absolute', inset: 0, opacity: i === current ? 1 : 0, transition: 'opacity 0.6s ease-in-out' }}
+            style={{
+              position: 'absolute', inset: 0,
+              opacity: isActive ? 1 : 0,
+              transition: 'opacity 0.6s ease-in-out',
+              pointerEvents: isActive ? 'auto' : 'none',
+            }}
           >
             <EditableImage
               adminKey={adminKey}
@@ -115,7 +121,7 @@ function Carousel({ images, adminKeyBase }: CarouselProps): JSX.Element {
             key={i}
             src={displaySrc}
             alt=""
-            className={`srv-carousel-img${i === current ? ' active' : ''}`}
+            className={`srv-carousel-img${isActive ? ' active' : ''}`}
           />
         );
       })}
@@ -136,6 +142,88 @@ function Carousel({ images, adminKeyBase }: CarouselProps): JSX.Element {
         ))}
       </div>
     </div>
+  );
+}
+
+
+// ─────────────────────────────────────────────────────────────
+//  ADD SERVICE ITEM  (edit mode only)
+//  Persists extra items per category to Firestore via getText/setText.
+// ─────────────────────────────────────────────────────────────
+
+function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
+  const { getText, setText } = useAdmin();
+  const [inputVal, setInputVal] = React.useState('');
+
+  const extraKey  = `srv.${svcN}.extra_items`;
+  const rawExtra  = getText(extraKey, '[]');
+  let extraItems: string[] = [];
+  try { extraItems = JSON.parse(rawExtra); } catch { extraItems = []; }
+
+  const addItem = () => {
+    if (!inputVal.trim()) return;
+    setText(extraKey, JSON.stringify([...extraItems, inputVal.trim()]));
+    setInputVal('');
+  };
+
+  const removeItem = (idx: number) => {
+    setText(extraKey, JSON.stringify(extraItems.filter((_, i) => i !== idx)));
+  };
+
+  const listColor  = isDark ? 'rgba(253,246,238,0.80)' : '#2C1810';
+  const inputBg    = isDark ? 'rgba(255,255,255,0.08)' : '#fff';
+  const inputBorder = isDark ? 'rgba(253,246,238,0.25)' : 'rgba(107,0,0,0.25)';
+
+  return (
+    <>
+      {/* Admin-added extra items */}
+      {extraItems.map((item, idx) => (
+        <li key={`extra-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ color: listColor, flex: 1 }}>{item}</span>
+          <button
+            type="button"
+            onClick={() => removeItem(idx)}
+            style={{
+              background: 'rgba(107,0,0,0.15)', border: '1px solid rgba(107,0,0,0.3)',
+              color: '#6B0000', cursor: 'pointer', borderRadius: 2,
+              fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11,
+              fontWeight: 700, padding: '2px 7px', flexShrink: 0,
+            }}
+          >
+            ✕
+          </button>
+        </li>
+      ))}
+
+      {/* Add-new input row */}
+      <li style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
+        <input
+          type="text"
+          value={inputVal}
+          onChange={e => setInputVal(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && addItem()}
+          placeholder="Add new service item…"
+          style={{
+            flex: 1, background: inputBg,
+            border: `1px dashed ${inputBorder}`,
+            color: listColor, fontFamily: 'Barlow, sans-serif',
+            fontSize: 14, padding: '7px 10px', outline: 'none',
+          }}
+        />
+        <button
+          type="button"
+          onClick={addItem}
+          style={{
+            background: '#6B0000', color: '#FDF6EE', border: 'none',
+            fontFamily: 'Barlow Condensed, sans-serif', fontSize: 12,
+            fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
+            padding: '8px 14px', cursor: 'pointer', flexShrink: 0,
+          }}
+        >
+          + Add
+        </button>
+      </li>
+    </>
   );
 }
 
@@ -303,6 +391,9 @@ export default function Services(): JSX.Element {
                       </EditableText>
                     </li>
                   ))}
+                  {editMode && (
+                    <AddServiceItem svcN={svc.n} isDark={svc.dark} />
+                  )}
                 </ul>
               </div>
 

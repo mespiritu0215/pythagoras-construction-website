@@ -11,7 +11,7 @@
 
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import emailjs from '@emailjs/browser';
-import { useAdmin } from './AdminContext';
+import { useAdmin, EditableText } from './AdminContext';
 
 /* ─────────────────────────────────────────────────────────────
    TYPES
@@ -299,7 +299,7 @@ const css = `
 ───────────────────────────────────────────────────────────── */
 export default function ContactUs(): JSX.Element {
   // ── Admin context ──────────────────────────────────────────
-  const { user: adminUser, setUser: setAdminUser, isAdmin } = useAdmin();
+  const { user: adminUser, setUser: setAdminUser, isAdmin, editMode } = useAdmin();
 
   // ── Local state (derives user from adminContext) ───────────
   const user     = adminUser;
@@ -470,21 +470,21 @@ export default function ContactUs(): JSX.Element {
 
         {/* LEFT */}
         <div className="cu-left">
-          <p className="cu-tag">Get In Touch</p>
+          <EditableText adminKey="contact.tag" tag="p" className="cu-tag">Get In Touch</EditableText>
           <h1 className="cu-heading">
             LET'S BUILD<br />
             SOMETHING<br />
             <span>GREAT.</span>
           </h1>
-          <p className="cu-desc">
+          <EditableText adminKey="contact.hero.desc" tag="p" className="cu-desc">
             Whether you're pursuing a career in construction or planning your next project,
             we're here to help. Reach out and one of our team members will get back to you promptly.
-          </p>
+          </EditableText>
           <div className="cu-info-list">
             <div className="cu-info-item">
               <div className="cu-info-icon">{IconEmail}</div>
               <div>
-                <p className="cu-info-text-label">Email Us At</p>
+                <EditableText adminKey="contact.info.email.label" tag="p" className="cu-info-text-label">Email Us At</EditableText>
                 <p className="cu-info-text-value">
                   <a href="mailto:pci1051@yahoo.com.ph">pci1051@yahoo.com.ph</a>
                 </p>
@@ -493,16 +493,16 @@ export default function ContactUs(): JSX.Element {
             <div className="cu-info-item">
               <div className="cu-info-icon">{IconPhone}</div>
               <div>
-                <p className="cu-info-text-label">Phone</p>
-                <p className="cu-info-text-value">(046) 894-9518 / (046) 238-4166</p>
-                <p className="cu-info-text-value">+63 927 572 4505 (Mobile)</p>
+                <EditableText adminKey="contact.info.phone.label" tag="p" className="cu-info-text-label">Phone</EditableText>
+                <EditableText adminKey="contact.info.phone.1" tag="p" className="cu-info-text-value">(046) 894-9518 / (046) 238-4166</EditableText>
+                <EditableText adminKey="contact.info.phone.2" tag="p" className="cu-info-text-value">+63 927 572 4505 (Mobile)</EditableText>
               </div>
             </div>
             <div className="cu-info-item">
               <div className="cu-info-icon">{IconClock}</div>
               <div>
-                <p className="cu-info-text-label">Working Hours</p>
-                <p className="cu-info-text-value">Mon – Sat &nbsp;·&nbsp; 8:00 AM – 5:00 PM</p>
+                <EditableText adminKey="contact.info.hours.label" tag="p" className="cu-info-text-label">Working Hours</EditableText>
+                <EditableText adminKey="contact.info.hours.value" tag="p" className="cu-info-text-value">Mon – Sat  ·  8:00 AM – 5:00 PM</EditableText>
               </div>
             </div>
           </div>
@@ -514,11 +514,11 @@ export default function ContactUs(): JSX.Element {
           {!user && (
             <div className="cu-auth-gate">
               <div className="cu-auth-lock">{IconLock}</div>
-              <h2 className="cu-auth-title">Sign In to Continue</h2>
-              <p className="cu-auth-sub">
+              <EditableText adminKey="contact.auth.title" tag="h2" className="cu-auth-title">Sign In to Continue</EditableText>
+              <EditableText adminKey="contact.auth.sub" tag="p" className="cu-auth-sub">
                 We require a Google account to verify your identity before submitting
                 a message to our team.
-              </p>
+              </EditableText>
               <div className="cu-google-btn-wrap">
                 <div ref={googleBtnRef} id="cu-google-btn-rendered" />
               </div>

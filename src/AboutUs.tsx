@@ -11,7 +11,7 @@
  *  - All original animation, award slider, and layout logic is unchanged
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import "./AboutUs.css";
 import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import NCDC5 from "./CompletedProjects/NCDCORMOC/NCDC5.png";
@@ -31,7 +31,7 @@ import award7 from './Awards/award7.png';
 import award8 from './Awards/award8.png';
 import award9 from './Awards/award9.png';
 
-import { useAdmin, EditableText, EditableImage } from './AdminContext';
+import { useAdmin, EditableText, EditableImage, uploadToStorage } from './AdminContext';
 
 // ─────────────────────────────────────────────────────────────
 //  DATA
@@ -65,13 +65,67 @@ const DEFAULT_VALUES = [
 // ─────────────────────────────────────────────────────────────
 
 function AboutUs() {
-  const { getText } = useAdmin();
+  const { getText, setText, editMode, isAdmin, uploading: adminUploading } = useAdmin();
+
+  // ── Awards state (static defaults + admin-added, minus admin-removed) ──
+  const staticAwards = [award1, award2, award3, award4, award5, award6, award7, award8, award9];
+
+  const getRemovedIndices = (): number[] => {
+    try { return JSON.parse(getText('about.awards.removed', '[]')); } catch { return []; }
+  };
+  const getExtraAwardUrls = (): string[] => {
+    try { return JSON.parse(getText('about.awards.extra', '[]')); } catch { return []; }
+  };
+
+  const removedIndices = getRemovedIndices();
+  const extraAwardUrls = getExtraAwardUrls();
+
+  const allAwards: string[] = [
+    ...staticAwards.filter((_, i) => !removedIndices.includes(i)),
+    ...extraAwardUrls,
+  ];
+
+  const [awardUploading, setAwardUploading] = useState(false);
+  const awardFileRef = useRef<HTMLInputElement>(null);
+
+  const handleAddAward = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setAwardUploading(true);
+    try {
+      const url = await uploadToStorage(`images/awards/${Date.now()}`, file);
+      const current = getExtraAwardUrls();
+      await setText('about.awards.extra', JSON.stringify([...current, url]));
+    } catch (err) {
+      alert('Upload failed: ' + (err as Error).message);
+    } finally {
+      setAwardUploading(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getText, setText]);
+
+  const handleRemoveAward = useCallback(async (displayIndex: number) => {
+    if (!window.confirm('Remove this award?')) return;
+    // displayIndex is index in allAwards; map back to static or extra
+    const keptStatic = staticAwards.map((_, i) => i).filter(i => !removedIndices.includes(i));
+    if (displayIndex < keptStatic.length) {
+      // It's a static award
+      const staticIdx = keptStatic[displayIndex];
+      await setText('about.awards.removed', JSON.stringify([...removedIndices, staticIdx]));
+    } else {
+      // It's an extra award
+      const extraIdx = displayIndex - keptStatic.length;
+      const current  = getExtraAwardUrls();
+      await setText('about.awards.extra', JSON.stringify(current.filter((_, i) => i !== extraIdx)));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getText, setText, removedIndices]);
 
   const heroSliderImages = [NCDC6, NCDC5, NCDC2];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeValue, setActiveValue]   = useState(0);
 
-  const awardImages = [award1, award2, award3, award4, award5, award6, award7, award8, award9];
   const [awardIndex,  setAwardIndex]  = useState(0);
   const [awardPaused, setAwardPaused] = useState(false);
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
@@ -79,7 +133,7 @@ function AboutUs() {
   const dragStartX = useRef(0);
   const dragDelta  = useRef(0);
   const visibleCount  = 3;
-  const maxAwardIndex = awardImages.length - visibleCount;
+  const maxAwardIndex = allAwards.length - visibleCount;
 
   const prevAward = () => setAwardIndex((prev) => Math.max(prev - 1, 0));
   const nextAward = () => setAwardIndex((prev) => Math.min(prev + 1, maxAwardIndex));
@@ -196,7 +250,11 @@ function AboutUs() {
                   src={img}
                   alt={`Project ${i + 1}`}
                   imgStyle={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  style={{ flexShrink: 0, width: '100%', height: '100%' }}
+                  style={{
+                    flexShrink: 0, width: '100%', height: '100%',
+                    // Only the visible slide should be interactive in edit mode
+                    pointerEvents: i === currentIndex ? 'auto' : 'none',
+                  }}
                 />
               ))}
             </div>
@@ -402,17 +460,17 @@ function AboutUs() {
             <div className="abt-awards-progress-bar">
               <div
                 className="abt-awards-progress-fill"
-                style={{ width: `${((awardIndex + visibleCount) / awardImages.length) * 100}%` }}
+                style={{ width: `${((awardIndex + visibleCount) / allAwards.length) * 100}%` }}
               />
             </div>
 
             <div className="abt-awards-controls">
               <span className="abt-awards-counter">
                 <span className="abt-awards-counter-cur">
-                  {String(awardIndex + 1).padStart(2, '0')}–{String(Math.min(awardIndex + visibleCount, awardImages.length)).padStart(2, '0')}
+                  {String(awardIndex + 1).padStart(2, '0')}–{String(Math.min(awardIndex + visibleCount, allAwards.length)).padStart(2, '0')}
                 </span>
                 <span className="abt-awards-counter-sep" />
-                <span className="abt-awards-counter-tot">{String(awardImages.length).padStart(2, '0')}</span>
+                <span className="abt-awards-counter-tot">{String(allAwards.length).padStart(2, '0')}</span>
               </span>
               <div className="abt-awards-arrows">
                 <button className="abt-awards-arrow" onClick={prevAward} disabled={awardIndex === 0} aria-label="Previous">←</button>
@@ -425,18 +483,36 @@ function AboutUs() {
                 className="abt-awards-track"
                 style={{ transform: `translateX(-${awardIndex * (100 / visibleCount)}%)` }}
               >
-                {awardImages.map((img, i) => (
-                  <div key={i} className="abt-award-card">
+                {allAwards.map((img, i) => (
+                  <div key={i} className="abt-award-card" style={{ position: 'relative' }}>
                     <button
                       className="abt-award-img-wrap"
-                      onClick={() => setLightboxImg(img)}
+                      onClick={() => !editMode && setLightboxImg(img)}
                       aria-label={`View award ${i + 1} in full`}
+                      style={{ cursor: editMode ? 'default' : 'pointer' }}
                     >
                       <img src={img} alt={`Award ${i + 1}`} className="abt-award-img" draggable={false} />
-                      <div className="abt-award-overlay">
-                        <span className="abt-award-zoom-icon">⊕</span>
-                      </div>
+                      {!editMode && (
+                        <div className="abt-award-overlay">
+                          <span className="abt-award-zoom-icon">⊕</span>
+                        </div>
+                      )}
                     </button>
+                    {editMode && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveAward(i)}
+                        style={{
+                          position: 'absolute', top: 6, right: 6, zIndex: 10,
+                          background: 'rgba(107,0,0,0.85)', color: '#FDF6EE',
+                          border: 'none', borderRadius: 2, cursor: 'pointer',
+                          fontFamily: 'Barlow Condensed, sans-serif',
+                          fontSize: 11, fontWeight: 700, padding: '3px 8px',
+                        }}
+                      >
+                        ✕ Remove
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
@@ -452,6 +528,36 @@ function AboutUs() {
                 />
               ))}
             </div>
+
+            {/* Add award button — edit mode only */}
+            {editMode && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+                <button
+                  type="button"
+                  onClick={() => awardFileRef.current?.click()}
+                  disabled={awardUploading}
+                  style={{
+                    background: '#6B0000', color: '#FDF6EE',
+                    border: '2px solid #6B0000',
+                    fontFamily: 'Barlow Condensed, sans-serif',
+                    fontSize: 13, fontWeight: 700, letterSpacing: 2,
+                    textTransform: 'uppercase', padding: '11px 28px',
+                    cursor: awardUploading ? 'wait' : 'pointer',
+                    opacity: awardUploading ? 0.6 : 1,
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  {awardUploading ? 'Uploading…' : '+ Add Award'}
+                </button>
+                <input
+                  ref={awardFileRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleAddAward}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
