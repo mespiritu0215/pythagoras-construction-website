@@ -12,7 +12,7 @@
 import React, { useState, useEffect, useRef, JSX } from 'react';
 import emailjs from '@emailjs/browser';
 import { useAdmin } from './AdminContext';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from './firebase';
 
 /* ─────────────────────────────────────────────────────────────
@@ -22,20 +22,6 @@ interface GoogleUser {
   name: string;
   email: string;
   picture: string;
-}
-
-declare global {
-  interface Window {
-    google: {
-      accounts: {
-        id: {
-          initialize: (config: object) => void;
-          renderButton: (element: HTMLElement, config: object) => void;
-          prompt: () => void;
-        };
-      };
-    };
-  }
 }
 
 const CONCERN_OPTIONS = [
@@ -54,7 +40,6 @@ const SUBJECT_MAP: Record<string, string> = {
   project: 'Construction Project Inquiry',
 };
 
-const GOOGLE_CLIENT_ID    = process.env.REACT_APP_GOOGLE_CLIENT_ID    ?? '';
 const EMAILJS_PUBLIC_KEY  = process.env.REACT_APP_EMAILJS_PUBLIC_KEY  ?? '';
 const EMAILJS_SERVICE_ID  = process.env.REACT_APP_EMAILJS_SERVICE_ID  ?? '';
 const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID ?? '';
@@ -161,6 +146,15 @@ const css = `
   line-height: 1.7; margin: 0; max-width: 320px;
 }
 .cu-google-btn-wrap { margin-top: 8px; display: flex; justify-content: center; }
+.cu-google-native-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #FFFFFF; border: 1px solid #DADCE0; border-radius: 4px;
+  padding: 10px 24px; width: 280px; justify-content: center;
+  font-family: 'Barlow', sans-serif; font-size: 14px; font-weight: 600;
+  color: #3C4043; cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12); transition: box-shadow 0.2s;
+}
+.cu-google-native-btn:hover { box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 
 .cu-user-pill {
   display: flex; align-items: center; gap: 10px;
@@ -315,8 +309,7 @@ export default function ContactUs(): JSX.Element {
   const [sendError, setSendError] = useState('');
   const [styleInjected, setStyleInjected] = useState(false);
 
-  const googleBtnRef   = useRef<HTMLDivElement>(null);
-  const gsiInitialized = useRef(false);
+
 
   useEffect(() => {
     if (styleInjected) return;
@@ -326,64 +319,24 @@ export default function ContactUs(): JSX.Element {
     setStyleInjected(true);
   }, [styleInjected]);
 
-  useEffect(() => {
-    if (document.getElementById('google-gsi-script')) return;
-    const script = document.createElement('script');
-    script.id  = 'google-gsi-script';
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-  }, []);
 
-  useEffect(() => {
-    if (user) return;
-    gsiInitialized.current = false;
-
-    const tryInit = () => {
-      if (!window.google || !googleBtnRef.current) return false;
-      if (gsiInitialized.current) return true;
-
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: async (response: { credential: string }) => {
-          try {
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            // ── Sign into Firebase Auth so Storage rules see request.auth ──
-            const firebaseCred = GoogleAuthProvider.credential(response.credential);
-            await signInWithCredential(auth, firebaseCred);
-            // ── Set user in AdminContext (shared globally) ──────
-            setUser({
-              name:    payload.name    ?? '',
-              email:   payload.email   ?? '',
-              picture: payload.picture ?? '',
-            });
-            setFullName(payload.name ?? '');
-          } catch {
-            alert('Sign-in failed. Please try again.');
-          }
-        },
-        ux_mode: 'popup',
+  // ── Firebase-native Google sign-in (avoids COOP postMessage conflict) ──
+  const handleGoogleSignIn = async (): Promise<void> => {
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const fbUser = result.user;
+      setUser({
+        name:    fbUser.displayName  ?? '',
+        email:   fbUser.email        ?? '',
+        picture: fbUser.photoURL     ?? '',
       });
-
-      window.google.accounts.id.renderButton(googleBtnRef.current, {
-        theme: 'outline',
-        size:  'large',
-        text:  'signin_with',
-        shape: 'rectangular',
-        width: 280,
-      });
-
-      gsiInitialized.current = true;
-      return true;
-    };
-
-    if (tryInit()) return;
-    const interval = setInterval(() => {
-      if (tryInit()) clearInterval(interval);
-    }, 300);
-    return () => clearInterval(interval);
-  }, [user, setUser]);
+      setFullName(fbUser.displayName ?? '');
+    } catch (err: unknown) {
+      console.error('Google sign-in error:', err);
+      alert('Sign-in failed. Please try again.');
+    }
+  };
 
   // Sync fullName when user changes
   useEffect(() => {
@@ -525,7 +478,7 @@ export default function ContactUs(): JSX.Element {
                 a message to our team.
               </p>
               <div className="cu-google-btn-wrap">
-                <div ref={googleBtnRef} id="cu-google-btn-rendered" />
+                <button type="button" onClick={handleGoogleSignIn} className="cu-google-native-btn"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>Sign in with Google</button>
               </div>
             </div>
           )}
