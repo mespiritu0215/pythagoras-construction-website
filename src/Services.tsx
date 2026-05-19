@@ -1,10 +1,15 @@
 /**
- * Services.tsx  (Updated for admin system)
+ * Services.tsx  (Updated — carousel manager popup + save fix)
  *
- * Admin changes:
- *  - Service headings, list items, and captions are wrapped with EditableText
- *  - Carousel images are wrapped with EditableImage so admins can replace them
- *  - All other styles and behaviour are identical to the original
+ * Changes vs previous version:
+ *  - Each carousel now has a "🖼 Manage Images" button in edit mode
+ *    that opens a full popup showing all carousel photos.
+ *    Admin can remove any image or add new ones (uploaded to Firebase).
+ *  - CarouselManagerModal stores the live image list via getText/setText
+ *    so any changes persist across sessions.
+ *  - AddServiceItem now uses local state so newly added items appear
+ *    immediately and are persisted to Firestore; font colours match
+ *    each section's text theme.
  */
 
 import React, { useState, useEffect, useRef, JSX } from 'react';
@@ -30,10 +35,10 @@ import PoiFeston1 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndre
 import PoiFeston2 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres2.png";
 import PoiFeston3 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndres3.png";
 
-import { useAdmin, EditableText, EditableImage } from './AdminContext';
+import { useAdmin, EditableText, EditableImage, uploadToStorage } from './AdminContext';
 
 // ─────────────────────────────────────────────────────────────
-//  Static image arrays (overridable by admin via EditableImage)
+//  Static image arrays (defaults — overridable by admin via popup)
 // ─────────────────────────────────────────────────────────────
 
 const GlobeCalbayogImages: string[] = [GlobeCalbayog1, GlobeCalbayog12, GlobeCalbayog16];
@@ -59,135 +64,431 @@ interface ServiceData {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  ADMIN-AWARE CAROUSEL
-//  Each image slot is individually replaceable by the admin.
+//  CAROUSEL MANAGER MODAL
+//  Shows all images in a grid; admin can remove any or add new.
+//  Changes are persisted via getText/setText as a JSON array.
 // ─────────────────────────────────────────────────────────────
 
-interface CarouselProps {
-  images:       string[];
-  adminKeyBase: string; // e.g. "srv.1.carousel"
+interface CarouselManagerProps {
+  adminKeyBase:  string;   // e.g. "srv.1.carousel"
+  defaultImages: string[];
+  onClose:       () => void;
 }
 
-function Carousel({ images, adminKeyBase }: CarouselProps): JSX.Element {
-  const { editMode, getImg } = useAdmin();
-  const [current, setCurrent]   = useState<number>(0);
-  const [hovered, setHovered]   = useState<boolean>(false);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: CarouselManagerProps): JSX.Element {
+  const { getText, setText } = useAdmin();
+  const listKey = `${adminKeyBase}.list`;
 
-  useEffect(() => {
-    if (hovered) {
-      intervalRef.current = setInterval(() => {
-        setCurrent(c => (c + 1) % images.length);
-      }, 1200);
-    } else {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+  // Load the saved list, falling back to the built-in defaults
+  const [images, setImages] = useState<string[]>(() => {
+    try {
+      const stored = getText(listKey, '');
+      return stored ? JSON.parse(stored) : [...defaultImages];
+    } catch {
+      return [...defaultImages];
     }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [hovered, images.length]);
+  });
+
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  // Save new list both locally (instant feedback) and to Firestore
+  const persist = async (newImgs: string[]) => {
+    setImages(newImgs);
+    try {
+      await setText(listKey, JSON.stringify(newImgs));
+    } catch (err) {
+      alert('Save failed: ' + (err as Error).message);
+    }
+  };
+
+  const handleAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setUploading(true);
+    try {
+      const path = `images/carousel/${adminKeyBase.replace(/\./g, '_')}_${Date.now()}`;
+      const url  = await uploadToStorage(path, file);
+      await persist([...images, url]);
+    } catch (err) {
+      alert('Upload failed: ' + (err as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Close on backdrop click
+  const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
 
   return (
     <div
-      className="srv-carousel-wrapper"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onClick={onBackdrop}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(18,0,0,0.92)',
+        zIndex: 99999,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 20, overflowY: 'auto',
+      }}
     >
-      {images.map((img, i) => {
-        // Use admin override if available, else original
-        const adminKey   = `${adminKeyBase}.${i}`;
-        const displaySrc = getImg(adminKey) ?? img;
-        const isActive   = i === current;
-
-        return editMode ? (
-          // In edit mode: only the visible slide receives pointer events
-          <div
-            key={i}
+      <div style={{
+        background:   '#FDF6EE',
+        maxWidth:     880,
+        width:        '100%',
+        maxHeight:    '90vh',
+        overflowY:    'auto',
+        padding:      '32px',
+        fontFamily:   'Barlow Condensed, sans-serif',
+        position:     'relative',
+      }}>
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+          <div>
+            <h2 style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: 32, color: '#2C1810',
+              margin: '0 0 6px', letterSpacing: 2,
+            }}>
+              MANAGE CAROUSEL IMAGES
+            </h2>
+            <p style={{ color: 'rgba(44,24,16,0.55)', fontSize: 13, margin: 0, letterSpacing: 1 }}>
+              {images.length} image{images.length !== 1 ? 's' : ''} · Click <strong>✕ Remove</strong> to delete · Use <strong>+ Add Photo</strong> to upload new
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
             style={{
-              position: 'absolute', inset: 0,
-              opacity: isActive ? 1 : 0,
-              transition: 'opacity 0.6s ease-in-out',
-              pointerEvents: isActive ? 'auto' : 'none',
+              background: 'none', border: 'none',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
+              lineHeight: 1, padding: '4px 8px', flexShrink: 0,
             }}
-          >
-            <EditableImage
-              adminKey={adminKey}
-              src={img}
-              alt=""
-              style={{ width: '100%', height: '100%' }}
-              imgStyle={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
+          >✕</button>
+        </div>
+
+        {/* ── Image grid ── */}
+        {images.length === 0 ? (
+          <div style={{
+            padding: '48px 0', textAlign: 'center',
+            color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
+            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
+            marginBottom: 24,
+          }}>
+            No images yet — add some below.
           </div>
         ) : (
-          <img
-            key={i}
-            src={displaySrc}
-            alt=""
-            className={`srv-carousel-img${isActive ? ' active' : ''}`}
-          />
-        );
-      })}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: 12,
+            marginBottom: 28,
+          }}>
+            {images.map((img, i) => (
+              <div
+                key={i}
+                style={{
+                  position: 'relative', borderRadius: 2,
+                  overflow: 'hidden',
+                  border: '1px solid rgba(107,0,0,0.14)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                }}
+              >
+                <img
+                  src={img}
+                  alt={`Slide ${i + 1}`}
+                  style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{
+                  padding: '8px 10px',
+                  background: '#ffffff',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                }}>
+                  <span style={{ fontSize: 11, color: 'rgba(44,24,16,0.45)', letterSpacing: 1 }}>
+                    Image {i + 1}
+                  </span>
+                  <button
+                    onClick={() => persist(images.filter((_, j) => j !== i))}
+                    style={{
+                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+                      border: 'none', borderRadius: 2, cursor: 'pointer',
+                      fontFamily: 'Barlow Condensed, sans-serif',
+                      fontSize: 11, fontWeight: 700, padding: '4px 10px',
+                      letterSpacing: 1,
+                    }}
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
-      <div className="srv-carousel-bar">
-        <div
-          className="srv-carousel-bar-fill"
-          style={{ width: `${((current + 1) / images.length) * 100}%` }}
+        {/* ── Footer actions ── */}
+        <div style={{
+          display: 'flex', gap: 12, justifyContent: 'space-between',
+          alignItems: 'center', flexWrap: 'wrap',
+          borderTop: '1px solid rgba(107,0,0,0.12)', paddingTop: 20,
+        }}>
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            style={{
+              background: '#6B0000', color: '#FDF6EE',
+              border: '2px solid #6B0000',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 13, fontWeight: 700, letterSpacing: 2,
+              textTransform: 'uppercase', padding: '11px 28px',
+              cursor: uploading ? 'wait' : 'pointer',
+              opacity: uploading ? 0.6 : 1,
+              transition: 'all 0.2s',
+            }}
+          >
+            {uploading ? 'Uploading…' : '+ Add Photo'}
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(107,0,0,0.35)',
+              color: 'rgba(44,24,16,0.7)',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 12, fontWeight: 700, letterSpacing: 2,
+              textTransform: 'uppercase', padding: '11px 24px', cursor: 'pointer',
+            }}
+          >
+            Done
+          </button>
+        </div>
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleAdd}
         />
-      </div>
-      <div className="srv-carousel-dots">
-        {images.map((_, i) => (
-          <span
-            key={i}
-            className={`srv-dot${i === current ? ' active' : ''}`}
-            onClick={() => setCurrent(i)}
-          />
-        ))}
       </div>
     </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+//  CAROUSEL
+//  Reads live image list from stored JSON (with fallback to props).
+//  In edit mode shows a "Manage Images" button that opens the modal.
+// ─────────────────────────────────────────────────────────────
+
+interface CarouselProps {
+  images:       string[];  // default / fallback images
+  adminKeyBase: string;    // e.g. "srv.1.carousel"
+}
+
+function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.Element {
+  const { editMode, getText } = useAdmin();
+  const [current,     setCurrent]     = useState<number>(0);
+  const [hovered,     setHovered]     = useState<boolean>(false);
+  const [showManager, setShowManager] = useState<boolean>(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Read the live image list; fall back to default images
+  const listKey = `${adminKeyBase}.list`;
+  const activeImages: string[] = (() => {
+    try {
+      const stored = getText(listKey, '');
+      return stored ? JSON.parse(stored) : defaultImages;
+    } catch {
+      return defaultImages;
+    }
+  })();
+
+  // Clamp index when images are removed
+  const safeIndex = activeImages.length > 0
+    ? Math.min(current, activeImages.length - 1)
+    : 0;
+
+  useEffect(() => {
+    if (hovered) {
+      intervalRef.current = setInterval(() => {
+        setCurrent(c => (c + 1) % activeImages.length);
+      }, 1200);
+    } else {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [hovered, activeImages.length]);
+
+  if (activeImages.length === 0) {
+    return (
+      <div className="srv-carousel-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {editMode && (
+          <button
+            onClick={() => setShowManager(true)}
+            style={{
+              background: '#6B0000', color: '#FDF6EE',
+              border: 'none',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 12, fontWeight: 700, letterSpacing: 2,
+              textTransform: 'uppercase', padding: '10px 20px', cursor: 'pointer',
+            }}
+          >
+            🖼 Add Images
+          </button>
+        )}
+        {showManager && (
+          <CarouselManagerModal
+            adminKeyBase={adminKeyBase}
+            defaultImages={defaultImages}
+            onClose={() => setShowManager(false)}
+          />
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div
+        className="srv-carousel-wrapper"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {activeImages.map((img, i) => (
+          <img
+            key={`${img}-${i}`}
+            src={img}
+            alt=""
+            className={`srv-carousel-img${i === safeIndex ? ' active' : ''}`}
+          />
+        ))}
+
+        {/* Progress bar */}
+        <div className="srv-carousel-bar">
+          <div
+            className="srv-carousel-bar-fill"
+            style={{ width: `${((safeIndex + 1) / activeImages.length) * 100}%` }}
+          />
+        </div>
+
+        {/* Dots */}
+        <div className="srv-carousel-dots">
+          {activeImages.map((_, i) => (
+            <span
+              key={i}
+              className={`srv-dot${i === safeIndex ? ' active' : ''}`}
+              onClick={() => setCurrent(i)}
+            />
+          ))}
+        </div>
+
+        {/* Edit mode: manage images button */}
+        {editMode && (
+          <button
+            onClick={() => setShowManager(true)}
+            style={{
+              position: 'absolute', top: 10, right: 10, zIndex: 10,
+              background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+              border: '1px solid rgba(253,246,238,0.25)',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
+              textTransform: 'uppercase', padding: '6px 12px',
+              cursor: 'pointer',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            🖼 Manage Images
+          </button>
+        )}
+      </div>
+
+      {/* Carousel manager modal */}
+      {showManager && (
+        <CarouselManagerModal
+          adminKeyBase={adminKeyBase}
+          defaultImages={defaultImages}
+          onClose={() => setShowManager(false)}
+        />
+      )}
+    </>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────
 //  ADD SERVICE ITEM  (edit mode only)
-//  Persists extra items per category to Firestore via getText/setText.
+//  Uses local state for immediate UI feedback + async Firestore save.
+//  Font colours now match each section's theme (dark vs light).
 // ─────────────────────────────────────────────────────────────
 
 function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
   const { getText, setText } = useAdmin();
-  const [inputVal, setInputVal] = React.useState('');
+  const extraKey = `srv.${svcN}.extra_items`;
 
-  const extraKey  = `srv.${svcN}.extra_items`;
-  const rawExtra  = getText(extraKey, '[]');
-  let extraItems: string[] = [];
-  try { extraItems = JSON.parse(rawExtra); } catch { extraItems = []; }
+  // Local state for immediate UI — initialised once from stored value
+  const [extraItems, setExtraItems] = React.useState<string[]>(() => {
+    try { return JSON.parse(getText(extraKey, '[]')); } catch { return []; }
+  });
+  const [inputVal, setInputVal] = React.useState('');
+  const [saving,   setSaving]   = React.useState(false);
+
+  const persist = async (newItems: string[]) => {
+    setExtraItems(newItems);
+    setSaving(true);
+    try {
+      await setText(extraKey, JSON.stringify(newItems));
+    } catch (err) {
+      // Rollback on failure
+      setExtraItems(extraItems);
+      alert('Could not save: ' + (err as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const addItem = () => {
-    if (!inputVal.trim()) return;
-    setText(extraKey, JSON.stringify([...extraItems, inputVal.trim()]));
+    if (!inputVal.trim() || saving) return;
+    persist([...extraItems, inputVal.trim()]);
     setInputVal('');
   };
 
   const removeItem = (idx: number) => {
-    setText(extraKey, JSON.stringify(extraItems.filter((_, i) => i !== idx)));
+    persist(extraItems.filter((_, i) => i !== idx));
   };
 
-  const listColor  = isDark ? 'rgba(253,246,238,0.80)' : '#2C1810';
-  const inputBg    = isDark ? 'rgba(255,255,255,0.08)' : '#fff';
-  const inputBorder = isDark ? 'rgba(253,246,238,0.25)' : 'rgba(107,0,0,0.25)';
+  // Theme-aware colours matching the section's typography
+  const listColor    = isDark ? 'rgba(253,246,238,0.85)' : '#2C1810';
+  const inputBg      = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
+  const inputBorder  = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(107,0,0,0.22)';
+  const btnBg        = isDark ? 'rgba(253,246,238,0.12)' : '#6B0000';
+  const btnColor     = isDark ? '#FDF6EE'                : '#FDF6EE';
+  const btnBorder    = isDark ? 'rgba(253,246,238,0.25)' : '#6B0000';
+  const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
+  const removeColor  = isDark ? 'rgba(253,246,238,0.7)'  : '#6B0000';
+  const removeBorder = isDark ? 'rgba(253,246,238,0.20)' : 'rgba(107,0,0,0.25)';
 
   return (
     <>
-      {/* Admin-added extra items */}
+      {/* Admin-added items */}
       {extraItems.map((item, idx) => (
         <li key={`extra-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: listColor, flex: 1 }}>{item}</span>
+          <span style={{ color: listColor, flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 14 }}>
+            {item}
+          </span>
           <button
             type="button"
             onClick={() => removeItem(idx)}
+            disabled={saving}
             style={{
-              background: 'rgba(107,0,0,0.15)', border: '1px solid rgba(107,0,0,0.3)',
-              color: '#6B0000', cursor: 'pointer', borderRadius: 2,
-              fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11,
-              fontWeight: 700, padding: '2px 7px', flexShrink: 0,
+              background: removeBg,
+              border: `1px solid ${removeBorder}`,
+              color: removeColor,
+              cursor: saving ? 'wait' : 'pointer',
+              borderRadius: 2,
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700,
+              padding: '2px 7px', flexShrink: 0,
             }}
           >
             ✕
@@ -195,32 +496,45 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
         </li>
       ))}
 
-      {/* Add-new input row */}
-      <li style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center' }}>
+      {/* Input row */}
+      <li style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
         <input
           type="text"
           value={inputVal}
           onChange={e => setInputVal(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && addItem()}
           placeholder="Add new service item…"
+          disabled={saving}
           style={{
-            flex: 1, background: inputBg,
+            flex: 1,
+            background: inputBg,
             border: `1px dashed ${inputBorder}`,
-            color: listColor, fontFamily: 'Barlow, sans-serif',
-            fontSize: 14, padding: '7px 10px', outline: 'none',
+            color: listColor,
+            fontFamily: 'Barlow, sans-serif',
+            fontSize: 14,
+            padding: '7px 10px',
+            outline: 'none',
+            opacity: saving ? 0.6 : 1,
           }}
         />
         <button
           type="button"
           onClick={addItem}
+          disabled={saving}
           style={{
-            background: '#6B0000', color: '#FDF6EE', border: 'none',
-            fontFamily: 'Barlow Condensed, sans-serif', fontSize: 12,
-            fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
-            padding: '8px 14px', cursor: 'pointer', flexShrink: 0,
+            background: btnBg,
+            color: btnColor,
+            border: `1px solid ${btnBorder}`,
+            fontFamily: 'Barlow Condensed, sans-serif',
+            fontSize: 12, fontWeight: 700,
+            letterSpacing: 1.5, textTransform: 'uppercase',
+            padding: '8px 14px',
+            cursor: saving ? 'wait' : 'pointer',
+            flexShrink: 0,
+            opacity: saving ? 0.6 : 1,
           }}
         >
-          + Add
+          {saving ? '…' : '+ Add'}
         </button>
       </li>
     </>
@@ -440,7 +754,7 @@ export default function Services(): JSX.Element {
               color: 'rgba(107,0,0,0.45)',
               pointerEvents: 'none',
             }}>
-              ✏️ click text to edit · 📷 click image to replace
+              ✏️ click text to edit · 🖼 click "Manage Images" to edit carousel
             </div>
           )}
         </section>

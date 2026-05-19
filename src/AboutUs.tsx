@@ -1,17 +1,16 @@
 /**
- * AboutUs.tsx  (Updated for admin system)
+ * AboutUs.tsx  (Updated — hero slider manager popup)
  *
- * Admin changes:
- *  - Mission, Vision, Core Values panel texts are wrapped with EditableText
- *  - Founder story paragraphs are wrapped with EditableText
- *  - Core Values tab descriptions are wrapped with EditableText
- *  - Hero subtitle paragraph is editable
- *  - Founder photo is wrapped with EditableImage
- *  - The three NCDC hero slider images are individually replaceable
- *  - All original animation, award slider, and layout logic is unchanged
+ * Changes vs previous version:
+ *  - Hero slider images are now managed via a popup modal (CarouselManagerModal).
+ *    Admin can add new images (uploaded to Firebase) or remove any existing one.
+ *    Changes persist via getText/setText as a JSON list.
+ *  - The "🖼 Manage Slider" button is shown on the hero slider in edit mode.
+ *  - All other behaviour (awards, story, values, animations) is unchanged.
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import React from "react";
 import "./AboutUs.css";
 import NCDC2 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import NCDC5 from "./CompletedProjects/NCDCORMOC/NCDC5.png";
@@ -60,6 +59,220 @@ const DEFAULT_VALUES = [
   },
 ];
 
+// Default hero slider images
+const DEFAULT_HERO_SLIDER = [NCDC6, NCDC5, NCDC2];
+
+// ─────────────────────────────────────────────────────────────
+//  CAROUSEL MANAGER MODAL
+//  Shared utility: shows all images in a grid, allows remove & add.
+//  Persists changes via getText/setText as a JSON array.
+// ─────────────────────────────────────────────────────────────
+
+const HERO_SLIDER_KEY = 'about.hero.slider.list';
+
+interface CarouselManagerProps {
+  storageKey:    string;   // key used with getText/setText
+  defaultImages: string[];
+  onClose:       () => void;
+}
+
+function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselManagerProps): JSX.Element {
+  const { getText, setText } = useAdmin();
+
+  const [images, setImages] = useState<string[]>(() => {
+    try {
+      const stored = getText(storageKey, '');
+      return stored ? JSON.parse(stored) : [...defaultImages];
+    } catch {
+      return [...defaultImages];
+    }
+  });
+
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const persist = async (newImgs: string[]) => {
+    setImages(newImgs);
+    try {
+      await setText(storageKey, JSON.stringify(newImgs));
+    } catch (err) {
+      alert('Save failed: ' + (err as Error).message);
+    }
+  };
+
+  const handleAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setUploading(true);
+    try {
+      const path = `images/slider/${storageKey.replace(/\./g, '_')}_${Date.now()}`;
+      const url  = await uploadToStorage(path, file);
+      await persist([...images, url]);
+    } catch (err) {
+      alert('Upload failed: ' + (err as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  return (
+    <div
+      onClick={onBackdrop}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(18,0,0,0.92)',
+        zIndex: 99999,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 20, overflowY: 'auto',
+      }}
+    >
+      <div style={{
+        background:  '#FDF6EE',
+        maxWidth:    880,
+        width:       '100%',
+        maxHeight:   '90vh',
+        overflowY:   'auto',
+        padding:     '32px',
+        fontFamily:  'Barlow Condensed, sans-serif',
+        position:    'relative',
+      }}>
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+          <div>
+            <h2 style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: 32, color: '#2C1810',
+              margin: '0 0 6px', letterSpacing: 2,
+            }}>
+              MANAGE SLIDER IMAGES
+            </h2>
+            <p style={{ color: 'rgba(44,24,16,0.55)', fontSize: 13, margin: 0, letterSpacing: 1 }}>
+              {images.length} image{images.length !== 1 ? 's' : ''} · Click <strong>✕ Remove</strong> to delete · Use <strong>+ Add Photo</strong> to upload
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              background: 'none', border: 'none',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
+              lineHeight: 1, padding: '4px 8px', flexShrink: 0,
+            }}
+          >✕</button>
+        </div>
+
+        {/* ── Image grid ── */}
+        {images.length === 0 ? (
+          <div style={{
+            padding: '48px 0', textAlign: 'center',
+            color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
+            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
+            marginBottom: 24,
+          }}>
+            No images yet — add some below.
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gap: 12,
+            marginBottom: 28,
+          }}>
+            {images.map((img, i) => (
+              <div
+                key={i}
+                style={{
+                  position: 'relative', borderRadius: 2,
+                  overflow: 'hidden',
+                  border: '1px solid rgba(107,0,0,0.14)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                }}
+              >
+                <img
+                  src={img}
+                  alt={`Slide ${i + 1}`}
+                  style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{
+                  padding: '8px 10px',
+                  background: '#ffffff',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                }}>
+                  <span style={{ fontSize: 11, color: 'rgba(44,24,16,0.45)', letterSpacing: 1 }}>
+                    Image {i + 1}
+                  </span>
+                  <button
+                    onClick={() => persist(images.filter((_, j) => j !== i))}
+                    style={{
+                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+                      border: 'none', borderRadius: 2, cursor: 'pointer',
+                      fontFamily: 'Barlow Condensed, sans-serif',
+                      fontSize: 11, fontWeight: 700, padding: '4px 10px',
+                      letterSpacing: 1,
+                    }}
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Footer actions ── */}
+        <div style={{
+          display: 'flex', gap: 12, justifyContent: 'space-between',
+          alignItems: 'center', flexWrap: 'wrap',
+          borderTop: '1px solid rgba(107,0,0,0.12)', paddingTop: 20,
+        }}>
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            style={{
+              background: '#6B0000', color: '#FDF6EE',
+              border: '2px solid #6B0000',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 13, fontWeight: 700, letterSpacing: 2,
+              textTransform: 'uppercase', padding: '11px 28px',
+              cursor: uploading ? 'wait' : 'pointer',
+              opacity: uploading ? 0.6 : 1,
+              transition: 'all 0.2s',
+            }}
+          >
+            {uploading ? 'Uploading…' : '+ Add Photo'}
+          </button>
+          <button
+            onClick={onClose}
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(107,0,0,0.35)',
+              color: 'rgba(44,24,16,0.7)',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 12, fontWeight: 700, letterSpacing: 2,
+              textTransform: 'uppercase', padding: '11px 24px', cursor: 'pointer',
+            }}
+          >
+            Done
+          </button>
+        </div>
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleAdd}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ─────────────────────────────────────────────────────────────
 //  COMPONENT
 // ─────────────────────────────────────────────────────────────
@@ -67,7 +280,7 @@ const DEFAULT_VALUES = [
 function AboutUs() {
   const { getText, setText, editMode, isAdmin, uploading: adminUploading } = useAdmin();
 
-  // ── Awards state (static defaults + admin-added, minus admin-removed) ──
+  // ── Awards state ──────────────────────────────────────────
   const staticAwards = [award1, award2, award3, award4, award5, award6, award7, award8, award9];
 
   const getRemovedIndices = (): number[] => {
@@ -107,14 +320,11 @@ function AboutUs() {
 
   const handleRemoveAward = useCallback(async (displayIndex: number) => {
     if (!window.confirm('Remove this award?')) return;
-    // displayIndex is index in allAwards; map back to static or extra
     const keptStatic = staticAwards.map((_, i) => i).filter(i => !removedIndices.includes(i));
     if (displayIndex < keptStatic.length) {
-      // It's a static award
       const staticIdx = keptStatic[displayIndex];
       await setText('about.awards.removed', JSON.stringify([...removedIndices, staticIdx]));
     } else {
-      // It's an extra award
       const extraIdx = displayIndex - keptStatic.length;
       const current  = getExtraAwardUrls();
       await setText('about.awards.extra', JSON.stringify(current.filter((_, i) => i !== extraIdx)));
@@ -122,9 +332,21 @@ function AboutUs() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getText, setText, removedIndices]);
 
-  const heroSliderImages = [NCDC6, NCDC5, NCDC2];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeValue, setActiveValue]   = useState(0);
+  // ── Hero slider state ─────────────────────────────────────
+  // Reads from stored JSON list; falls back to the three built-in images.
+  const getHeroImages = (): string[] => {
+    try {
+      const stored = getText(HERO_SLIDER_KEY, '');
+      return stored ? JSON.parse(stored) : [...DEFAULT_HERO_SLIDER];
+    } catch {
+      return [...DEFAULT_HERO_SLIDER];
+    }
+  };
+
+  const heroSliderImages = getHeroImages();
+  const [currentIndex,  setCurrentIndex]  = useState(0);
+  const [showSliderMgr, setShowSliderMgr] = useState(false);
+  const [activeValue,   setActiveValue]   = useState(0);
 
   const [awardIndex,  setAwardIndex]  = useState(0);
   const [awardPaused, setAwardPaused] = useState(false);
@@ -133,7 +355,7 @@ function AboutUs() {
   const dragStartX = useRef(0);
   const dragDelta  = useRef(0);
   const visibleCount  = 3;
-  const maxAwardIndex = allAwards.length - visibleCount;
+  const maxAwardIndex = Math.max(0, allAwards.length - visibleCount);
 
   const prevAward = () => setAwardIndex((prev) => Math.max(prev - 1, 0));
   const nextAward = () => setAwardIndex((prev) => Math.min(prev + 1, maxAwardIndex));
@@ -174,18 +396,24 @@ function AboutUs() {
 
   // Hero slider auto-advance
   useEffect(() => {
+    if (heroSliderImages.length === 0) return;
     const interval = setInterval(() => {
-      setCurrentIndex(prev => (prev === heroSliderImages.length - 1 ? 0 : prev + 1));
+      setCurrentIndex(prev => (prev >= heroSliderImages.length - 1 ? 0 : prev + 1));
     }, 3000);
     return () => clearInterval(interval);
   }, [heroSliderImages.length]);
+
+  // Clamp currentIndex when images are removed
+  const safeIndex = heroSliderImages.length > 0
+    ? Math.min(currentIndex, heroSliderImages.length - 1)
+    : 0;
 
   useEffect(() => {
     document.body.style.backgroundColor = "#FDF6EE";
     return () => { document.body.style.backgroundColor = ""; };
   }, []);
 
-  // Get core values (with admin overrides applied)
+  // Core values with admin overrides
   const values = DEFAULT_VALUES.map((v, i) => ({
     ...v,
     text: getText(`about.values.${i}.text`, v.text),
@@ -236,51 +464,84 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* Hero slider — images are individually replaceable */}
+        {/* ── Hero slider — managed via popup in edit mode ── */}
         <div className="abt-hero-right">
-          <div className="abt-hero-slider">
+          <div className="abt-hero-slider" style={{ position: 'relative' }}>
             <div
               className="abt-hero-track"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+              style={{ transform: `translateX(-${safeIndex * 100}%)` }}
             >
               {heroSliderImages.map((img, i) => (
-                <EditableImage
-                  key={i}
-                  adminKey={`about.hero.slider.${i}`}
-                  src={img}
-                  alt={`Project ${i + 1}`}
-                  imgStyle={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                <div
+                  key={`${img}-${i}`}
                   style={{
                     flexShrink: 0, width: '100%', height: '100%',
-                    // Only the visible slide should be interactive in edit mode
-                    pointerEvents: i === currentIndex ? 'auto' : 'none',
                   }}
-                />
+                >
+                  <img
+                    src={img}
+                    alt={`Project ${i + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                </div>
               ))}
             </div>
+
+            {/* Slide counter */}
             <div className="abt-slide-counter">
-              <span className="abt-counter-current">{String(currentIndex + 1).padStart(2, '0')}</span>
+              <span className="abt-counter-current">{String(safeIndex + 1).padStart(2, '0')}</span>
               <span className="abt-counter-sep" />
               <span className="abt-counter-total">{String(heroSliderImages.length).padStart(2, '0')}</span>
             </div>
+
+            {/* Dots */}
             <div className="abt-slider-dots">
               {heroSliderImages.map((_, i) => (
                 <button
                   key={i}
-                  className={`abt-dot${i === currentIndex ? ' abt-dot-active' : ''}`}
+                  className={`abt-dot${i === safeIndex ? ' abt-dot-active' : ''}`}
                   onClick={() => setCurrentIndex(i)}
                   aria-label={`Go to slide ${i + 1}`}
                 />
               ))}
             </div>
+
             <div className="abt-hero-slider-footer">
               <span>Our Projects</span>
               <a href="/projects" className="abt-visit-chip">View All →</a>
             </div>
+
+            {/* ── Edit mode: manage slider button ── */}
+            {editMode && (
+              <button
+                onClick={() => setShowSliderMgr(true)}
+                style={{
+                  position: 'absolute', top: 10, left: 10, zIndex: 10,
+                  background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+                  border: '1px solid rgba(253,246,238,0.25)',
+                  fontFamily: 'Barlow Condensed, sans-serif',
+                  fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
+                  textTransform: 'uppercase', padding: '6px 12px',
+                  cursor: 'pointer',
+                  backdropFilter: 'blur(4px)',
+                }}
+              >
+                🖼 Manage Slider
+              </button>
+            )}
           </div>
           <div className="abt-hero-accent-bar" />
         </div>
       </section>
+
+      {/* Slider manager modal */}
+      {showSliderMgr && (
+        <CarouselManagerModal
+          storageKey={HERO_SLIDER_KEY}
+          defaultImages={DEFAULT_HERO_SLIDER}
+          onClose={() => setShowSliderMgr(false)}
+        />
+      )}
 
       {/* ── WHO WE ARE ── */}
       <section className="abt-who-section">
@@ -322,10 +583,8 @@ function AboutUs() {
       {/* ── FOUNDER STORY ── */}
       <section className="abt-founder-section">
         <div className="abt-founder-inner">
-          {/* Left: photo + quote strip */}
           <div className="abt-founder-media">
             <div className="abt-founder-photo-wrap">
-              {/* Replaceable founder photo */}
               <EditableImage
                 adminKey="about.founder.photo"
                 src={SirBong}
@@ -345,7 +604,6 @@ function AboutUs() {
             </div>
           </div>
 
-          {/* Right: story text */}
           <div className="abt-founder-content">
             <p className="abt-section-tag">OUR STORY</p>
             <h2 className="abt-founder-heading">ENGR. FERDINAND GARDUQUE</h2>
@@ -410,7 +668,6 @@ function AboutUs() {
             <div className="abt-values-panel">
               <div className="abt-values-panel-num">{values[activeValue].num}</div>
               <h3 className="abt-values-panel-title">{values[activeValue].title}</h3>
-              {/* The active value text is editable inline */}
               <EditableText
                 adminKey={`about.values.${activeValue}.text`}
                 tag="p"
