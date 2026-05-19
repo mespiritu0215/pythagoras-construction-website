@@ -16,8 +16,8 @@ import { useAdmin, AdminProject, ProjectOverride, uploadToStorage } from './Admi
 // Must match the category labels in your Projectsdata.ts
 const CATEGORY_OPTIONS = [
   'Civil Works',
-  'Electrical Works',
-  'Architectural & Design',
+  'Electrical',
+  'Renovations & Construction',
   'Ongoing Projects',
 ];
 
