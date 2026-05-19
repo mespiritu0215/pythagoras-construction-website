@@ -17,7 +17,7 @@ import { useAdmin, AdminProject, ProjectOverride, uploadToStorage } from './Admi
 const CATEGORY_OPTIONS = [
   'Civil Works',
   'Electrical',
-  'Renovations & Construction',
+  'Renovations / Construction',
   'Ongoing Projects',
 ];
 
