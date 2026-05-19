@@ -403,17 +403,18 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 function HeroSection() {
   const { editMode, getText } = useAdmin();
 
-  // Load active slide list from context; fall back to defaults
-  const getSlides = (): SlideData[] => {
+  // Load active slide list from context; fall back to defaults.
+  // Memoized on the raw stored string so re-renders triggered by
+  // EditableText keystrokes (unrelated setText calls) don't recompute
+  // slides and cause hs-content-inner inputs to reset.
+  const storedSlides = getText(HERO_SLIDES_KEY, '');
+  const slides = useMemo<SlideData[]>(() => {
     try {
-      const stored = getText(HERO_SLIDES_KEY, '');
-      return stored ? JSON.parse(stored) : HERO_SLIDES_DEFAULT;
+      return storedSlides ? JSON.parse(storedSlides) : HERO_SLIDES_DEFAULT;
     } catch {
       return HERO_SLIDES_DEFAULT;
     }
-  };
-
-  const slides = getSlides();
+  }, [storedSlides]);
 
   const [current,     setCurrent]     = useState(0);
   const [prev,        setPrev]        = useState<number | null>(null);
