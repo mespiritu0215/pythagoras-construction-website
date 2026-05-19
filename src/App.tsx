@@ -1098,6 +1098,7 @@ function App(): JSX.Element {
           transition: opacity 0.8s ease;
           transform: scale(1.04);
           animation: none;
+          pointer-events: none;
         }
         .hs-bg-layer.hs-bg-active {
           opacity: 1;
