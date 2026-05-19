@@ -347,21 +347,23 @@ export function EditableText({
   [k: string]: any;
 }) {
   const { editMode, getText, setText } = useAdmin();
-  const savedText  = getText(adminKey, children);
+  const savedText = getText(adminKey, children);
 
-  const isFocused  = useRef(false);
-  const elemRef    = useRef<HTMLElement>(null);
-  // frozenHtml never changes while the user is focused — React's reconciler
-  // therefore never sees a new dangerouslySetInnerHTML value and leaves the
-  // DOM alone while the admin is typing.
-  const frozenHtml = useRef(savedText);
+  const isFocused = useRef(false);
+  const elemRef   = useRef<HTMLElement>(null);
 
-  // Sync content imperatively (before paint) when Firestore data changes,
-  // but ONLY when the field is not currently being edited.
+  // Set content on initial mount only.
+  // Using an empty dep array means React never manages this element's
+  // innerHTML — no dangerouslySetInnerHTML means no reconciler patch.
   useLayoutEffect(() => {
-    if (!isFocused.current) {
-      frozenHtml.current = savedText;
-      if (elemRef.current) elemRef.current.innerHTML = savedText;
+    if (elemRef.current) elemRef.current.innerHTML = savedText;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync from Firestore whenever savedText changes, but never while typing.
+  useLayoutEffect(() => {
+    if (!isFocused.current && elemRef.current) {
+      elemRef.current.innerHTML = savedText;
     }
   }, [savedText]);
 
@@ -379,15 +381,14 @@ export function EditableText({
       className={className}
       contentEditable
       suppressContentEditableWarning
-      // frozenHtml.current does not change while focused →
-      // React reconciler sees identical __html value → never resets DOM.
-      dangerouslySetInnerHTML={{ __html: frozenHtml.current }}
+      // NO dangerouslySetInnerHTML — content is set imperatively via ref so
+      // React's reconciler never patches innerHTML, even on slide-timer
+      // re-renders. This is the only reliable way to protect a contentEditable
+      // element from being reset mid-edit by an unrelated state update.
       onFocus={() => { isFocused.current = true; }}
       onBlur={(e: React.FocusEvent<HTMLElement>) => {
         isFocused.current = false;
         const newText = e.currentTarget.innerText.trim();
-        // Update frozenHtml immediately so the next render prop matches the DOM.
-        frozenHtml.current = newText;
         if (elemRef.current) elemRef.current.innerHTML = newText;
         setText(adminKey, newText); // persist to Firestore
       }}
