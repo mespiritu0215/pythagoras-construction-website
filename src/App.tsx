@@ -1,14 +1,15 @@
 /**
- * App.tsx  (v3 — admin fixes)
+ * App.tsx  (Updated — hero slide manager + editable hero text)
  *
- * Fixes:
- *  - AppInner now calls useAdmin() so edit-mode state is accessible
- *  - "Recently Completed" projects are driven by featuredProjectIds from
- *    Firestore — admin can choose which projects appear via a picker modal
- *  - About-strip description is now editable (split into company name
- *    bold span + EditableText for the rest)
- *  - Contact section labels/values wrapped with EditableText
- *  - useMemo added to efficiently derive displayedProjects
+ * Changes vs previous version:
+ *  - HeroSection now calls useAdmin() so edit-mode state is accessible.
+ *  - The hero slide images AND their captions (label/title/sub) are managed
+ *    via a "⚙ Manage Slides" popup in edit mode. Admin can add, remove, or
+ *    edit any slide; changes persist to Firestore via getText/setText.
+ *  - The hero eyebrow, headline lines, and sub-paragraph are now wrapped
+ *    with EditableText so they can be edited inline in edit mode.
+ *  - All other behaviour (AppInner, FeaturedProjectPicker, routes, footer,
+ *    styles) is unchanged.
  */
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -32,7 +33,7 @@ import HeroImg4 from "./CompletedProjects/NCDCORMOC/NCDC2.png";
 import HeroImg5 from "./CompletedProjects/pages/TEAMBUILDING.png";
 
 import { FEATURED_PROJECTS, ALL_PROJECTS } from './Projectsdata';
-import { AdminProvider, EditableText, EditableImage, useAdmin } from './AdminContext';
+import { AdminProvider, EditableText, EditableImage, useAdmin, uploadToStorage } from './AdminContext';
 import { AdminBar } from './AdminBar';
 
 const firebaseConfig = {
@@ -48,14 +49,23 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// ── Hero showcase images ─────────────────────────────────────
-const HERO_SLIDES = [
-  { img: HeroImg2, label: "Architectural",      title: "San Andres POI Festoon", sub: "San Andres, Catanduanes" },
-  { img: HeroImg3, label: "Architectural",      title: "Badoc POI Festoon",      sub: "Badoc, Ilocos Norte" },
-  { img: HeroImg4, label: "Civil Works",         title: "NCDC Ormoc",             sub: "New Core Data Center · Globe · Leyte" },
-  { img: HeroImg1, label: "Civil Works",         title: "NCDC Ormoc",             sub: "Core Data Center · Globe · Ormoc, Leyte" },
-  { img: HeroImg5, label: "Teamwork in Action",  title: "PCI Team Building",      sub: undefined },
+// ── Hero showcase images (defaults) ─────────────────────────
+interface SlideData {
+  img:   string;
+  label: string;
+  title: string;
+  sub?:  string;
+}
+
+const HERO_SLIDES_DEFAULT: SlideData[] = [
+  { img: HeroImg2, label: "Architectural",      title: "San Andres POI Festoon",  sub: "San Andres, Catanduanes" },
+  { img: HeroImg3, label: "Architectural",      title: "Badoc POI Festoon",       sub: "Badoc, Ilocos Norte" },
+  { img: HeroImg4, label: "Civil Works",         title: "NCDC Ormoc",              sub: "New Core Data Center · Globe · Leyte" },
+  { img: HeroImg1, label: "Civil Works",         title: "NCDC Ormoc",              sub: "Core Data Center · Globe · Ormoc, Leyte" },
+  { img: HeroImg5, label: "Teamwork in Action",  title: "PCI Team Building",       sub: undefined },
 ];
+
+const HERO_SLIDES_KEY = 'home.hero.slides';
 
 // ── Who We Are section images ────────────────────────────────
 const whoImg1 = ALL_PROJECTS[2]?.images[4] ?? ALL_PROJECTS[0].cover;
@@ -72,18 +82,352 @@ function ScrollToTop(): null {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  HERO SECTION (unchanged)
+//  HERO SLIDE MANAGER MODAL
+//  Admin can add, remove, or edit the caption fields of each slide.
+//  Changes persist via getText/setText as a JSON array.
+// ─────────────────────────────────────────────────────────────
+
+interface HeroSlideManagerProps {
+  slides:  SlideData[];
+  onClose: () => void;
+}
+
+function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideManagerProps): JSX.Element {
+  const { setText } = useAdmin();
+
+  const [slides,    setSlides]    = useState<SlideData[]>(initialSlides);
+  const [uploading, setUploading] = useState(false);
+  // New-slide form state
+  const [newLabel,  setNewLabel]  = useState('');
+  const [newTitle,  setNewTitle]  = useState('');
+  const [newSub,    setNewSub]    = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const persist = async (newSlides: SlideData[]) => {
+    setSlides(newSlides);
+    try {
+      await setText(HERO_SLIDES_KEY, JSON.stringify(newSlides));
+    } catch (err) {
+      alert('Save failed: ' + (err as Error).message);
+    }
+  };
+
+  const removeSlide = (i: number) =>
+    persist(slides.filter((_, j) => j !== i));
+
+  const updateField = (i: number, field: keyof SlideData, value: string) => {
+    const updated = slides.map((s, j) =>
+      j === i ? { ...s, [field]: value || undefined } : s
+    );
+    persist(updated);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    setUploading(true);
+    try {
+      const url = await uploadToStorage(`images/hero/${Date.now()}`, file);
+      const newSlide: SlideData = {
+        img:   url,
+        label: newLabel.trim() || 'New Slide',
+        title: newTitle.trim() || 'New Project',
+        sub:   newSub.trim()   || undefined,
+      };
+      await persist([...slides, newSlide]);
+      setNewLabel(''); setNewTitle(''); setNewSub('');
+    } catch (err) {
+      alert('Upload failed: ' + (err as Error).message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  const fieldStyle: React.CSSProperties = {
+    width: '100%', background: 'rgba(44,24,16,0.05)',
+    border: '1px solid rgba(107,0,0,0.18)',
+    color: '#2C1810',
+    fontFamily: 'Barlow, sans-serif', fontSize: 13,
+    padding: '6px 10px', outline: 'none', boxSizing: 'border-box',
+    marginTop: 4,
+  };
+
+  return (
+    <div
+      onClick={onBackdrop}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(18,0,0,0.92)',
+        zIndex: 99999,
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+        padding: '40px 20px', overflowY: 'auto',
+      }}
+    >
+      <div style={{
+        background:  '#FDF6EE',
+        maxWidth:    940,
+        width:       '100%',
+        padding:     '32px',
+        fontFamily:  'Barlow Condensed, sans-serif',
+        position:    'relative',
+      }}>
+        {/* ── Header ── */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28 }}>
+          <div>
+            <h2 style={{
+              fontFamily: 'Bebas Neue, sans-serif',
+              fontSize: 32, color: '#2C1810',
+              margin: '0 0 6px', letterSpacing: 2,
+            }}>
+              MANAGE HERO SLIDES
+            </h2>
+            <p style={{ color: 'rgba(44,24,16,0.55)', fontSize: 13, margin: 0, letterSpacing: 1 }}>
+              {slides.length} slide{slides.length !== 1 ? 's' : ''} · Edit captions inline · Remove or add slides below
+            </p>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{
+              background: 'none', border: 'none',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
+              lineHeight: 1, padding: '4px 8px', flexShrink: 0,
+            }}
+          >✕</button>
+        </div>
+
+        {/* ── Current slides ── */}
+        {slides.length === 0 ? (
+          <div style={{
+            padding: '40px 0', textAlign: 'center',
+            color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
+            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
+            marginBottom: 24,
+          }}>
+            No slides yet — add one below.
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+            {slides.map((slide, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex', gap: 16, alignItems: 'flex-start',
+                  border: '1px solid rgba(107,0,0,0.14)',
+                  borderRadius: 2, overflow: 'hidden',
+                  background: '#fff',
+                }}
+              >
+                {/* Thumbnail */}
+                <div style={{ flexShrink: 0, width: 160, height: 110, position: 'relative', overflow: 'hidden' }}>
+                  <img
+                    src={slide.img}
+                    alt={slide.title}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'linear-gradient(to top, rgba(43,8,0,0.6) 0%, transparent 60%)',
+                    display: 'flex', alignItems: 'flex-end',
+                    padding: '6px 8px',
+                  }}>
+                    <span style={{
+                      fontFamily: 'Bebas Neue, sans-serif', fontSize: 16,
+                      color: '#FDF6EE', letterSpacing: 1,
+                    }}>
+                      {i + 1} / {slides.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Caption fields */}
+                <div style={{ flex: 1, padding: '12px 0', paddingRight: 12 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
+                    <div>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                        Label (category)
+                      </label>
+                      <input
+                        type="text"
+                        value={slide.label}
+                        onChange={e => updateField(i, 'label', e.target.value)}
+                        style={fieldStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                        Title (project name)
+                      </label>
+                      <input
+                        type="text"
+                        value={slide.title}
+                        onChange={e => updateField(i, 'title', e.target.value)}
+                        style={fieldStyle}
+                      />
+                    </div>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                        Sub-title (location — optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={slide.sub ?? ''}
+                        onChange={e => updateField(i, 'sub', e.target.value)}
+                        placeholder="Leave blank to hide"
+                        style={fieldStyle}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Remove */}
+                <div style={{ padding: '12px 12px 12px 0', flexShrink: 0 }}>
+                  <button
+                    onClick={() => removeSlide(i)}
+                    style={{
+                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+                      border: 'none', borderRadius: 2, cursor: 'pointer',
+                      fontFamily: 'Barlow Condensed, sans-serif',
+                      fontSize: 11, fontWeight: 700, padding: '6px 12px',
+                      letterSpacing: 1,
+                    }}
+                  >
+                    ✕ Remove
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* ── Add new slide ── */}
+        <div style={{
+          borderTop: '2px solid rgba(107,0,0,0.12)',
+          paddingTop: 24,
+        }}>
+          <p style={{
+            fontFamily: 'Bebas Neue, sans-serif',
+            fontSize: 20, color: '#2C1810',
+            margin: '0 0 16px', letterSpacing: 1.5,
+          }}>
+            + ADD NEW SLIDE
+          </p>
+          <p style={{ fontSize: 12, color: 'rgba(44,24,16,0.5)', margin: '0 0 16px', letterSpacing: 1 }}>
+            Fill in the captions, then click "Upload & Add Slide" to choose a photo.
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 20px', marginBottom: 16 }}>
+            <div>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Label</label>
+              <input
+                type="text" value={newLabel}
+                onChange={e => setNewLabel(e.target.value)}
+                placeholder="e.g. Civil Works"
+                style={fieldStyle}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Title</label>
+              <input
+                type="text" value={newTitle}
+                onChange={e => setNewTitle(e.target.value)}
+                placeholder="e.g. NCDC Ormoc"
+                style={fieldStyle}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Sub-title (optional)</label>
+              <input
+                type="text" value={newSub}
+                onChange={e => setNewSub(e.target.value)}
+                placeholder="e.g. Globe · Ormoc, Leyte"
+                style={fieldStyle}
+              />
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <button
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              style={{
+                background: '#6B0000', color: '#FDF6EE',
+                border: '2px solid #6B0000',
+                fontFamily: 'Barlow Condensed, sans-serif',
+                fontSize: 13, fontWeight: 700, letterSpacing: 2,
+                textTransform: 'uppercase', padding: '11px 28px',
+                cursor: uploading ? 'wait' : 'pointer',
+                opacity: uploading ? 0.6 : 1,
+                transition: 'all 0.2s',
+              }}
+            >
+              {uploading ? 'Uploading…' : '📷 Upload & Add Slide'}
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: 'transparent',
+                border: '1px solid rgba(107,0,0,0.35)',
+                color: 'rgba(44,24,16,0.7)',
+                fontFamily: 'Barlow Condensed, sans-serif',
+                fontSize: 12, fontWeight: 700, letterSpacing: 2,
+                textTransform: 'uppercase', padding: '11px 24px', cursor: 'pointer',
+              }}
+            >
+              Done
+            </button>
+          </div>
+        </div>
+
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleImageUpload}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+//  HERO SECTION
+//  Now reads slides from Firestore (via getText) — admin can manage
+//  via the slide manager modal. Hero text is also editable.
 // ─────────────────────────────────────────────────────────────
 
 function HeroSection() {
-  const [current, setCurrent]     = useState(0);
-  const [prev,    setPrev]        = useState<number | null>(null);
-  const [transitioning, setTrans] = useState(false);
+  const { editMode, getText } = useAdmin();
+
+  // Load active slide list from context; fall back to defaults
+  const getSlides = (): SlideData[] => {
+    try {
+      const stored = getText(HERO_SLIDES_KEY, '');
+      return stored ? JSON.parse(stored) : HERO_SLIDES_DEFAULT;
+    } catch {
+      return HERO_SLIDES_DEFAULT;
+    }
+  };
+
+  const slides = getSlides();
+
+  const [current,     setCurrent]     = useState(0);
+  const [prev,        setPrev]        = useState<number | null>(null);
+  const [transitioning, setTrans]     = useState(false);
+  const [showManager, setShowManager] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const slideCount = slides.length;
+  const safeIndex  = slideCount > 0 ? Math.min(current, slideCount - 1) : 0;
+  const slide      = slides[safeIndex] ?? HERO_SLIDES_DEFAULT[0];
+
   const goTo = (next: number) => {
-    if (transitioning || next === current) return;
-    setPrev(current);
+    if (transitioning || next === safeIndex) return;
+    setPrev(safeIndex);
     setTrans(true);
     setTimeout(() => { setCurrent(next); setPrev(null); setTrans(false); }, 800);
   };
@@ -92,7 +436,9 @@ function HeroSection() {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setCurrent(c => {
-        const next = (c + 1) % HERO_SLIDES.length;
+        const count = slides.length;
+        if (count === 0) return c;
+        const next = (c + 1) % count;
         setPrev(c);
         setTrans(true);
         setTimeout(() => { setPrev(null); setTrans(false); }, 800);
@@ -105,7 +451,7 @@ function HeroSection() {
     startTimer();
     return () => { if (timerRef.current) clearInterval(timerRef.current); };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [slides.length]);
 
   const handleDot = (i: number) => {
     if (timerRef.current) clearInterval(timerRef.current);
@@ -113,88 +459,132 @@ function HeroSection() {
     startTimer();
   };
 
-  const slide = HERO_SLIDES[current];
-
   return (
-    <section className="hero-showcase">
-      {HERO_SLIDES.map((s, i) => (
-        <div
-          key={i}
-          className={`hs-bg-layer ${i === current ? 'hs-bg-active' : ''} ${i === prev ? 'hs-bg-prev' : ''}`}
-          style={{ backgroundImage: `url(${s.img})` }}
-        />
-      ))}
-      <div className="hs-overlay" />
-      <div className="hs-deco-line hs-deco-line-v" />
-      <div className="hs-deco-line hs-deco-line-h" />
+    <>
+      <section className="hero-showcase" style={{ position: 'relative' }}>
+        {/* Background layers */}
+        {slides.map((s, i) => (
+          <div
+            key={`${s.img}-${i}`}
+            className={`hs-bg-layer ${i === safeIndex ? 'hs-bg-active' : ''} ${i === prev ? 'hs-bg-prev' : ''}`}
+            style={{ backgroundImage: `url(${s.img})` }}
+          />
+        ))}
+        <div className="hs-overlay" />
+        <div className="hs-deco-line hs-deco-line-v" />
+        <div className="hs-deco-line hs-deco-line-h" />
 
-      <div className="hs-content">
-        <div className="hs-content-inner">
-          <p className="hs-eyebrow">Est. 1993 · PCAB Licensed · General "A"</p>
-          <h1 className="hs-headline">
-            <span className="hs-hl-line">BUILDING</span>
-            <span className="hs-hl-line">WITH PURPOSE.</span>
-            <span className="hs-hl-line">DELIVERING WITH</span>
-            <span className="hs-hl-line hs-hl-accent">EXCELLENCE.</span>
-          </h1>
-          <p className="hs-sub">
-            Trusted general contractor delivering comprehensive civil, electrical,
-            and design services across the Philippines since 1993.
-          </p>
-          <div className="hs-cta-row">
-            <a href="#contact" className="hs-btn-primary">Book an Appointment</a>
-            <Link to="/projects" className="hs-btn-ghost">View Our Projects →</Link>
+        {/* Hero text content — editable in admin mode */}
+        <div className="hs-content">
+          <div className="hs-content-inner">
+            <EditableText adminKey="home.hero.eyebrow" tag="p" className="hs-eyebrow">
+              Est. 1993 · PCAB Licensed · General "A"
+            </EditableText>
+            <h1 className="hs-headline">
+              <EditableText adminKey="home.hero.line1" tag="span" className="hs-hl-line">
+                BUILDING
+              </EditableText>
+              <EditableText adminKey="home.hero.line2" tag="span" className="hs-hl-line">
+                WITH PURPOSE.
+              </EditableText>
+              <EditableText adminKey="home.hero.line3" tag="span" className="hs-hl-line">
+                DELIVERING WITH
+              </EditableText>
+              <EditableText adminKey="home.hero.line4" tag="span" className="hs-hl-line hs-hl-accent">
+                EXCELLENCE.
+              </EditableText>
+            </h1>
+            <EditableText adminKey="home.hero.sub" tag="p" className="hs-sub">
+              Trusted general contractor delivering comprehensive civil, electrical,
+              and design services across the Philippines since 1993.
+            </EditableText>
+            <div className="hs-cta-row">
+              <a href="#contact" className="hs-btn-primary">Book an Appointment</a>
+              <Link to="/projects" className="hs-btn-ghost">View Our Projects →</Link>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={`hs-project-tag ${transitioning ? 'hs-tag-out' : 'hs-tag-in'}`}>
-        <span className="hs-tag-label">{slide.label}</span>
-        <p className="hs-tag-title">{slide.title}</p>
-        {slide.sub && <p className="hs-tag-sub">{slide.sub}</p>}
-      </div>
+        {/* Slide caption tag */}
+        <div className={`hs-project-tag ${transitioning ? 'hs-tag-out' : 'hs-tag-in'}`}>
+          <span className="hs-tag-label">{slide.label}</span>
+          <p className="hs-tag-title">{slide.title}</p>
+          {slide.sub && <p className="hs-tag-sub">{slide.sub}</p>}
+        </div>
 
-      <div className="hs-controls">
-        <div className="hs-progress-bar">
-          <div className="hs-progress-fill" key={current} style={{ animation: 'progressFill 5s linear forwards' }} />
+        {/* Controls */}
+        <div className="hs-controls">
+          <div className="hs-progress-bar">
+            <div className="hs-progress-fill" key={safeIndex} style={{ animation: 'progressFill 5s linear forwards' }} />
+          </div>
+          <div className="hs-dots">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                className={`hs-dot ${i === safeIndex ? 'hs-dot-active' : ''}`}
+                onClick={() => handleDot(i)}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
+          </div>
+          <div className="hs-counter">
+            <span className="hs-count-cur">{String(safeIndex + 1).padStart(2, '0')}</span>
+            <span className="hs-count-sep" />
+            <span className="hs-count-tot">{String(slideCount).padStart(2, '0')}</span>
+          </div>
         </div>
-        <div className="hs-dots">
-          {HERO_SLIDES.map((_, i) => (
-            <button key={i} className={`hs-dot ${i === current ? 'hs-dot-active' : ''}`} onClick={() => handleDot(i)} aria-label={`Slide ${i + 1}`} />
-          ))}
-        </div>
-        <div className="hs-counter">
-          <span className="hs-count-cur">{String(current + 1).padStart(2, '0')}</span>
-          <span className="hs-count-sep" />
-          <span className="hs-count-tot">{String(HERO_SLIDES.length).padStart(2, '0')}</span>
-        </div>
-      </div>
 
-      <div className="hs-stats">
-        <div className="hs-stat">
-          <div className="hs-stat-num">30+</div>
-          <div className="hs-stat-label">Years of Excellence</div>
+        {/* Stats bar */}
+        <div className="hs-stats">
+          <div className="hs-stat">
+            <div className="hs-stat-num">30+</div>
+            <div className="hs-stat-label">Years of Excellence</div>
+          </div>
+          <div className="hs-stat-div" />
+          <div className="hs-stat">
+            <div className="hs-stat-num">100+</div>
+            <div className="hs-stat-label">Construction Workers</div>
+          </div>
+          <div className="hs-stat-div" />
+          <div className="hs-stat">
+            <div className="hs-stat-num">PCAB</div>
+            <div className="hs-stat-label">General "A" Licensed</div>
+          </div>
         </div>
-        <div className="hs-stat-div" />
-        <div className="hs-stat">
-          <div className="hs-stat-num">100+</div>
-          <div className="hs-stat-label">Construction Workers</div>
-        </div>
-        <div className="hs-stat-div" />
-        <div className="hs-stat">
-          <div className="hs-stat-num">PCAB</div>
-          <div className="hs-stat-label">General "A" Licensed</div>
-        </div>
-      </div>
-    </section>
+
+        {/* ── Edit mode: manage slides button ── */}
+        {editMode && (
+          <button
+            onClick={() => setShowManager(true)}
+            style={{
+              position: 'absolute', top: 80, right: 20, zIndex: 10,
+              background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+              border: '1px solid rgba(253,246,238,0.25)',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
+              textTransform: 'uppercase', padding: '8px 16px',
+              cursor: 'pointer',
+              backdropFilter: 'blur(4px)',
+            }}
+          >
+            ⚙ Manage Slides
+          </button>
+        )}
+      </section>
+
+      {/* Slide manager modal */}
+      {showManager && (
+        <HeroSlideManagerModal
+          slides={slides}
+          onClose={() => setShowManager(false)}
+        />
+      )}
+    </>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FEATURED PROJECT PICKER MODAL
-//  Lets admin choose which projects appear in the "Recently
-//  Completed" section on the homepage. Selection is persisted
-//  to Firestore via setFeaturedProjectIds.
+//  FEATURED PROJECT PICKER MODAL  (unchanged)
 // ─────────────────────────────────────────────────────────────
 
 function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
@@ -206,7 +596,6 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
     setFeaturedProjectIds,
   } = useAdmin();
 
-  // Build the full list of selectable projects (static + admin-added)
   const allAvailable = useMemo(() => {
     const staticOnes = ALL_PROJECTS
       .filter(p => !(deletedProjectIds ?? []).includes(p.id))
@@ -228,7 +617,6 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
     return [...staticOnes, ...adminOnes];
   }, [adminProjects, deletedProjectIds, projectOverrides]);
 
-  // Initialise selection from Firestore or fall back to current FEATURED_PROJECTS
   const [selected, setSelected] = useState<string[]>(() =>
     (featuredProjectIds?.length ?? 0) > 0
       ? featuredProjectIds
@@ -252,7 +640,6 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
     }
   };
 
-  // Close on backdrop click
   const handleBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -281,14 +668,9 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
         fontFamily:   'Barlow Condensed, sans-serif',
         position:     'relative',
       }}>
-        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
           <div>
-            <h2 style={{
-              fontFamily:    'Bebas Neue, sans-serif',
-              fontSize:      36, color: '#2C1810',
-              margin:        '0 0 6px', letterSpacing: 2,
-            }}>
+            <h2 style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 36, color: '#2C1810', margin: '0 0 6px', letterSpacing: 2 }}>
               CHOOSE FEATURED PROJECTS
             </h2>
             <p style={{ color: 'rgba(44,24,16,0.55)', fontSize: 13, margin: 0, letterSpacing: 1 }}>
@@ -297,27 +679,17 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: 'none', border: 'none',
-              fontSize: 22, cursor: 'pointer', color: '#6B0000',
-              lineHeight: 1, padding: '4px 8px', flexShrink: 0,
-            }}
+            style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#6B0000', lineHeight: 1, padding: '4px 8px', flexShrink: 0 }}
             aria-label="Close"
           >✕</button>
         </div>
 
-        {/* Project grid */}
         {allAvailable.length === 0 ? (
           <p style={{ color: 'rgba(44,24,16,0.5)', fontSize: 14, textAlign: 'center', padding: '40px 0' }}>
             No projects available yet.
           </p>
         ) : (
-          <div style={{
-            display:             'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap:                 16,
-            marginBottom:        28,
-          }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16, marginBottom: 28 }}>
             {allAvailable.map(p => {
               const isSel = selected.includes(p.id);
               return (
@@ -325,67 +697,25 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
                   key={p.id}
                   onClick={() => toggle(p.id)}
                   style={{
-                    cursor:      'pointer',
-                    border:      isSel ? '3px solid #6B0000' : '2px solid rgba(107,0,0,0.15)',
-                    borderRadius: 2,
-                    overflow:    'hidden',
-                    position:    'relative',
-                    transition:  'border-color 0.2s, box-shadow 0.2s',
-                    boxShadow:   isSel ? '0 4px 16px rgba(107,0,0,0.20)' : 'none',
-                    userSelect:  'none',
+                    cursor: 'pointer',
+                    border: isSel ? '3px solid #6B0000' : '2px solid rgba(107,0,0,0.15)',
+                    borderRadius: 2, overflow: 'hidden', position: 'relative',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow: isSel ? '0 4px 16px rgba(107,0,0,0.20)' : 'none',
+                    userSelect: 'none',
                   }}
                 >
-                  {/* Cover image */}
                   <div style={{ position: 'relative', paddingTop: '65%' }}>
-                    <img
-                      src={p.cover}
-                      alt={p.title}
-                      style={{
-                        position: 'absolute', inset: 0,
-                        width: '100%', height: '100%', objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
-                    {/* Selection overlay */}
+                    <img src={p.cover} alt={p.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     {isSel && (
-                      <div style={{
-                        position:       'absolute', inset: 0,
-                        background:     'rgba(107,0,0,0.38)',
-                        display:        'flex',
-                        alignItems:     'center',
-                        justifyContent: 'center',
-                      }}>
-                        <div style={{
-                          width:          32, height: 32,
-                          borderRadius:   '50%',
-                          background:     '#6B0000',
-                          color:          '#FDF6EE',
-                          display:        'flex',
-                          alignItems:     'center',
-                          justifyContent: 'center',
-                          fontSize:       18, fontWeight: 700,
-                        }}>✓</div>
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(107,0,0,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6B0000', color: '#FDF6EE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700 }}>✓</div>
                       </div>
                     )}
                   </div>
-
-                  {/* Footer */}
-                  <div style={{
-                    padding:    '8px 10px 10px',
-                    background: isSel ? 'rgba(107,0,0,0.04)' : '#FFFFFF',
-                  }}>
-                    <p style={{
-                      fontSize:      10, letterSpacing: 2,
-                      color:         '#6B0000', margin: '0 0 2px',
-                      textTransform: 'uppercase',
-                    }}>{p.category}</p>
-                    <p style={{
-                      fontSize:     13, fontWeight: 700,
-                      color:        '#2C1810', margin: 0,
-                      letterSpacing: 0.5,
-                      whiteSpace:   'nowrap', overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}>{p.title}</p>
+                  <div style={{ padding: '8px 10px 10px', background: isSel ? 'rgba(107,0,0,0.04)' : '#FFFFFF' }}>
+                    <p style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', margin: '0 0 2px', textTransform: 'uppercase' }}>{p.category}</p>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: '#2C1810', margin: 0, letterSpacing: 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</p>
                   </div>
                 </div>
               );
@@ -393,39 +723,21 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
           </div>
         )}
 
-        {/* Action buttons */}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           <button
             onClick={() => setSelected(FEATURED_PROJECTS.map(p => String(p.id)))}
-            style={{
-              background: 'transparent', border: '1px solid rgba(107,0,0,0.3)',
-              color: 'rgba(44,24,16,0.6)', fontFamily: 'Barlow Condensed, sans-serif',
-              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
-              padding: '10px 20px', cursor: 'pointer',
-            }}
+            style={{ background: 'transparent', border: '1px solid rgba(107,0,0,0.3)', color: 'rgba(44,24,16,0.6)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 20px', cursor: 'pointer' }}
             type="button"
           >Reset to Default</button>
           <button
             onClick={onClose}
-            style={{
-              background: 'transparent', border: '1px solid rgba(107,0,0,0.4)',
-              color: 'rgba(44,24,16,0.7)', fontFamily: 'Barlow Condensed, sans-serif',
-              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
-              padding: '10px 24px', cursor: 'pointer',
-            }}
+            style={{ background: 'transparent', border: '1px solid rgba(107,0,0,0.4)', color: 'rgba(44,24,16,0.7)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 24px', cursor: 'pointer' }}
             type="button"
           >Cancel</button>
           <button
             onClick={handleSave}
             disabled={saving}
-            style={{
-              background: saving ? 'rgba(107,0,0,0.6)' : '#6B0000',
-              border: '1px solid #6B0000',
-              color: '#FDF6EE', fontFamily: 'Barlow Condensed, sans-serif',
-              fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
-              padding: '10px 28px', cursor: saving ? 'wait' : 'pointer',
-              transition: 'background 0.2s',
-            }}
+            style={{ background: saving ? 'rgba(107,0,0,0.6)' : '#6B0000', border: '1px solid #6B0000', color: '#FDF6EE', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 28px', cursor: saving ? 'wait' : 'pointer', transition: 'background 0.2s' }}
             type="button"
           >{saving ? 'Saving…' : 'Save Selection'}</button>
         </div>
@@ -435,7 +747,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  APP INNER
+//  APP INNER  (unchanged)
 // ─────────────────────────────────────────────────────────────
 
 function AppInner(): JSX.Element {
@@ -443,7 +755,6 @@ function AppInner(): JSX.Element {
   const [scrolled, setScrolled] = useState<boolean>(false);
   const [showPicker, setShowPicker] = useState(false);
 
-  // Pull admin state so the home page can react to edit mode
   const {
     isAdmin,
     editMode,
@@ -461,12 +772,9 @@ function AppInner(): JSX.Element {
 
   const closeMenu = (): void => setMenuOpen(false);
 
-  // ── Compute which projects appear in "Recently Completed" ──
-  // Falls back to FEATURED_PROJECTS if admin hasn't chosen yet.
   const displayedProjects = useMemo(() => {
     if (!featuredProjectIds?.length) return FEATURED_PROJECTS as any[];
 
-    // Build a lookup map of all available projects
     const allMap = new Map<string, any>();
     ALL_PROJECTS.forEach(p => allMap.set(String(p.id), { ...p }));
     (adminProjects ?? []).forEach(p => allMap.set(String(p.id), { ...p }));
@@ -476,7 +784,6 @@ function AppInner(): JSX.Element {
       .map(id => {
         const p = allMap.get(id);
         if (!p) return null;
-        // Apply any field overrides for static projects
         const ov = projectOverrides[id];
         if (ov) {
           return {
@@ -538,18 +845,10 @@ function AppInner(): JSX.Element {
                 <div className="who-inner">
                   <div className="who-text">
                     <p className="section-tag">WHO WE ARE</p>
-                    <EditableText
-                      adminKey="home.who.heading"
-                      tag="h2"
-                      className="who-heading"
-                    >
+                    <EditableText adminKey="home.who.heading" tag="h2" className="who-heading">
                       A PEOPLE-DRIVEN CONSTRUCTION FIRM TURNING PLANS INTO WELL-BUILT REALITIES.
                     </EditableText>
-                    <EditableText
-                      adminKey="home.who.desc"
-                      tag="p"
-                      className="who-desc"
-                    >
+                    <EditableText adminKey="home.who.desc" tag="p" className="who-desc">
                       We are a team of experienced professionals dedicated to delivering quality
                       construction through collaboration, integrity, and hands-on expertise — from
                       planning and cost estimation to project execution and supervision for private clients.
@@ -587,21 +886,17 @@ function AppInner(): JSX.Element {
                     <p className="section-tag muted">OUR PROJECTS</p>
                     <h2 className="projects-heading">RECENTLY COMPLETED PROJECTS</h2>
                   </div>
-                  {/* Row: "Choose Projects" button (edit mode) + "All Projects" link */}
                   <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
                     {isAdmin && editMode && (
                       <button
                         type="button"
                         onClick={() => setShowPicker(true)}
                         style={{
-                          background:    'transparent',
-                          border:        '1px solid #6B0000',
-                          color:         '#6B0000',
-                          fontFamily:    'Barlow Condensed, sans-serif',
-                          fontSize:      11, fontWeight: 700,
-                          letterSpacing: 2, textTransform: 'uppercase',
-                          padding:       '9px 18px', cursor: 'pointer',
-                          transition:    'background 0.2s, color 0.2s',
+                          background: 'transparent', border: '1px solid #6B0000',
+                          color: '#6B0000', fontFamily: 'Barlow Condensed, sans-serif',
+                          fontSize: 11, fontWeight: 700, letterSpacing: 2,
+                          textTransform: 'uppercase', padding: '9px 18px', cursor: 'pointer',
+                          transition: 'background 0.2s, color 0.2s',
                         }}
                         onMouseEnter={e => {
                           (e.currentTarget as HTMLButtonElement).style.background = '#6B0000';
@@ -649,14 +944,9 @@ function AppInner(): JSX.Element {
                   </div>
                   <div className="about-strip-text">
                     <p className="section-tag">ABOUT US</p>
-                    <EditableText
-                      adminKey="home.about.heading"
-                      tag="h2"
-                      className="about-strip-heading"
-                    >
+                    <EditableText adminKey="home.about.heading" tag="h2" className="about-strip-heading">
                       Pythagoras Construction Company, Inc.
                     </EditableText>
-                    {/* Description: company name stays bold, rest is editable */}
                     <p className="about-strip-desc">
                       <span className="bold-text">Pythagoras Construction, Inc.</span>{' '}
                       <EditableText adminKey="home.about.desc" tag="span">
