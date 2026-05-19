@@ -92,6 +92,17 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Sync images when Firestore data loads/changes (handles the case where
+  // the modal was opened before the Firestore snapshot arrived)
+  const savedListStr = getText(listKey, '');
+  useEffect(() => {
+    try {
+      const parsed = savedListStr ? JSON.parse(savedListStr) : [...defaultImages];
+      setImages(parsed);
+    } catch { /**/ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedListStr]);
+
   // Save new list both locally (instant feedback) and to Firestore
   const persist = async (newImgs: string[]) => {
     setImages(newImgs);
@@ -418,29 +429,47 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
 
 // ─────────────────────────────────────────────────────────────
 //  ADD SERVICE ITEM  (edit mode only)
-//  Uses local state for immediate UI feedback + async Firestore save.
-//  Font colours now match each section's theme (dark vs light).
+//
+//  Fixes:
+//   1. useEffect syncs extraItems from Firestore when siteData loads/changes.
+//      Previously, the useState lazy-init ran only once at mount — if Firestore
+//      data hadn't arrived yet, extraItems was [] and previously-saved items
+//      never appeared, making "add" appear broken.
+//   2. Added items no longer carry an inline `color` style; they inherit the
+//      colour from the parent `srv-list` / `srv-list-dark` CSS class so they
+//      look identical to the built-in service items.
 // ─────────────────────────────────────────────────────────────
 
 function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
   const { getText, setText } = useAdmin();
   const extraKey = `srv.${svcN}.extra_items`;
 
-  // Local state for immediate UI — initialised once from stored value
+  // Initialize from whatever is already in context (cache or live Firestore)
   const [extraItems, setExtraItems] = React.useState<string[]>(() => {
     try { return JSON.parse(getText(extraKey, '[]')); } catch { return []; }
   });
   const [inputVal, setInputVal] = React.useState('');
   const [saving,   setSaving]   = React.useState(false);
 
+  // ── FIX 1: sync with Firestore when siteData updates ──────
+  const savedStr = getText(extraKey, '[]');
+  React.useEffect(() => {
+    if (saving) return; // don't override optimistic local update mid-save
+    try {
+      const parsed: string[] = JSON.parse(savedStr);
+      setExtraItems(parsed);
+    } catch { /**/ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedStr]);
+
   const persist = async (newItems: string[]) => {
-    setExtraItems(newItems);
+    setExtraItems(newItems); // optimistic
     setSaving(true);
     try {
       await setText(extraKey, JSON.stringify(newItems));
     } catch (err) {
       // Rollback on failure
-      setExtraItems(extraItems);
+      try { setExtraItems(JSON.parse(getText(extraKey, '[]'))); } catch { /**/ }
       alert('Could not save: ' + (err as Error).message);
     } finally {
       setSaving(false);
@@ -457,12 +486,12 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
     persist(extraItems.filter((_, i) => i !== idx));
   };
 
-  // Theme-aware colours matching the section's typography
-  const listColor    = isDark ? 'rgba(253,246,238,0.85)' : '#2C1810';
+  // Theme-aware colours for input / button only (items inherit CSS colour)
   const inputBg      = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
   const inputBorder  = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(107,0,0,0.22)';
+  const inputColor   = isDark ? 'rgba(253,246,238,0.85)' : '#2C1810';
   const btnBg        = isDark ? 'rgba(253,246,238,0.12)' : '#6B0000';
-  const btnColor     = isDark ? '#FDF6EE'                : '#FDF6EE';
+  const btnColor     = '#FDF6EE';
   const btnBorder    = isDark ? 'rgba(253,246,238,0.25)' : '#6B0000';
   const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
   const removeColor  = isDark ? 'rgba(253,246,238,0.7)'  : '#6B0000';
@@ -470,10 +499,11 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
 
   return (
     <>
-      {/* Admin-added items */}
+      {/* Admin-added items — inherits colour from srv-list / srv-list-dark CSS */}
       {extraItems.map((item, idx) => (
         <li key={`extra-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ color: listColor, flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 14 }}>
+          {/* ── FIX 2: no inline color — inherits from parent CSS class ── */}
+          <span style={{ flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 14 }}>
             {item}
           </span>
           <button
@@ -509,7 +539,7 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
             flex: 1,
             background: inputBg,
             border: `1px dashed ${inputBorder}`,
-            color: listColor,
+            color: inputColor,
             fontFamily: 'Barlow, sans-serif',
             fontSize: 14,
             padding: '7px 10px',

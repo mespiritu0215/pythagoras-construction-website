@@ -1,15 +1,58 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ALL_PROJECTS } from './Projectsdata';
+import { useAdmin, ProjectOverride } from './AdminContext';
+
+// ─── Apply stored Firestore overrides to a static project ────
+function applyOverride(project: any, override?: ProjectOverride): any {
+  if (!override) return project;
+  return {
+    ...project,
+    title:       override.title       ?? project.title,
+    description: override.description ?? project.description,
+    location:    override.location    ?? project.location,
+    client:      override.client      ?? project.client,
+    completion:  override.completion  ?? project.completion,
+    amount:      override.amount      ?? project.amount,
+    ongoing:     override.ongoing     !== undefined ? override.ongoing : project.ongoing,
+    cover:       override.cover       ?? project.cover,
+    images:      override.images      ?? project.images,
+  };
+}
 
 export default function ProjectDetails() {
-  const { id }     = useParams<{ id: string }>();
-  const navigate   = useNavigate();
-  const project    = ALL_PROJECTS.find((p) => p.id === Number(id));
+  const { id }   = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  // ── Pull admin data so we can apply overrides and find admin-added projects ──
+  const {
+    adminProjects,
+    projectOverrides,
+    deletedProjectIds,
+  } = useAdmin();
+
+  // 1. Check static projects first (match by string comparison to support both
+  //    numeric IDs like "1" and timestamp IDs like "1621234567890").
+  const staticProject = ALL_PROJECTS.find((p) => String(p.id) === id);
+
+  // 2. Check admin-added projects (Firestore collection, string IDs).
+  const adminProject = adminProjects.find((p) => p.id === id);
+
+  // 3. Resolve the project — apply overrides to static projects.
+  const project: any = staticProject
+    ? applyOverride(staticProject, id ? projectOverrides[id] : undefined)
+    : adminProject ?? null;
+
+  // Guard: project deleted by admin
+  const isDeleted = staticProject && id
+    ? deletedProjectIds.includes(Number(id))
+    : false;
 
   // ── Carousel state ───────────────────────────────────────
-  // Always show exactly 3 images; cycle through them automatically
-  const carouselImages = project ? project.images.slice(0, 3) : [];
+  // Show all available images (admin-added projects may have more than 3)
+  const carouselImages: string[] = project
+    ? (project.images?.length ? project.images : [project.cover])
+    : [];
   const [activeIdx, setActiveIdx]   = useState(0);
   const [animDir,   setAnimDir]     = useState<'left'|'right'>('right');
   const [isAnimating, setIsAnimating] = useState(false);
@@ -66,11 +109,11 @@ export default function ProjectDetails() {
     return () => { document.body.style.background = ''; };
   }, []);
 
-  // ── Not found ────────────────────────────────────────────
-  if (!project) {
+  // ── Not found / deleted ─────────────────────────────────
+  if (!project || isDeleted) {
     return (
       <div className="pd-not-found">
-        <p>Project not found.</p>
+        <p>{isDeleted ? 'This project has been removed.' : 'Project not found.'}</p>
         <button onClick={() => navigate('/projects')}>← Back to Projects</button>
       </div>
     );

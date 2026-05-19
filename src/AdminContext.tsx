@@ -1,10 +1,13 @@
 /**
- * AdminContext.tsx  (v3 — fixes)
+ * AdminContext.tsx  (v4 — fixes)
  *
  * Fixes in this version:
  *  1. User persisted to localStorage — no logout on page refresh
- *  2. EditableText uses local draft state + isFocused ref so React re-renders
- *     never reset content while the admin is actively typing
+ *  2. EditableText now uses a frozenHtml ref + useLayoutEffect instead of
+ *     dangerouslySetInnerHTML with a draft state.  The ref value is frozen
+ *     while the element is focused, so React's reconciler never sees a prop
+ *     change and never overwrites what the admin has typed. useLayoutEffect
+ *     runs before browser paint, preventing any flash of empty content.
  *  3. featuredProjectIds added to SiteData — admin can choose which projects
  *     appear in the "Recently Completed" homepage section
  *  4. uploadImg shows an alert on failure so errors are not silent
@@ -15,6 +18,7 @@ import React, {
   useContext,
   useState,
   useEffect,
+  useLayoutEffect,
   useCallback,
   useRef,
   ReactNode,
@@ -305,19 +309,26 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 // ─────────────────────────────────────────────────────────────
 //  EDITABLE TEXT
 //
-//  FIX #2: Use a local `draft` state + `isFocused` ref.
+//  FIX #2 (v4): frozenHtml ref + useLayoutEffect approach.
 //
-//  Previously, `dangerouslySetInnerHTML` was tied directly to the
-//  live Firestore value, so any parent re-render (timer, scroll, etc.)
-//  would reset the DOM and wipe whatever the admin had typed.
+//  Root cause of the "resets while typing" bug:
+//    dangerouslySetInnerHTML passes a new object `{ __html: draft }` on
+//    every parent re-render (slide timer, Firestore snapshot, etc.).
+//    Even though the *string* value is the same, React's reconciler
+//    reapplied innerHTML in certain concurrent-mode re-render sequences,
+//    wiping what the admin had typed.
 //
-//  Now:
-//  - `draft` is local state, initialised once from Firestore.
-//  - While the element is focused, external Firestore changes do NOT
-//    update `draft` (isFocused guard in the useEffect).
-//  - React sees the same `{ __html: draft }` on re-renders while the
-//    user is typing, so it never touches the DOM.
-//  - On blur we commit the new text: update `draft` + save to Firestore.
+//  Fix strategy:
+//    - `frozenHtml` is a ref whose value is *literally frozen* while the
+//      element is focused. Since refs don't trigger re-renders, React's
+//      reconciler always sees the identical object reference passed to
+//      dangerouslySetInnerHTML, so it never touches the DOM.
+//    - useLayoutEffect (runs before browser paint) keeps frozenHtml and
+//      the real DOM in sync whenever savedText changes AND we are not
+//      focused — handles external Firestore updates + initial render
+//      without any flash of empty content.
+//    - On blur we update frozenHtml to the newly typed text before
+//      persisting to Firestore, so the next render stays consistent.
 // ─────────────────────────────────────────────────────────────
 
 export function EditableText({
@@ -338,14 +349,19 @@ export function EditableText({
   const { editMode, getText, setText } = useAdmin();
   const savedText  = getText(adminKey, children);
 
-  // Local draft — only updated on blur, not while typing
-  const [draft,     setDraft]    = useState(savedText);
-  const isFocused = useRef(false);
+  const isFocused  = useRef(false);
+  const elemRef    = useRef<HTMLElement>(null);
+  // frozenHtml never changes while the user is focused — React's reconciler
+  // therefore never sees a new dangerouslySetInnerHTML value and leaves the
+  // DOM alone while the admin is typing.
+  const frozenHtml = useRef(savedText);
 
-  // Sync from Firestore, but only when the element is not being edited
-  useEffect(() => {
+  // Sync content imperatively (before paint) when Firestore data changes,
+  // but ONLY when the field is not currently being edited.
+  useLayoutEffect(() => {
     if (!isFocused.current) {
-      setDraft(savedText);
+      frozenHtml.current = savedText;
+      if (elemRef.current) elemRef.current.innerHTML = savedText;
     }
   }, [savedText]);
 
@@ -356,15 +372,20 @@ export function EditableText({
   return (
     // @ts-ignore — dynamic tag with contentEditable
     <Tag
+      ref={elemRef}
       className={className}
       contentEditable
       suppressContentEditableWarning
-      dangerouslySetInnerHTML={{ __html: draft }}
+      // frozenHtml.current does not change while focused →
+      // React reconciler sees identical __html value → never resets DOM.
+      dangerouslySetInnerHTML={{ __html: frozenHtml.current }}
       onFocus={() => { isFocused.current = true; }}
       onBlur={(e: React.FocusEvent<HTMLElement>) => {
         isFocused.current = false;
         const newText = e.currentTarget.innerText.trim();
-        setDraft(newText);          // keep local state in sync
+        // Update frozenHtml immediately so the next render prop matches the DOM.
+        frozenHtml.current = newText;
+        if (elemRef.current) elemRef.current.innerHTML = newText;
         setText(adminKey, newText); // persist to Firestore
       }}
       title="✏️ Click to edit"

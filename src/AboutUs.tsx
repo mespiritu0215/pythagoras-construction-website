@@ -91,6 +91,18 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Sync images when Firestore data loads/changes (handles the case where
+  // the modal was opened before the Firestore snapshot had arrived, or when
+  // previously-saved custom images need to be loaded into the modal).
+  const savedListStr = getText(storageKey, '');
+  useEffect(() => {
+    try {
+      const parsed = savedListStr ? JSON.parse(savedListStr) : [...defaultImages];
+      setImages(parsed);
+    } catch { /**/ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedListStr]);
+
   const persist = async (newImgs: string[]) => {
     setImages(newImgs);
     try {
