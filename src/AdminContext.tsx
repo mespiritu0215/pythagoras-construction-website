@@ -369,9 +369,12 @@ export function EditableText({
     return <Tag className={className} style={style} {...rest}>{savedText}</Tag>;
   }
 
+  // Cast to any so TypeScript does not try to resolve prop types for the
+  // dynamic tag — this is the standard pattern for polymorphic components.
+  const DynamicTag = Tag as any;
+
   return (
-    // @ts-ignore — dynamic tag with contentEditable
-    <Tag
+    <DynamicTag
       ref={elemRef}
       className={className}
       contentEditable

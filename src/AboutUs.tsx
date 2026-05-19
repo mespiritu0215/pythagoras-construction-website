@@ -76,7 +76,7 @@ interface CarouselManagerProps {
   onClose:       () => void;
 }
 
-function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselManagerProps): JSX.Element {
+function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselManagerProps): React.JSX.Element {
   const { getText, setText } = useAdmin();
 
   const [images, setImages] = useState<string[]>(() => {
