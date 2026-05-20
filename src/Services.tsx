@@ -428,37 +428,28 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
 }
 
 // ─────────────────────────────────────────────────────────────
-//  ADD SERVICE ITEM  (edit mode only)
+//  SERVICE EXTRA ITEMS
 //
-//  Fixes:
-//   1. useEffect syncs extraItems from Firestore when siteData loads/changes.
-//      Previously, the useState lazy-init ran only once at mount — if Firestore
-//      data hadn't arrived yet, extraItems was [] and previously-saved items
-//      never appeared, making "add" appear broken.
-//   2. Added items no longer carry an inline `color` style; they inherit the
-//      colour from the parent `srv-list` / `srv-list-dark` CSS class so they
-//      look identical to the built-in service items.
+//  Always rendered (not gated behind editMode) so saved items remain
+//  visible after the admin exits edit mode.  Edit UI (input row +
+//  remove buttons) is shown only while editMode is active.
 // ─────────────────────────────────────────────────────────────
 
-function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
-  const { getText, setText } = useAdmin();
+function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) {
+  const { editMode, getText, setText } = useAdmin();
   const extraKey = `srv.${svcN}.extra_items`;
 
-  // Initialize from whatever is already in context (cache or live Firestore)
   const [extraItems, setExtraItems] = React.useState<string[]>(() => {
     try { return JSON.parse(getText(extraKey, '[]')); } catch { return []; }
   });
   const [inputVal, setInputVal] = React.useState('');
   const [saving,   setSaving]   = React.useState(false);
 
-  // ── FIX 1: sync with Firestore when siteData updates ──────
+  // Sync whenever Firestore delivers a new snapshot
   const savedStr = getText(extraKey, '[]');
   React.useEffect(() => {
-    if (saving) return; // don't override optimistic local update mid-save
-    try {
-      const parsed: string[] = JSON.parse(savedStr);
-      setExtraItems(parsed);
-    } catch { /**/ }
+    if (saving) return;
+    try { setExtraItems(JSON.parse(savedStr)); } catch { /**/ }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedStr]);
 
@@ -468,7 +459,6 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
     try {
       await setText(extraKey, JSON.stringify(newItems));
     } catch (err) {
-      // Rollback on failure
       try { setExtraItems(JSON.parse(getText(extraKey, '[]'))); } catch { /**/ }
       alert('Could not save: ' + (err as Error).message);
     } finally {
@@ -482,91 +472,88 @@ function AddServiceItem({ svcN, isDark }: { svcN: number; isDark: boolean }) {
     setInputVal('');
   };
 
-  const removeItem = (idx: number) => {
-    persist(extraItems.filter((_, i) => i !== idx));
-  };
+  const removeItem = (idx: number) => persist(extraItems.filter((_, i) => i !== idx));
 
-  // Theme-aware colours for input / button only (items inherit CSS colour)
-  const inputBg      = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
-  const inputBorder  = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(107,0,0,0.22)';
-  const inputColor   = isDark ? 'rgba(253,246,238,0.85)' : '#2C1810';
-  const btnBg        = isDark ? 'rgba(253,246,238,0.12)' : '#6B0000';
-  const btnColor     = '#FDF6EE';
-  const btnBorder    = isDark ? 'rgba(253,246,238,0.25)' : '#6B0000';
+  // Theme-aware remove button colours
   const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
   const removeColor  = isDark ? 'rgba(253,246,238,0.7)'  : '#6B0000';
   const removeBorder = isDark ? 'rgba(253,246,238,0.20)' : 'rgba(107,0,0,0.25)';
 
+  // Input background/border stay theme-aware; text and + button use var(--text-mid)
+  const inputBg     = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
+  const inputBorder = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(107,0,0,0.22)';
+
   return (
     <>
-      {/* Admin-added items — inherits colour from srv-list / srv-list-dark CSS */}
+      {/* Always-visible saved items — inherits colour from srv-list CSS */}
       {extraItems.map((item, idx) => (
         <li key={`extra-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {/* ── FIX 2: no inline color — inherits from parent CSS class ── */}
           <span style={{ flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 14 }}>
             {item}
           </span>
-          <button
-            type="button"
-            onClick={() => removeItem(idx)}
-            disabled={saving}
-            style={{
-              background: removeBg,
-              border: `1px solid ${removeBorder}`,
-              color: removeColor,
-              cursor: saving ? 'wait' : 'pointer',
-              borderRadius: 2,
-              fontFamily: 'Barlow Condensed, sans-serif',
-              fontSize: 11, fontWeight: 700,
-              padding: '2px 7px', flexShrink: 0,
-            }}
-          >
-            ✕
-          </button>
+          {editMode && (
+            <button
+              type="button"
+              onClick={() => removeItem(idx)}
+              disabled={saving}
+              style={{
+                background: removeBg,
+                border: `1px solid ${removeBorder}`,
+                color: removeColor,
+                cursor: saving ? 'wait' : 'pointer',
+                borderRadius: 2,
+                fontFamily: 'Barlow Condensed, sans-serif',
+                fontSize: 11, fontWeight: 700,
+                padding: '2px 7px', flexShrink: 0,
+              }}
+            >✕</button>
+          )}
         </li>
       ))}
 
-      {/* Input row */}
-      <li style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
-        <input
-          type="text"
-          value={inputVal}
-          onChange={e => setInputVal(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addItem()}
-          placeholder="Add new service item…"
-          disabled={saving}
-          style={{
-            flex: 1,
-            background: inputBg,
-            border: `1px dashed ${inputBorder}`,
-            color: inputColor,
-            fontFamily: 'Barlow, sans-serif',
-            fontSize: 14,
-            padding: '7px 10px',
-            outline: 'none',
-            opacity: saving ? 0.6 : 1,
-          }}
-        />
-        <button
-          type="button"
-          onClick={addItem}
-          disabled={saving}
-          style={{
-            background: btnBg,
-            color: btnColor,
-            border: `1px solid ${btnBorder}`,
-            fontFamily: 'Barlow Condensed, sans-serif',
-            fontSize: 12, fontWeight: 700,
-            letterSpacing: 1.5, textTransform: 'uppercase',
-            padding: '8px 14px',
-            cursor: saving ? 'wait' : 'pointer',
-            flexShrink: 0,
-            opacity: saving ? 0.6 : 1,
-          }}
-        >
-          {saving ? '…' : '+ Add'}
-        </button>
-      </li>
+      {/* Input row — edit mode only */}
+      {editMode && (
+        <li style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
+          <input
+            type="text"
+            value={inputVal}
+            onChange={e => setInputVal(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && addItem()}
+            placeholder="Add new service item…"
+            disabled={saving}
+            style={{
+              flex: 1,
+              background: inputBg,
+              border: `1px dashed ${inputBorder}`,
+              color: 'var(--text-mid)',
+              fontFamily: 'Barlow, sans-serif',
+              fontSize: 14,
+              padding: '7px 10px',
+              outline: 'none',
+              opacity: saving ? 0.6 : 1,
+            }}
+          />
+          <button
+            type="button"
+            onClick={addItem}
+            disabled={saving}
+            style={{
+              background: 'transparent',
+              color: 'var(--text-mid)',
+              border: '1px solid var(--text-mid)',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              fontSize: 12, fontWeight: 700,
+              letterSpacing: 1.5, textTransform: 'uppercase',
+              padding: '8px 14px',
+              cursor: saving ? 'wait' : 'pointer',
+              flexShrink: 0,
+              opacity: saving ? 0.6 : 1,
+            }}
+          >
+            {saving ? '…' : '+ Add'}
+          </button>
+        </li>
+      )}
     </>
   );
 }
@@ -735,9 +722,7 @@ export default function Services(): JSX.Element {
                       </EditableText>
                     </li>
                   ))}
-                  {editMode && (
-                    <AddServiceItem svcN={svc.n} isDark={svc.dark} />
-                  )}
+                  <ServiceExtraItems svcN={svc.n} isDark={svc.dark} />
                 </ul>
               </div>
 
