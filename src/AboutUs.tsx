@@ -534,7 +534,7 @@ function AboutUs() {
               <button
                 onClick={() => setShowSliderMgr(true)}
                 style={{
-                  position: 'absolute', top: 10, right: 10, zIndex: 10,
+                  position: 'absolute', top: 75, right: 10, zIndex: 10,
                   background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
                   border: '1px solid rgba(253,246,238,0.25)',
                   fontFamily: 'Barlow Condensed, sans-serif',
