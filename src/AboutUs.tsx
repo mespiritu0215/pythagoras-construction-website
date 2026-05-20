@@ -359,37 +359,7 @@ function AboutUs() {
   const [currentIndex,    setCurrentIndex]    = useState(0);
   const [showSliderMgr,   setShowSliderMgr]   = useState(false);
 
-  // ── Inline slider-image replacement ──────────────────────
-  // Tracks which slide index the admin wants to replace, plus a
-  // snapshot of the image list captured at click-time so the async
-  // upload uses a consistent array even if Firestore updates mid-flight.
-  const [replacingSlideIdx,    setReplacingSlideIdx]    = useState<number | null>(null);
-  const [sliderReplaceLoading, setSliderReplaceLoading] = useState(false);
-  const sliderFileRef    = useRef<HTMLInputElement>(null);
-  const sliderImgSnapshot = useRef<string[]>([]);
 
-  const handleSliderReplace = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || replacingSlideIdx === null) return;
-    e.target.value = '';
-    setSliderReplaceLoading(true);
-    try {
-      const url = await uploadToStorage(
-        `images/slider/about_hero_${Date.now()}`,
-        file,
-      );
-      const updated = sliderImgSnapshot.current.map((img, i) =>
-        i === replacingSlideIdx ? url : img,
-      );
-      await setText(HERO_SLIDER_KEY, JSON.stringify(updated));
-    } catch (err) {
-      alert('Upload failed: ' + (err as Error).message);
-    } finally {
-      setSliderReplaceLoading(false);
-      setReplacingSlideIdx(null);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [replacingSlideIdx, setText]);
   const [activeValue,   setActiveValue]   = useState(0);
 
   const [awardIndex,  setAwardIndex]  = useState(0);
@@ -516,7 +486,6 @@ function AboutUs() {
               style={{ transform: `translateX(-${safeIndex * 100}%)` }}
             >
               {heroSliderImages.map((img, i) => {
-                const isReplacing = sliderReplaceLoading && replacingSlideIdx === i;
                 return (
                   <div
                     key={`${img}-${i}`}
@@ -527,50 +496,10 @@ function AboutUs() {
                       alt={`Project ${i + 1}`}
                       style={{
                         width: '100%', height: '100%', objectFit: 'cover', display: 'block',
-                        opacity: isReplacing ? 0.45 : 1,
-                        transition: 'opacity 0.2s',
                       }}
                     />
 
-                    {/* ── Edit-mode replace overlay ── */}
-                    {editMode && (
-                      <button
-                        type="button"
-                        disabled={sliderReplaceLoading}
-                        onClick={() => {
-                          // snapshot the current list before any async work
-                          sliderImgSnapshot.current = [...heroSliderImages];
-                          setReplacingSlideIdx(i);
-                          sliderFileRef.current?.click();
-                        }}
-                        style={{
-                          position: 'absolute', inset: 0,
-                          background: isReplacing
-                            ? 'rgba(18,0,0,0.65)'
-                            : 'rgba(107,0,0,0.52)',
-                          display: 'flex', flexDirection: 'column',
-                          alignItems: 'center', justifyContent: 'center', gap: 6,
-                          color: '#FDF6EE',
-                          fontFamily: 'Barlow Condensed, sans-serif',
-                          fontSize: 12, fontWeight: 700, letterSpacing: 2,
-                          textTransform: 'uppercase',
-                          border: 'none', cursor: isReplacing ? 'wait' : 'pointer',
-                          opacity: 0,
-                          transition: 'opacity 0.2s',
-                        }}
-                        // show on hover via inline JS (avoids a CSS class)
-                        onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1'; }}
-                        onMouseLeave={e => {
-                          if (!isReplacing) (e.currentTarget as HTMLButtonElement).style.opacity = '0';
-                        }}
-                        title="📷 Click to replace this image"
-                      >
-                        <span style={{ fontSize: 22 }}>
-                          {isReplacing ? '⏳' : '📷'}
-                        </span>
-                        <span>{isReplacing ? 'Uploading…' : 'Replace Image'}</span>
-                      </button>
-                    )}
+
                   </div>
                 );
               })}
@@ -605,7 +534,7 @@ function AboutUs() {
               <button
                 onClick={() => setShowSliderMgr(true)}
                 style={{
-                  position: 'absolute', top: 10, left: 10, zIndex: 10,
+                  position: 'absolute', top: 10, right: 10, zIndex: 10,
                   background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
                   border: '1px solid rgba(253,246,238,0.25)',
                   fontFamily: 'Barlow Condensed, sans-serif',
@@ -619,14 +548,7 @@ function AboutUs() {
               </button>
             )}
 
-            {/* Hidden file input for inline per-image replacement */}
-            <input
-              ref={sliderFileRef}
-              type="file"
-              accept="image/*"
-              style={{ display: 'none' }}
-              onChange={handleSliderReplace}
-            />
+
           </div>
           <div className="abt-hero-accent-bar" />
         </div>
