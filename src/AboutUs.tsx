@@ -527,7 +527,7 @@ function AboutUs() {
 
             <div className="abt-hero-slider-footer">
               <span>Our Projects</span>
-              <a href="/projects" className="abt-visit-chip">View All →</a>
+              <a href="#/projects" className="abt-visit-chip">View All →</a>
             </div>
 
             {/* ── Edit mode: manage slider button ── */}
