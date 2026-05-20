@@ -299,7 +299,8 @@ const css = `
 ───────────────────────────────────────────────────────────── */
 export default function ContactUs(): JSX.Element {
   // ── Admin context ──────────────────────────────────────────
-  const { user: adminUser, setUser: setAdminUser, isAdmin, editMode } = useAdmin();
+  const { user: adminUser, setUser: setAdminUser, isAdmin, editMode, getText } = useAdmin();
+  const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   // ── Local state (derives user from adminContext) ───────────
   const user     = adminUser;
@@ -486,7 +487,9 @@ export default function ContactUs(): JSX.Element {
               <div>
                 <EditableText adminKey="contact.info.email.label" tag="p" className="cu-info-text-label">Email Us At</EditableText>
                 <p className="cu-info-text-value">
-                  <a href="mailto:pci1051@yahoo.com.ph">pci1051@yahoo.com.ph</a>
+                  <a href={`mailto:${siteEmail}`}>
+                    <EditableText adminKey="site.email" tag="span">pci1051@yahoo.com.ph</EditableText>
+                  </a>
                 </p>
               </div>
             </div>

@@ -784,7 +784,10 @@ function AppInner(): JSX.Element {
     deletedProjectIds,
     projectOverrides,
     adminProjects,
+    getText,
   } = useAdmin();
+
+  const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   useEffect(() => {
     const onScroll = (): void => setScrolled(window.scrollY > 40);
@@ -1001,8 +1004,8 @@ function AppInner(): JSX.Element {
                     <div className="contact-card contact-card-wide">
                       <img src={emailIcon} alt="Email" className="contact-icon" />
                       <p className="contact-card-label">Email Us At</p>
-                      <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">
-                        <EditableText adminKey="home.contact.email" tag="span">
+                      <a href={`mailto:${siteEmail}`} className="contact-card-value link">
+                        <EditableText adminKey="site.email" tag="span">
                           pci1051@yahoo.com.ph
                         </EditableText>
                       </a>
@@ -1069,8 +1072,8 @@ function AppInner(): JSX.Element {
             </div>
             <div className="footer-info-item">
               <div className="footer-label">Email</div>
-              <a href="mailto:pci1051@yahoo.com.ph">
-                <EditableText adminKey="footer.email" tag="span">
+              <a href={`mailto:${siteEmail}`}>
+                <EditableText adminKey="site.email" tag="span">
                   pci1051@yahoo.com.ph
                 </EditableText>
               </a>

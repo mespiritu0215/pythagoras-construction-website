@@ -291,6 +291,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
 
 function AboutUs() {
   const { getText, setText, editMode, isAdmin, uploading: adminUploading } = useAdmin();
+  const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   // ── Awards state ──────────────────────────────────────────
   const staticAwards = [award1, award2, award3, award4, award5, award6, award7, award8, award9];
@@ -851,7 +852,9 @@ function AboutUs() {
             <div className="abt-contact-card abt-card-wide">
               <img src={email} alt="Email" className="abt-contact-icon" />
               <p className="abt-contact-label">Email Us At</p>
-              <a href="mailto:pci1051@yahoo.com.ph" className="abt-contact-value abt-link">pci1051@yahoo.com.ph</a>
+              <a href={`mailto:${siteEmail}`} className="abt-contact-value abt-link">
+                <EditableText adminKey="site.email" tag="span">pci1051@yahoo.com.ph</EditableText>
+              </a>
               <p className="abt-contact-note">We reply within 24 hours</p>
             </div>
             <div className="abt-contact-card">

@@ -274,7 +274,8 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
 // ─────────────────────────────────────────────────────────────
 
 export default function Projects(): JSX.Element {
-  const { isAdmin, editMode, adminProjects, deletedProjectIds } = useAdmin();
+  const { isAdmin, editMode, adminProjects, deletedProjectIds, getText } = useAdmin();
+  const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
   const [showAddModal, setShowAddModal] = useState(false);
 
   // Build ID key map
@@ -369,7 +370,9 @@ export default function Projects(): JSX.Element {
             <div className="contact-card contact-card-wide">
               <img src={emailIcon} alt="Email" className="contact-icon" />
               <p className="contact-card-label">Email Us At</p>
-              <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">pci1051@yahoo.com.ph</a>
+              <a href={`mailto:${siteEmail}`} className="contact-card-value link">
+                <EditableText adminKey="site.email" tag="span">pci1051@yahoo.com.ph</EditableText>
+              </a>
               <p className="contact-card-note">We reply within 24 hours</p>
             </div>
             <div className="contact-card">

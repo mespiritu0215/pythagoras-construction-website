@@ -476,8 +476,8 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
 
   // Theme-aware remove button colours
   const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
-  const removeColor  = isDark ? 'rgb(92, 64, 51)'  : '#6B0000';
-  const removeBorder = isDark ? 'rgb(92, 64, 51)' : 'rgba(107,0,0,0.25)';
+  const removeColor  = isDark ? 'rgba(253,246,238,0.7)'  : '#6B0000';
+  const removeBorder = isDark ? 'rgba(253,246,238,0.20)' : 'rgba(107,0,0,0.25)';
 
   // Input background/border stay theme-aware; text and + button use var(--text-mid)
   const inputBg     = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
@@ -637,7 +637,8 @@ const services: ServiceData[] = [
 // ─────────────────────────────────────────────────────────────
 
 export default function Services(): JSX.Element {
-  const { editMode } = useAdmin();
+  const { editMode, getText } = useAdmin();
+  const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   return (
     <main className="srv-page">
@@ -807,8 +808,8 @@ export default function Services(): JSX.Element {
             <div className="contact-card contact-card-wide">
               <img src={emailIcon} alt="Email" className="contact-icon" />
               <p className="contact-card-label">Email Us At</p>
-              <a href="mailto:pci1051@yahoo.com.ph" className="contact-card-value link">
-                pci1051@yahoo.com.ph
+              <a href={`mailto:${siteEmail}`} className="contact-card-value link">
+                <EditableText adminKey="site.email" tag="span">pci1051@yahoo.com.ph</EditableText>
               </a>
               <p className="contact-card-note">We reply within 24 hours</p>
             </div>
