@@ -360,12 +360,16 @@ export function EditableText({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync from Firestore whenever savedText changes, but never while typing.
+  // Sync content whenever savedText changes OR editMode turns on.
+  // editMode must be in deps: toggling edit ON mounts a fresh <DynamicTag>
+  // with no children; without this, neither effect would re-fire to populate
+  // it because savedText hasn't changed — causing blank text in edit mode.
   useLayoutEffect(() => {
     if (!isFocused.current && elemRef.current) {
       elemRef.current.innerHTML = savedText;
     }
-  }, [savedText]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedText, editMode]);
 
   if (!editMode) {
     return <Tag className={className} style={style} {...rest}>{savedText}</Tag>;
