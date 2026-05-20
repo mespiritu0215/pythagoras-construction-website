@@ -395,6 +395,53 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 }
 
 // ─────────────────────────────────────────────────────────────
+//  HERO CONTENT INNER  (memoized — isolated from slide state)
+//
+//  Extracting hs-content-inner into its own React.memo component
+//  prevents it from re-rendering when HeroSection's slide state
+//  changes (setCurrent / setPrev / setTrans).  Those are local
+//  state updates that should never touch the editable text; but
+//  without the memo boundary, each slide advance caused React to
+//  reconcile the contentEditable nodes and reset their content.
+//
+//  AdminContext changes (Firestore syncs, editMode toggles) still
+//  propagate correctly because EditableText reads the context
+//  directly via useAdmin().
+// ─────────────────────────────────────────────────────────────
+
+const HeroContentInner = React.memo(function HeroContentInner() {
+  return (
+    <div className="hs-content-inner">
+      <EditableText adminKey="home.hero.eyebrow" tag="p" className="hs-eyebrow">
+        Est. 1993 · PCAB Licensed · General "A"
+      </EditableText>
+      <h1 className="hs-headline">
+        <EditableText adminKey="home.hero.line1" tag="span" className="hs-hl-line">
+          BUILDING
+        </EditableText>
+        <EditableText adminKey="home.hero.line2" tag="span" className="hs-hl-line">
+          WITH PURPOSE.
+        </EditableText>
+        <EditableText adminKey="home.hero.line3" tag="span" className="hs-hl-line">
+          DELIVERING WITH
+        </EditableText>
+        <EditableText adminKey="home.hero.line4" tag="span" className="hs-hl-line hs-hl-accent">
+          EXCELLENCE.
+        </EditableText>
+      </h1>
+      <EditableText adminKey="home.hero.sub" tag="p" className="hs-sub">
+        Trusted general contractor delivering comprehensive civil, electrical,
+        and design services across the Philippines since 1993.
+      </EditableText>
+      <div className="hs-cta-row">
+        <a href="#contact" className="hs-btn-primary">Book an Appointment</a>
+        <Link to="/projects" className="hs-btn-ghost">View Our Projects →</Link>
+      </div>
+    </div>
+  );
+});
+
+// ─────────────────────────────────────────────────────────────
 //  HERO SECTION
 //  Now reads slides from Firestore (via getText) — admin can manage
 //  via the slide manager modal. Hero text is also editable.
@@ -475,35 +522,9 @@ function HeroSection() {
         <div className="hs-deco-line hs-deco-line-v" />
         <div className="hs-deco-line hs-deco-line-h" />
 
-        {/* Hero text content — editable in admin mode */}
+        {/* Hero text content — memoized so slide advances never re-render it */}
         <div className="hs-content">
-          <div className="hs-content-inner">
-            <EditableText adminKey="home.hero.eyebrow" tag="p" className="hs-eyebrow">
-              Est. 1993 · PCAB Licensed · General "A"
-            </EditableText>
-            <h1 className="hs-headline">
-              <EditableText adminKey="home.hero.line1" tag="span" className="hs-hl-line">
-                BUILDING
-              </EditableText>
-              <EditableText adminKey="home.hero.line2" tag="span" className="hs-hl-line">
-                WITH PURPOSE.
-              </EditableText>
-              <EditableText adminKey="home.hero.line3" tag="span" className="hs-hl-line">
-                DELIVERING WITH
-              </EditableText>
-              <EditableText adminKey="home.hero.line4" tag="span" className="hs-hl-line hs-hl-accent">
-                EXCELLENCE.
-              </EditableText>
-            </h1>
-            <EditableText adminKey="home.hero.sub" tag="p" className="hs-sub">
-              Trusted general contractor delivering comprehensive civil, electrical,
-              and design services across the Philippines since 1993.
-            </EditableText>
-            <div className="hs-cta-row">
-              <a href="#contact" className="hs-btn-primary">Book an Appointment</a>
-              <Link to="/projects" className="hs-btn-ghost">View Our Projects →</Link>
-            </div>
-          </div>
+          <HeroContentInner />
         </div>
 
         {/* Slide caption tag */}
