@@ -476,8 +476,8 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
 
   // Theme-aware remove button colours
   const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
-  const removeColor  = isDark ? 'rgba(253,246,238,0.7)'  : '#6B0000';
-  const removeBorder = isDark ? 'rgba(253,246,238,0.20)' : 'rgba(107,0,0,0.25)';
+  const removeColor  = isDark ? 'rgb(92, 64, 51)'  : '#6B0000';
+  const removeBorder = isDark ? 'rgb(92, 64, 51)' : 'rgba(107,0,0,0.25)';
 
   // Input background/border stay theme-aware; text and + button use var(--text-mid)
   const inputBg     = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
