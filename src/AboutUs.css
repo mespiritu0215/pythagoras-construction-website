@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
 
 :root {
-  --maroon:        #6B0000;
-  --maroon-hover:  #8B0000;
-  --maroon-deep:   #4A0000;
+  --maroon:        #C0152A;
+  --maroon-hover:  #E01A30;
+  --maroon-deep:   #8B0010;
   --cream:         #FDF6EE;
   --cream-dark:    #F0E6D6;
   --cream-darker:  #E8D8C4;
@@ -45,7 +45,7 @@
    NAVBAR OVERRIDES
 ───────────────────────────────────────────────────────────── */
 body:has(.abt-page) .App-header:not(.scrolled) {
-  background: var(--maroon) !important;
+  background: var(--maroon-deep) !important;
 }
 body:has(.abt-page) .App-header:not(.scrolled) .nav-links li a {
   color: rgba(253, 246, 238, 0.85) !important;
@@ -64,7 +64,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   body:has(.abt-page) .nav-links {
     background: var(--maroon-deep) !important;
     border: 1px solid rgba(253, 246, 238, 0.15) !important;
-    box-shadow: 0 10px 40px rgba(43, 8, 0, 0.5) !important;
+    box-shadow: 0 10px 40px rgba(60, 5, 10, 0.5) !important;
   }
   body:has(.abt-page) .nav-links li a {
     color: var(--cream) !important;
@@ -74,7 +74,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
     color: rgba(253, 246, 238, 0.65) !important;
   }
   body:has(.abt-page) .nav-backdrop {
-    background: rgba(43, 8, 0, 0.6) !important;
+    background: rgba(60, 5, 10, 0.6) !important;
   }
 }
 
@@ -277,7 +277,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  background: rgba(43,8,0,0.72);
+  background: rgba(150,5,10,0.72);
   backdrop-filter: blur(6px);
   z-index: 4;
 }
@@ -366,7 +366,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   margin-bottom: 16px;
   letter-spacing: 2px;
 }
-.abt-panel-light .abt-panel-number { color: rgba(107,0,0,0.07); }
+.abt-panel-light .abt-panel-number { color: rgba(192,21,42,0.07); }
 
 .abt-panel-title {
   font-family: var(--font-display);
@@ -405,7 +405,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   align-items: start;
 }
 
-/* Photo + quote */
 .abt-founder-media {
   display: flex;
   flex-direction: column;
@@ -460,8 +459,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   margin: 0;
 }
 
-/* Story content */
-.abt-founder-cont  ent {
+.abt-founder-content {
   padding-top: 8px;
 }
 
@@ -525,186 +523,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ORG CHART SECTION
-───────────────────────────────────────────────────────────── */
-.abt-org-section {
-  background: var(--cream-dark);
-  padding: var(--section-pad) var(--side-pad);
-  border-top: 1px solid var(--cream-darker);
-}
-
-.abt-org-inner {
-  max-width: var(--max-w);
-  margin: 0 auto;
-}
-
-.abt-org-header {
-  text-align: center;
-  margin-bottom: clamp(40px, 6vw, 72px);
-}
-
-.abt-org-heading {
-  font-family: var(--font-display);
-  font-size: clamp(34px, 5vw, 64px);
-  color: var(--text-dark);
-  letter-spacing: 2px;
-  margin: 0 0 clamp(10px, 1.5vw, 16px);
-  font-style: italic;
-}
-
-.abt-org-sub {
-  font-family: var(--font-body);
-  font-size: clamp(13px, 1.3vw, 15px);
-  color: var(--text-mid);
-  max-width: 540px;
-  margin: 0 auto;
-  line-height: 1.75;
-}
-
-/* Chart container */
-.abt-org-chart {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* President row */
-.abt-org-president-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-/* SVG connector strip */
-.abt-org-connectors {
-  width: 100%;
-  line-height: 0;
-}
-.abt-org-connectors svg {
-  display: block;
-  overflow: visible;
-}
-
-/* Department row */
-.abt-org-dept-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-  width: 100%;
-}
-
-/* Shared card base */
-.abt-org-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 5px;
-  padding: clamp(18px, 2.5vw, 28px) clamp(12px, 2vw, 24px);
-  border: none;
-  font-family: inherit;
-}
-
-/* President card */
-.abt-org-card--president {
-  background: var(--maroon-deep);
-  min-width: clamp(180px, 22vw, 260px);
-  cursor: default;
-}
-
-.abt-org-card--president .abt-org-card-label {
-  color: var(--cream);
-  font-size: clamp(18px, 2.2vw, 26px);
-}
-
-.abt-org-card--president .abt-org-card-sub {
-  color: rgba(253,246,238,0.45);
-}
-
-/* Department cards */
-.abt-org-card--dept {
-  background: var(--white);
-  border-top: 3px solid var(--maroon);
-  cursor: pointer;
-  transition: background 0.2s, transform 0.18s, box-shadow 0.18s;
-}
-.abt-org-card--dept:hover {
-  background: var(--cream);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 24px rgba(107,0,0,0.10);
-  z-index: 1;
-  position: relative;
-}
-
-.abt-org-card--active {
-  background: rgba(107,0,0,0.05) !important;
-  box-shadow: 0 4px 20px rgba(107,0,0,0.10) !important;
-  transform: translateY(-3px) !important;
-  position: relative;
-  z-index: 1;
-}
-.abt-org-card--active .abt-org-card-label {
-  color: var(--maroon) !important;
-}
-
-/* Card text */
-.abt-org-card-label {
-  font-family: var(--font-display);
-  font-size: clamp(16px, 2vw, 22px);
-  letter-spacing: 3px;
-  color: var(--text-dark);
-}
-
-.abt-org-card-sub {
-  font-family: var(--font-cond);
-  font-size: clamp(9px, 0.95vw, 11px);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--warm-gray);
-  line-height: 1.4;
-}
-
-.abt-org-card-chevron {
-  font-size: 9px;
-  color: var(--maroon);
-  opacity: 0.5;
-  margin-top: 6px;
-}
-
-/* Expanded detail panel */
-.abt-org-detail {
-  width: 100%;
-  margin-top: 2px;
-  animation: abtFadeUp 0.25s ease both;
-}
-
-.abt-org-detail-inner {
-  background: var(--maroon-deep);
-  border-bottom: 3px solid var(--maroon);
-  padding: clamp(20px, 2.5vw, 28px) clamp(24px, 3.5vw, 44px);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.abt-org-detail-title {
-  font-family: var(--font-display);
-  font-size: clamp(16px, 2vw, 22px);
-  letter-spacing: 2px;
-  color: var(--cream);
-  margin: 0;
-}
-
-.abt-org-detail-desc {
-  font-family: var(--font-body);
-  font-size: clamp(13px, 1.3vw, 15px);
-  line-height: 1.75;
-  color: rgba(253,246,238,0.62);
-  margin: 0;
-  max-width: 600px;
-}
-
-/* ─────────────────────────────────────────────────────────────
    CORE VALUES
 ───────────────────────────────────────────────────────────── */
 .abt-values-section {
@@ -759,12 +577,12 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
 }
 .abt-value-tab:hover {
   background: var(--cream-dark);
-  border-left-color: rgba(107,0,0,0.4);
+  border-left-color: rgba(192,21,42,0.4);
 }
 .abt-tab-active {
-  background: rgba(107,0,0,0.06) !important;
+  background: rgba(192,21,42,0.06) !important;
   border-left-color: var(--maroon) !important;
-  border-color: rgba(107,0,0,0.15) !important;
+  border-color: rgba(192,21,42,0.15) !important;
 }
 
 .abt-tab-num {
@@ -808,7 +626,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
 .abt-values-panel-num {
   font-family: var(--font-display);
   font-size: clamp(64px, 9vw, 120px);
-  color: rgba(107,0,0,0.07);
+  color: rgba(192,21,42,0.07);
   line-height: 1;
   margin-bottom: 8px;
   letter-spacing: 3px;
@@ -836,6 +654,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   height: 2px;
   background: var(--maroon);
 }
+
 /* ─────────────────────────────────────────────────────────────
    AWARDS
 ───────────────────────────────────────────────────────────── */
@@ -851,8 +670,8 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(circle at 8% 50%, rgba(107,0,0,0.06) 0%, transparent 55%),
-    radial-gradient(circle at 92% 50%, rgba(107,0,0,0.05) 0%, transparent 55%);
+    radial-gradient(circle at 8% 50%, rgba(192,21,42,0.06) 0%, transparent 55%),
+    radial-gradient(circle at 92% 50%, rgba(192,21,42,0.05) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -862,7 +681,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   position: relative;
 }
 
-/* Header */
 .abt-awards-header {
   text-align: center;
   margin-bottom: clamp(40px, 5vw, 64px);
@@ -896,16 +714,14 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   opacity: 0.8;
 }
 
-/* Slider root */
 .abt-awards-slider-root {
   user-select: none;
 }
 
-/* Progress bar */
 .abt-awards-progress-bar {
   width: 100%;
   height: 2px;
-  background: rgba(107,0,0,0.12);
+  background: rgba(192,21,42,0.12);
   border-radius: 2px;
   margin-bottom: 20px;
   overflow: hidden;
@@ -918,7 +734,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Controls row */
 .abt-awards-controls {
   display: flex;
   align-items: center;
@@ -963,7 +778,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 1.5px solid rgba(107,0,0,0.25);
+  border: 1.5px solid rgba(192,21,42,0.25);
   background: transparent;
   color: var(--maroon);
   font-size: 1.1rem;
@@ -987,7 +802,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   cursor: not-allowed;
 }
 
-/* Viewport */
 .abt-awards-viewport {
   overflow: hidden;
   border-radius: 4px;
@@ -999,7 +813,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   will-change: transform;
 }
 
-/* Cards */
 .abt-award-card {
   flex: 0 0 calc(100% / 3);
   padding: 0 10px;
@@ -1018,7 +831,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   overflow: hidden;
   box-shadow:
     0 2px 8px rgba(44,24,16,0.10),
-    0 0 0 1px rgba(107,0,0,0.10);
+    0 0 0 1px rgba(192,21,42,0.10);
   transition: box-shadow 0.3s ease, transform 0.3s ease;
   aspect-ratio: 3 / 4;
 }
@@ -1027,7 +840,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   transform: translateY(-8px) scale(1.015);
   box-shadow:
     0 24px 56px rgba(44,24,16,0.22),
-    0 0 0 2px rgba(107,0,0,0.30);
+    0 0 0 2px rgba(192,21,42,0.30);
 }
 
 .abt-award-img {
@@ -1047,7 +860,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
 .abt-award-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(74,0,0,0.45);
+  background: rgba(139,0,16,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1072,7 +885,6 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   transform: scale(1);
 }
 
-/* Dots */
 .abt-awards-dots {
   display: flex;
   justify-content: center;
@@ -1085,7 +897,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
   height: 7px;
   border-radius: 50%;
   border: none;
-  background: rgba(107,0,0,0.22);
+  background: rgba(192,21,42,0.22);
   cursor: pointer;
   padding: 0;
   transition: background 0.2s ease, width 0.25s ease, border-radius 0.25s ease;
@@ -1190,7 +1002,7 @@ body:has(.abt-page) .App-header:not(.scrolled) .hamburger span {
 .abt-contact-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(43,8,0,0.93);
+  background: rgba(60,5,10,0.93);
   pointer-events: none;
 }
 
@@ -1292,13 +1104,8 @@ a.abt-contact-value.abt-link { text-decoration: underline; }
   .abt-who-panels { grid-template-columns: 1fr; gap: 3px; }
   .abt-values-layout { grid-template-columns: 1fr; gap: 24px; }
   .abt-values-panel { min-height: auto; }
-
-  /* Founder */
   .abt-founder-inner { grid-template-columns: 1fr; gap: 40px; }
   .abt-founder-photo-wrap { max-width: 360px; }
-
-  /* Org chart — 2 cols on tablet */
-  .abt-org-dept-row { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
@@ -1308,12 +1115,8 @@ a.abt-contact-value.abt-link { text-decoration: underline; }
   .abt-contact-cards { flex-direction: column; align-items: stretch; }
   .abt-contact-card, .abt-card-wide { max-width: 100%; }
   .abt-founder-badge-row { justify-content: flex-start; }
-
-  /* Org chart — 2 cols on mobile too, connector spans full width */
-  .abt-org-dept-row { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 380px) {
   .abt-hero-title { font-size: clamp(38px, 12vw, 60px); }
-  .abt-org-dept-row { grid-template-columns: 1fr 1fr; }
 }

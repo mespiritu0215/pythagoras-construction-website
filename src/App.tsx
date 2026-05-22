@@ -83,8 +83,6 @@ function ScrollToTop(): null {
 
 // ─────────────────────────────────────────────────────────────
 //  HERO SLIDE MANAGER MODAL
-//  Admin can add, remove, or edit the caption fields of each slide.
-//  Changes persist via getText/setText as a JSON array.
 // ─────────────────────────────────────────────────────────────
 
 interface HeroSlideManagerProps {
@@ -97,7 +95,6 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 
   const [slides,    setSlides]    = useState<SlideData[]>(initialSlides);
   const [uploading, setUploading] = useState(false);
-  // New-slide form state
   const [newLabel,  setNewLabel]  = useState('');
   const [newTitle,  setNewTitle]  = useState('');
   const [newSub,    setNewSub]    = useState('');
@@ -150,7 +147,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 
   const fieldStyle: React.CSSProperties = {
     width: '100%', background: 'rgba(44,24,16,0.05)',
-    border: '1px solid rgba(107,0,0,0.18)',
+    border: '1px solid rgba(192,21,42,0.18)',
     color: '#2C1810',
     fontFamily: 'Barlow, sans-serif', fontSize: 13,
     padding: '6px 10px', outline: 'none', boxSizing: 'border-box',
@@ -162,7 +159,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
       onClick={onBackdrop}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(18,0,0,0.92)',
+        background: 'rgba(60,5,10,0.92)',
         zIndex: 99999,
         display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
         padding: '40px 20px', overflowY: 'auto',
@@ -195,7 +192,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
             aria-label="Close"
             style={{
               background: 'none', border: 'none',
-              fontSize: 22, cursor: 'pointer', color: '#6B0000',
+              fontSize: 22, cursor: 'pointer', color: '#C0152A',
               lineHeight: 1, padding: '4px 8px', flexShrink: 0,
             }}
           >✕</button>
@@ -206,7 +203,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
           <div style={{
             padding: '40px 0', textAlign: 'center',
             color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
-            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
+            border: '2px dashed rgba(192,21,42,0.15)', borderRadius: 2,
             marginBottom: 24,
           }}>
             No slides yet — add one below.
@@ -218,7 +215,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                 key={i}
                 style={{
                   display: 'flex', gap: 16, alignItems: 'flex-start',
-                  border: '1px solid rgba(107,0,0,0.14)',
+                  border: '1px solid rgba(192,21,42,0.14)',
                   borderRadius: 2, overflow: 'hidden',
                   background: '#fff',
                 }}
@@ -232,7 +229,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                   />
                   <div style={{
                     position: 'absolute', inset: 0,
-                    background: 'linear-gradient(to top, rgba(43,8,0,0.6) 0%, transparent 60%)',
+                    background: 'linear-gradient(to top, rgba(60,5,10,0.6) 0%, transparent 60%)',
                     display: 'flex', alignItems: 'flex-end',
                     padding: '6px 8px',
                   }}>
@@ -249,7 +246,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                 <div style={{ flex: 1, padding: '12px 0', paddingRight: 12 }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px 16px' }}>
                     <div>
-                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>
                         Label (category)
                       </label>
                       <input
@@ -260,7 +257,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>
                         Title (project name)
                       </label>
                       <input
@@ -271,7 +268,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                       />
                     </div>
                     <div style={{ gridColumn: '1 / -1' }}>
-                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>
+                      <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>
                         Sub-title (location — optional)
                       </label>
                       <input
@@ -290,7 +287,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
                   <button
                     onClick={() => removeSlide(i)}
                     style={{
-                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+                      background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
                       border: 'none', borderRadius: 2, cursor: 'pointer',
                       fontFamily: 'Barlow Condensed, sans-serif',
                       fontSize: 11, fontWeight: 700, padding: '6px 12px',
@@ -307,7 +304,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 
         {/* ── Add new slide ── */}
         <div style={{
-          borderTop: '2px solid rgba(107,0,0,0.12)',
+          borderTop: '2px solid rgba(192,21,42,0.12)',
           paddingTop: 24,
         }}>
           <p style={{
@@ -322,7 +319,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 20px', marginBottom: 16 }}>
             <div>
-              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Label</label>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>Label</label>
               <input
                 type="text" value={newLabel}
                 onChange={e => setNewLabel(e.target.value)}
@@ -331,7 +328,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
               />
             </div>
             <div>
-              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Title</label>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>Title</label>
               <input
                 type="text" value={newTitle}
                 onChange={e => setNewTitle(e.target.value)}
@@ -340,7 +337,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
               />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', textTransform: 'uppercase' }}>Sub-title (optional)</label>
+              <label style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', textTransform: 'uppercase' }}>Sub-title (optional)</label>
               <input
                 type="text" value={newSub}
                 onChange={e => setNewSub(e.target.value)}
@@ -354,8 +351,8 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
               style={{
-                background: '#6B0000', color: '#FDF6EE',
-                border: '2px solid #6B0000',
+                background: '#C0152A', color: '#FDF6EE',
+                border: '2px solid #C0152A',
                 fontFamily: 'Barlow Condensed, sans-serif',
                 fontSize: 13, fontWeight: 700, letterSpacing: 2,
                 textTransform: 'uppercase', padding: '11px 28px',
@@ -370,7 +367,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
               onClick={onClose}
               style={{
                 background: 'transparent',
-                border: '1px solid rgba(107,0,0,0.35)',
+                border: '1px solid rgba(192,21,42,0.35)',
                 color: 'rgba(44,24,16,0.7)',
                 fontFamily: 'Barlow Condensed, sans-serif',
                 fontSize: 12, fontWeight: 700, letterSpacing: 2,
@@ -395,18 +392,7 @@ function HeroSlideManagerModal({ slides: initialSlides, onClose }: HeroSlideMana
 }
 
 // ─────────────────────────────────────────────────────────────
-//  HERO CONTENT INNER  (memoized — isolated from slide state)
-//
-//  Extracting hs-content-inner into its own React.memo component
-//  prevents it from re-rendering when HeroSection's slide state
-//  changes (setCurrent / setPrev / setTrans).  Those are local
-//  state updates that should never touch the editable text; but
-//  without the memo boundary, each slide advance caused React to
-//  reconcile the contentEditable nodes and reset their content.
-//
-//  AdminContext changes (Firestore syncs, editMode toggles) still
-//  propagate correctly because EditableText reads the context
-//  directly via useAdmin().
+//  HERO CONTENT INNER
 // ─────────────────────────────────────────────────────────────
 
 const HeroContentInner = React.memo(function HeroContentInner() {
@@ -443,17 +429,11 @@ const HeroContentInner = React.memo(function HeroContentInner() {
 
 // ─────────────────────────────────────────────────────────────
 //  HERO SECTION
-//  Now reads slides from Firestore (via getText) — admin can manage
-//  via the slide manager modal. Hero text is also editable.
 // ─────────────────────────────────────────────────────────────
 
 function HeroSection() {
   const { editMode, getText } = useAdmin();
 
-  // Load active slide list from context; fall back to defaults.
-  // Memoized on the raw stored string so re-renders triggered by
-  // EditableText keystrokes (unrelated setText calls) don't recompute
-  // slides and cause hs-content-inner inputs to reset.
   const storedSlides = getText(HERO_SLIDES_KEY, '');
   const slides = useMemo<SlideData[]>(() => {
     try {
@@ -522,7 +502,7 @@ function HeroSection() {
         <div className="hs-deco-line hs-deco-line-v" />
         <div className="hs-deco-line hs-deco-line-h" />
 
-        {/* Hero text content — memoized so slide advances never re-render it */}
+        {/* Hero text content */}
         <div className="hs-content">
           <HeroContentInner />
         </div>
@@ -580,7 +560,7 @@ function HeroSection() {
             onClick={() => setShowManager(true)}
             style={{
               position: 'absolute', top: 80, right: 20, zIndex: 10,
-              background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
+              background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
               border: '1px solid rgba(253,246,238,0.25)',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
@@ -606,7 +586,7 @@ function HeroSection() {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  FEATURED PROJECT PICKER MODAL  (unchanged)
+//  FEATURED PROJECT PICKER MODAL
 // ─────────────────────────────────────────────────────────────
 
 function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
@@ -671,7 +651,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
       onClick={handleBackdrop}
       style={{
         position:       'fixed', inset: 0,
-        background:     'rgba(18,0,0,0.88)',
+        background:     'rgba(60,5,10,0.88)',
         zIndex:         99998,
         display:        'flex',
         alignItems:     'center',
@@ -701,7 +681,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
           </div>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#6B0000', lineHeight: 1, padding: '4px 8px', flexShrink: 0 }}
+            style={{ background: 'none', border: 'none', fontSize: 22, cursor: 'pointer', color: '#C0152A', lineHeight: 1, padding: '4px 8px', flexShrink: 0 }}
             aria-label="Close"
           >✕</button>
         </div>
@@ -720,23 +700,23 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
                   onClick={() => toggle(p.id)}
                   style={{
                     cursor: 'pointer',
-                    border: isSel ? '3px solid #6B0000' : '2px solid rgba(107,0,0,0.15)',
+                    border: isSel ? '3px solid #C0152A' : '2px solid rgba(192,21,42,0.15)',
                     borderRadius: 2, overflow: 'hidden', position: 'relative',
                     transition: 'border-color 0.2s, box-shadow 0.2s',
-                    boxShadow: isSel ? '0 4px 16px rgba(107,0,0,0.20)' : 'none',
+                    boxShadow: isSel ? '0 4px 16px rgba(192,21,42,0.20)' : 'none',
                     userSelect: 'none',
                   }}
                 >
                   <div style={{ position: 'relative', paddingTop: '65%' }}>
                     <img src={p.cover} alt={p.title} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                     {isSel && (
-                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(107,0,0,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#6B0000', color: '#FDF6EE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700 }}>✓</div>
+                      <div style={{ position: 'absolute', inset: 0, background: 'rgba(192,21,42,0.38)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#C0152A', color: '#FDF6EE', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, fontWeight: 700 }}>✓</div>
                       </div>
                     )}
                   </div>
-                  <div style={{ padding: '8px 10px 10px', background: isSel ? 'rgba(107,0,0,0.04)' : '#FFFFFF' }}>
-                    <p style={{ fontSize: 10, letterSpacing: 2, color: '#6B0000', margin: '0 0 2px', textTransform: 'uppercase' }}>{p.category}</p>
+                  <div style={{ padding: '8px 10px 10px', background: isSel ? 'rgba(192,21,42,0.04)' : '#FFFFFF' }}>
+                    <p style={{ fontSize: 10, letterSpacing: 2, color: '#C0152A', margin: '0 0 2px', textTransform: 'uppercase' }}>{p.category}</p>
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#2C1810', margin: 0, letterSpacing: 0.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{p.title}</p>
                   </div>
                 </div>
@@ -748,18 +728,18 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
           <button
             onClick={() => setSelected(FEATURED_PROJECTS.map(p => String(p.id)))}
-            style={{ background: 'transparent', border: '1px solid rgba(107,0,0,0.3)', color: 'rgba(44,24,16,0.6)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 20px', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: '1px solid rgba(192,21,42,0.3)', color: 'rgba(44,24,16,0.6)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 20px', cursor: 'pointer' }}
             type="button"
           >Reset to Default</button>
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: '1px solid rgba(107,0,0,0.4)', color: 'rgba(44,24,16,0.7)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 24px', cursor: 'pointer' }}
+            style={{ background: 'transparent', border: '1px solid rgba(192,21,42,0.4)', color: 'rgba(44,24,16,0.7)', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 24px', cursor: 'pointer' }}
             type="button"
           >Cancel</button>
           <button
             onClick={handleSave}
             disabled={saving}
-            style={{ background: saving ? 'rgba(107,0,0,0.6)' : '#6B0000', border: '1px solid #6B0000', color: '#FDF6EE', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 28px', cursor: saving ? 'wait' : 'pointer', transition: 'background 0.2s' }}
+            style={{ background: saving ? 'rgba(192,21,42,0.6)' : '#C0152A', border: '1px solid #C0152A', color: '#FDF6EE', fontFamily: 'Barlow Condensed, sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', padding: '10px 28px', cursor: saving ? 'wait' : 'pointer', transition: 'background 0.2s' }}
             type="button"
           >{saving ? 'Saving…' : 'Save Selection'}</button>
         </div>
@@ -769,7 +749,7 @@ function FeaturedProjectPicker({ onClose }: { onClose: () => void }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-//  APP INNER  (unchanged)
+//  APP INNER
 // ─────────────────────────────────────────────────────────────
 
 function AppInner(): JSX.Element {
@@ -917,19 +897,19 @@ function AppInner(): JSX.Element {
                         type="button"
                         onClick={() => setShowPicker(true)}
                         style={{
-                          background: 'transparent', border: '1px solid #6B0000',
-                          color: '#6B0000', fontFamily: 'Barlow Condensed, sans-serif',
+                          background: 'transparent', border: '1px solid #C0152A',
+                          color: '#C0152A', fontFamily: 'Barlow Condensed, sans-serif',
                           fontSize: 11, fontWeight: 700, letterSpacing: 2,
                           textTransform: 'uppercase', padding: '9px 18px', cursor: 'pointer',
                           transition: 'background 0.2s, color 0.2s',
                         }}
                         onMouseEnter={e => {
-                          (e.currentTarget as HTMLButtonElement).style.background = '#6B0000';
+                          (e.currentTarget as HTMLButtonElement).style.background = '#C0152A';
                           (e.currentTarget as HTMLButtonElement).style.color = '#FDF6EE';
                         }}
                         onMouseLeave={e => {
                           (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-                          (e.currentTarget as HTMLButtonElement).style.color = '#6B0000';
+                          (e.currentTarget as HTMLButtonElement).style.color = '#C0152A';
                         }}
                       >
                         ⚙ Choose Projects
@@ -1106,7 +1086,7 @@ function App(): JSX.Element {
         <AppInner />
       </Router>
 
-      {/* Hero showcase CSS (unchanged) */}
+      {/* Hero showcase CSS */}
       <style>{`
         .hero-showcase {
           position: relative;
@@ -1140,8 +1120,8 @@ function App(): JSX.Element {
         .hs-overlay {
           position: absolute; inset: 0;
           background:
-            linear-gradient(to right, rgba(43,8,0,0.88) 0%, rgba(43,8,0,0.55) 55%, rgba(43,8,0,0.3) 100%),
-            linear-gradient(to top,   rgba(43,8,0,0.85) 0%, transparent 50%);
+            linear-gradient(to right, rgba(60,5,10,0.88) 0%, rgba(60,5,10,0.55) 55%, rgba(60,5,10,0.3) 100%),
+            linear-gradient(to top,   rgba(60,5,10,0.85) 0%, transparent 50%);
           pointer-events: none;
         }
         .hs-deco-line {
@@ -1204,14 +1184,14 @@ function App(): JSX.Element {
         }
         .hs-btn-primary {
           display: inline-block;
-          background: #6B0000; color: #FDF6EE;
+          background: #C0152A; color: #FDF6EE;
           font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
           font-size: clamp(11px,1.2vw,13px); letter-spacing: 2px;
           text-transform: uppercase; padding: 14px 32px;
-          border: 2px solid #6B0000; text-decoration: none;
+          border: 2px solid #C0152A; text-decoration: none;
           transition: background 0.2s, color 0.2s;
         }
-        .hs-btn-primary:hover { background: transparent; color: #6B0000 !important; }
+        .hs-btn-primary:hover { background: transparent; color: #C0152A !important; }
         .hs-btn-ghost {
           display: inline-block; color: rgba(253,246,238,0.78);
           font-family: 'Barlow Condensed', sans-serif; font-weight: 600;
@@ -1253,7 +1233,7 @@ function App(): JSX.Element {
           display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
         }
         .hs-progress-bar { width: 120px; height: 2px; background: rgba(253,246,238,0.15); overflow: hidden; }
-        .hs-progress-fill { height: 100%; background: #6B0000; width: 0%; }
+        .hs-progress-fill { height: 100%; background: #C0152A; width: 0%; }
         @keyframes progressFill { from { width: 0%; } to { width: 100%; } }
         .hs-dots { display: flex; gap: 6px; }
         .hs-dot {
@@ -1270,7 +1250,7 @@ function App(): JSX.Element {
         .hs-stats {
           position: relative; z-index: 3;
           display: flex; align-items: center; flex-wrap: wrap;
-          background: rgba(107,0,0,0.40);
+          background: rgba(192,21,42,0.40);
           border-top: 1px solid rgba(253,246,238,0.10);
           padding: clamp(18px,3vw,30px) clamp(20px,6vw,80px);
           backdrop-filter: blur(6px);

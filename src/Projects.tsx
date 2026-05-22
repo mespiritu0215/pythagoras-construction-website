@@ -8,6 +8,8 @@
  *  - Project field overrides from Firestore are applied before rendering
  *  - Hero subtitle is editable via EditableText
  *  - "+ Add Project" button in hero when in Edit Mode
+ *
+ * Color update: dark maroon (#6B0000 / rgba(107,0,0,...)) → crimson-red (#C0152A / rgba(192,21,42,...))
  */
 
 import React, { useState, useRef, useEffect, JSX } from 'react';
@@ -24,7 +26,6 @@ import heroBgImg   from './background.png';
 //  HELPERS
 // ─────────────────────────────────────────────────────────────
 
-/** Apply stored Firestore overrides to a static project */
 function applyOverride(project: ProjectData, override?: ProjectOverride): ProjectData {
   if (!override) return project;
   return {
@@ -41,7 +42,6 @@ function applyOverride(project: ProjectData, override?: ProjectOverride): Projec
   };
 }
 
-/** Merge admin-added projects into existing categories */
 function mergeAdminProjects(
   staticCats:    CategoryGroup[],
   adminProjects: AdminProject[]
@@ -51,7 +51,6 @@ function mergeAdminProjects(
   const merged: CategoryGroup[] = staticCats.map(c => ({ ...c, projects: [...c.projects] }));
 
   for (const ap of adminProjects) {
-    // Cast AdminProject to ProjectData shape (fields are compatible)
     const asProject = ap as unknown as ProjectData;
     const match = merged.find(c => c.label.toLowerCase() === ap.category.toLowerCase());
     if (match) {
@@ -112,7 +111,6 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
     trackRef.current.scrollBy({ left: dir === 'right' ? amt : -amt, behavior: 'smooth' });
   };
 
-  // ── State for edit modal ────────────────────────────────────
   const [editingProject, setEditingProject] = useState<any | null>(null);
   const [editIsAdmin,    setEditIsAdmin]    = useState(false);
 
@@ -122,7 +120,6 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
   };
   const closeEdit = () => { setEditingProject(null); };
 
-  // ── Handle delete ───────────────────────────────────────────
   const handleDelete = async (project: ProjectData, isAdminP: boolean) => {
     const ok = window.confirm(
       `Delete "${project.title}"?\n\n` +
@@ -165,7 +162,6 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
                 const isDeleted = !isAdminP && deletedProjectIds.includes(Number(rawProject.id));
                 if (isDeleted) return null;
 
-                // Apply overrides for static projects
                 const project = isAdminP
                   ? rawProject
                   : applyOverride(rawProject, projectOverrides[String(rawProject.id)]);
@@ -193,14 +189,12 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
                           className={`prj-img${i === idx ? ' prj-img-active' : ''}`} />
                       ))}
 
-                      {/* View overlay (non-edit mode only) */}
                       {!editMode && (
                         <div className="prj-overlay">
                           <span className="prj-overlay-text">View Project →</span>
                         </div>
                       )}
 
-                      {/* ── Admin edit mode buttons ── */}
                       {editMode && (
                         <div className="prj-admin-actions">
                           <button
@@ -220,14 +214,12 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
                         </div>
                       )}
 
-                      {/* Source badge (edit mode only) */}
                       {editMode && (
                         <div className={`prj-source-badge${isAdminP ? ' prj-src-admin' : ' prj-src-static'}`}>
                           {isAdminP ? 'Admin Added' : 'Built-in'}
                         </div>
                       )}
 
-                      {/* Override indicator on static project */}
                       {editMode && !isAdminP && projectOverrides[String(rawProject.id)] && (
                         <div className="prj-override-dot" title="Has overrides">●</div>
                       )}
@@ -257,7 +249,6 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
         </div>
       </section>
 
-      {/* Edit modal (per-row so it's scoped) */}
       {editingProject && (
         <AddProjectModal
           onClose={closeEdit}
@@ -278,18 +269,13 @@ export default function Projects(): JSX.Element {
   const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Build ID key map
   const adminProjectIds = new Set(adminProjects.map(p => String(p.id)));
-
-  // Merge admin projects into categories (deleted static ones filtered inside ProjectRow)
   const mergedCategories = mergeAdminProjects(CATEGORIES, adminProjects);
 
-  // Build index map for carousel state
   const allProjectIds = mergedCategories.flatMap(c => c.projects.map(p => String(p.id)));
   const initMap = Object.fromEntries(allProjectIds.map(id => [id, 0]));
   const [indexMap, setIndexMap] = useState<Record<string, number>>(initMap);
 
-  // Refresh indexMap when admin projects change
   useEffect(() => {
     setIndexMap(prev => {
       const next = { ...prev };
@@ -319,7 +305,6 @@ export default function Projects(): JSX.Element {
             the Philippines — from office fit-outs to large-scale electrical installations.
           </EditableText>
 
-          {/* Add project button — edit mode only */}
           {isAdmin && editMode && (
             <button className="prj-add-btn" type="button"
               onClick={() => setShowAddModal(true)}>
@@ -390,7 +375,6 @@ export default function Projects(): JSX.Element {
         </div>
       </section>
 
-      {/* Add Project modal */}
       {showAddModal && <AddProjectModal onClose={() => setShowAddModal(false)} />}
 
       {/* ── STYLES ── */}
@@ -398,11 +382,11 @@ export default function Projects(): JSX.Element {
         /* ─── Admin edit mode card ─── */
         .prj-card-edit-mode {
           cursor: default !important;
-          outline: 2px dashed rgba(107,0,0,0.28);
+          outline: 2px dashed rgba(192,21,42,0.28);
         }
         .prj-card-edit-mode:hover,
         .prj-card-edit-mode:focus {
-          border-color: rgba(107,0,0,0.10) !important;
+          border-color: rgba(192,21,42,0.10) !important;
           box-shadow: none !important;
         }
 
@@ -429,10 +413,10 @@ export default function Projects(): JSX.Element {
         }
         .prj-admin-edit:hover { background: #FDF6EE; }
         .prj-admin-del {
-          background: rgba(107,0,0,0.85); color: #FDF6EE;
-          border: 1px solid rgba(107,0,0,0.5);
+          background: rgba(192,21,42,0.85); color: #FDF6EE;
+          border: 1px solid rgba(192,21,42,0.5);
         }
-        .prj-admin-del:hover { background: #6B0000; }
+        .prj-admin-del:hover { background: #C0152A; }
 
         /* ─── Source + override badges ─── */
         .prj-source-badge {
@@ -441,7 +425,7 @@ export default function Projects(): JSX.Element {
           font-size: 9px; font-weight: 700; letter-spacing: 2px;
           text-transform: uppercase; padding: 3px 8px; z-index: 5;
         }
-        .prj-src-admin  { background: #6B0000;           color: #FDF6EE; }
+        .prj-src-admin  { background: #C0152A;           color: #FDF6EE; }
         .prj-src-static { background: rgba(18,0,0,0.65); color: rgba(253,246,238,0.7); }
 
         .prj-override-dot {
@@ -454,8 +438,8 @@ export default function Projects(): JSX.Element {
         .prj-add-btn {
           margin-top: 24px;
           display: inline-flex; align-items: center; gap: 8px;
-          background: #6B0000; color: #FDF6EE;
-          border: 2px solid #6B0000;
+          background: #C0152A; color: #FDF6EE;
+          border: 2px solid #C0152A;
           font-family: 'Barlow Condensed', sans-serif;
           font-size: 13px; font-weight: 700;
           letter-spacing: 2px; text-transform: uppercase;
@@ -465,7 +449,7 @@ export default function Projects(): JSX.Element {
         }
         .prj-add-btn:hover { background: transparent; color: #FDF6EE; }
 
-        /* ─── Original layout (unchanged) ─── */
+        /* ─── Original layout ─── */
         .prj-hero {
           position: relative; display: flex; flex-direction: column; overflow: hidden;
         }
@@ -475,7 +459,7 @@ export default function Projects(): JSX.Element {
         }
         .prj-hero-overlay {
           position: absolute; inset: 0;
-          background: linear-gradient(135deg, rgba(43,8,0,0.94) 0%, rgba(74,0,0,0.90) 60%, rgba(107,0,0,0.85) 100%);
+          background: linear-gradient(135deg, rgba(60,5,10,0.94) 0%, rgba(139,0,16,0.90) 60%, rgba(192,21,42,0.85) 100%);
         }
         .prj-hero-content {
           position: relative; z-index: 2;
@@ -511,7 +495,7 @@ export default function Projects(): JSX.Element {
         .prj-hero-stats {
           position: relative; z-index: 2;
           display: flex; align-items: center; flex-wrap: wrap;
-          background: rgba(107,0,0,0.38);
+          background: rgba(192,21,42,0.38);
           border-top: 1px solid rgba(253,246,238,0.10);
           padding: clamp(20px,3vw,32px) clamp(20px,6vw,80px);
           animation: prjFadeUp 0.8s 0.46s ease both;
@@ -526,33 +510,33 @@ export default function Projects(): JSX.Element {
         .prj-section-light { background: #FFFFFF; }
         .prj-section-inner { max-width: 1280px; margin: 0 auto; padding: 0 clamp(20px,6vw,80px); }
         .prj-row-header { display: flex; align-items: center; gap: 20px; margin-bottom: 28px; }
-        .prj-cat-label { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(11px,1.3vw,14px); font-weight: 700; letter-spacing: 5px; text-transform: uppercase; color: #6B0000; white-space: nowrap; }
-        .prj-cat-rule { flex: 1; height: 1px; background: linear-gradient(to right, rgba(107,0,0,0.45), transparent); }
+        .prj-cat-label { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(11px,1.3vw,14px); font-weight: 700; letter-spacing: 5px; text-transform: uppercase; color: #C0152A; white-space: nowrap; }
+        .prj-cat-rule { flex: 1; height: 1px; background: linear-gradient(to right, rgba(192,21,42,0.45), transparent); }
         .prj-scroll-area { position: relative; }
         .prj-track { display: flex; gap: 24px; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding: 4px 2px 18px; scrollbar-width: none; }
         .prj-track::-webkit-scrollbar { display: none; }
-        .prj-card { flex: 0 0 calc((100% - 48px) / 3); scroll-snap-align: start; min-width: 0; display: flex; flex-direction: column; background: rgba(107,0,0,0.05); border: 1px solid rgba(107,0,0,0.10); cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s; outline: none; }
-        .prj-card:hover, .prj-card:focus { border-color: rgba(107,0,0,0.35); box-shadow: 0 8px 32px rgba(107,0,0,0.10); }
-        .prj-card-light { background: #FFFFFF; border: 1px solid rgba(107,0,0,0.09); box-shadow: 4px 6px 24px rgba(107,0,0,0.05); }
+        .prj-card { flex: 0 0 calc((100% - 48px) / 3); scroll-snap-align: start; min-width: 0; display: flex; flex-direction: column; background: rgba(192,21,42,0.05); border: 1px solid rgba(192,21,42,0.10); cursor: pointer; transition: border-color 0.3s, box-shadow 0.3s; outline: none; }
+        .prj-card:hover, .prj-card:focus { border-color: rgba(192,21,42,0.35); box-shadow: 0 8px 32px rgba(192,21,42,0.10); }
+        .prj-card-light { background: #FFFFFF; border: 1px solid rgba(192,21,42,0.09); box-shadow: 4px 6px 24px rgba(192,21,42,0.05); }
         .prj-carousel { position: relative; width: 100%; padding-top: 70%; overflow: hidden; background: #E8D8C4; flex-shrink: 0; }
         .prj-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: 0; transition: opacity 0.55s ease-in-out; display: block; }
         .prj-img-active { opacity: 1; }
-        .prj-overlay { position: absolute; inset: 0; background: rgba(107,0,0,0); display: flex; align-items: center; justify-content: center; transition: background 0.3s; pointer-events: none; }
-        .prj-card:hover .prj-overlay { background: rgba(107,0,0,0.28); }
+        .prj-overlay { position: absolute; inset: 0; background: rgba(192,21,42,0); display: flex; align-items: center; justify-content: center; transition: background 0.3s; pointer-events: none; }
+        .prj-card:hover .prj-overlay { background: rgba(192,21,42,0.28); }
         .prj-overlay-text { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(11px,1.2vw,14px); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #FDF6EE; opacity: 0; transform: translateY(8px); transition: opacity 0.25s, transform 0.25s; }
         .prj-card:hover .prj-overlay-text { opacity: 1; transform: translateY(0); }
         .prj-dots { position: absolute; bottom: 9px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; max-width: 80%; }
         .prj-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(253,246,238,0.4); flex-shrink: 0; transition: background 0.3s; }
         .prj-dot-on { background: #FDF6EE; }
-        .prj-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(14px,1.8vw,20px); border-top: 1px solid rgba(107,0,0,0.08); background: #F0E6D6; }
-        .prj-footer-light { background: #FFFFFF; border-top: 1px solid rgba(107,0,0,0.07); }
+        .prj-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: clamp(14px,1.8vw,20px); border-top: 1px solid rgba(192,21,42,0.08); background: #F0E6D6; }
+        .prj-footer-light { background: #FFFFFF; border-top: 1px solid rgba(192,21,42,0.07); }
         .prj-footer-text { min-width: 0; }
-        .prj-cat-badge { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(9px,0.9vw,11px); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #6B0000; margin: 0 0 4px; }
+        .prj-cat-badge { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(9px,0.9vw,11px); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #C0152A; margin: 0 0 4px; }
         .prj-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(14px,1.6vw,20px); font-weight: 700; letter-spacing: 1px; color: #2C1810; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .prj-arrow-icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(107,0,0,0.38); color: #6B0000; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; padding-bottom: 5px; }
-        .prj-card:hover .prj-arrow-icon { background: #6B0000; border-color: #6B0000; color: #FDF6EE; }
-        .prj-arrow { position: absolute; top: 33%; transform: translateY(-50%); z-index: 10; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(107,0,0,0.35); background: rgba(253,246,238,0.92); color: #6B0000; font-size: 28px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding-bottom: 5px; transition: background 0.2s, border-color 0.2s, color 0.2s; }
-        .prj-arrow:hover { background: #6B0000; border-color: #6B0000; color: #FDF6EE; }
+        .prj-arrow-icon { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(192,21,42,0.38); color: #C0152A; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s, color 0.2s; padding-bottom: 5px; }
+        .prj-card:hover .prj-arrow-icon { background: #C0152A; border-color: #C0152A; color: #FDF6EE; }
+        .prj-arrow { position: absolute; top: 33%; transform: translateY(-50%); z-index: 10; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(192,21,42,0.35); background: rgba(253,246,238,0.92); color: #C0152A; font-size: 28px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding-bottom: 5px; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+        .prj-arrow:hover { background: #C0152A; border-color: #C0152A; color: #FDF6EE; }
         .prj-arrow-l { left: -21px; }
         .prj-arrow-r { right: -21px; }
         @media (max-width: 1024px) { .prj-card { flex: 0 0 calc((100% - 24px) / 2); } .prj-arrow { display: none; } }
