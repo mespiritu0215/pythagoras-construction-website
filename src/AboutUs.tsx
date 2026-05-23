@@ -7,8 +7,6 @@
  *    Changes persist via getText/setText as a JSON list.
  *  - The "🖼 Manage Slider" button is shown on the hero slider in edit mode.
  *  - All other behaviour (awards, story, values, animations) is unchanged.
- *
- * Color update: dark maroon (#6B0000 / rgba(107,0,0,...)) → crimson-red (#C0152A / rgba(192,21,42,...))
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -66,12 +64,14 @@ const DEFAULT_HERO_SLIDER = [NCDC6, NCDC5, NCDC2];
 
 // ─────────────────────────────────────────────────────────────
 //  CAROUSEL MANAGER MODAL
+//  Shared utility: shows all images in a grid, allows remove & add.
+//  Persists changes via getText/setText as a JSON array.
 // ─────────────────────────────────────────────────────────────
 
 const HERO_SLIDER_KEY = 'about.hero.slider.list';
 
 interface CarouselManagerProps {
-  storageKey:    string;
+  storageKey:    string;   // key used with getText/setText
   defaultImages: string[];
   onClose:       () => void;
 }
@@ -91,6 +91,9 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Sync images when Firestore data loads/changes (handles the case where
+  // the modal was opened before the Firestore snapshot had arrived, or when
+  // previously-saved custom images need to be loaded into the modal).
   const savedListStr = getText(storageKey, '');
   useEffect(() => {
     try {
@@ -134,7 +137,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
       onClick={onBackdrop}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(30,0,5,0.92)',
+        background: 'rgba(18,0,0,0.92)',
         zIndex: 99999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 20, overflowY: 'auto',
@@ -169,7 +172,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
             aria-label="Close"
             style={{
               background: 'none', border: 'none',
-              fontSize: 22, cursor: 'pointer', color: '#C0152A',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
               lineHeight: 1, padding: '4px 8px', flexShrink: 0,
             }}
           >✕</button>
@@ -180,7 +183,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
           <div style={{
             padding: '48px 0', textAlign: 'center',
             color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
-            border: '2px dashed rgba(192,21,42,0.15)', borderRadius: 2,
+            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
             marginBottom: 24,
           }}>
             No images yet — add some below.
@@ -198,7 +201,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
                 style={{
                   position: 'relative', borderRadius: 2,
                   overflow: 'hidden',
-                  border: '1px solid rgba(192,21,42,0.14)',
+                  border: '1px solid rgba(107,0,0,0.14)',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 }}
               >
@@ -218,7 +221,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
                   <button
                     onClick={() => persist(images.filter((_, j) => j !== i))}
                     style={{
-                      background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
+                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
                       border: 'none', borderRadius: 2, cursor: 'pointer',
                       fontFamily: 'Barlow Condensed, sans-serif',
                       fontSize: 11, fontWeight: 700, padding: '4px 10px',
@@ -237,14 +240,14 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
         <div style={{
           display: 'flex', gap: 12, justifyContent: 'space-between',
           alignItems: 'center', flexWrap: 'wrap',
-          borderTop: '1px solid rgba(192,21,42,0.12)', paddingTop: 20,
+          borderTop: '1px solid rgba(107,0,0,0.12)', paddingTop: 20,
         }}>
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
             style={{
-              background: '#C0152A', color: '#FDF6EE',
-              border: '2px solid #C0152A',
+              background: '#6B0000', color: '#FDF6EE',
+              border: '2px solid #6B0000',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 13, fontWeight: 700, letterSpacing: 2,
               textTransform: 'uppercase', padding: '11px 28px',
@@ -259,7 +262,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(192,21,42,0.35)',
+              border: '1px solid rgba(107,0,0,0.35)',
               color: 'rgba(44,24,16,0.7)',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 12, fontWeight: 700, letterSpacing: 2,
@@ -343,6 +346,7 @@ function AboutUs() {
   }, [getText, setText, removedIndices]);
 
   // ── Hero slider state ─────────────────────────────────────
+  // Reads from stored JSON list; falls back to the three built-in images.
   const getHeroImages = (): string[] => {
     try {
       const stored = getText(HERO_SLIDER_KEY, '');
@@ -355,6 +359,7 @@ function AboutUs() {
   const heroSliderImages = getHeroImages();
   const [currentIndex,    setCurrentIndex]    = useState(0);
   const [showSliderMgr,   setShowSliderMgr]   = useState(false);
+
 
   const [activeValue,   setActiveValue]   = useState(0);
 
@@ -370,6 +375,7 @@ function AboutUs() {
   const prevAward = () => setAwardIndex((prev) => Math.max(prev - 1, 0));
   const nextAward = () => setAwardIndex((prev) => Math.min(prev + 1, maxAwardIndex));
 
+  // Auto-advance awards
   useEffect(() => {
     if (awardPaused) return;
     const id = setInterval(() => {
@@ -378,12 +384,14 @@ function AboutUs() {
     return () => clearInterval(id);
   }, [awardPaused, maxAwardIndex]);
 
+  // Lightbox keyboard close
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setLightboxImg(null); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Drag handlers for awards
   const onDragStart = (clientX: number) => {
     setIsDragging(true);
     dragStartX.current = clientX;
@@ -401,6 +409,7 @@ function AboutUs() {
     dragDelta.current = 0;
   };
 
+  // Hero slider auto-advance
   useEffect(() => {
     if (heroSliderImages.length === 0) return;
     const interval = setInterval(() => {
@@ -409,6 +418,7 @@ function AboutUs() {
     return () => clearInterval(interval);
   }, [heroSliderImages.length]);
 
+  // Clamp currentIndex when images are removed
   const safeIndex = heroSliderImages.length > 0
     ? Math.min(currentIndex, heroSliderImages.length - 1)
     : 0;
@@ -418,6 +428,7 @@ function AboutUs() {
     return () => { document.body.style.backgroundColor = ""; };
   }, []);
 
+  // Core values with admin overrides
   const values = DEFAULT_VALUES.map((v, i) => ({
     ...v,
     text: getText(`about.values.${i}.text`, v.text),
@@ -468,7 +479,7 @@ function AboutUs() {
           </div>
         </div>
 
-        {/* ── Hero slider ── */}
+        {/* ── Hero slider — managed via popup in edit mode ── */}
         <div className="abt-hero-right">
           <div className="abt-hero-slider" style={{ position: 'relative' }}>
             <div
@@ -488,6 +499,8 @@ function AboutUs() {
                         width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                       }}
                     />
+
+
                   </div>
                 );
               })}
@@ -523,7 +536,7 @@ function AboutUs() {
                 onClick={() => setShowSliderMgr(true)}
                 style={{
                   position: 'absolute', top: 75, right: 10, zIndex: 10,
-                  background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
+                  background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
                   border: '1px solid rgba(253,246,238,0.25)',
                   fontFamily: 'Barlow Condensed, sans-serif',
                   fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
@@ -535,6 +548,8 @@ function AboutUs() {
                 🖼 Manage Slider
               </button>
             )}
+
+
           </div>
           <div className="abt-hero-accent-bar" />
         </div>
@@ -767,7 +782,7 @@ function AboutUs() {
                         onClick={() => handleRemoveAward(i)}
                         style={{
                           position: 'absolute', top: 6, right: 6, zIndex: 10,
-                          background: 'rgba(192,21,42,0.85)', color: '#FDF6EE',
+                          background: 'rgba(107,0,0,0.85)', color: '#FDF6EE',
                           border: 'none', borderRadius: 2, cursor: 'pointer',
                           fontFamily: 'Barlow Condensed, sans-serif',
                           fontSize: 11, fontWeight: 700, padding: '3px 8px',
@@ -800,8 +815,8 @@ function AboutUs() {
                   onClick={() => awardFileRef.current?.click()}
                   disabled={awardUploading}
                   style={{
-                    background: '#C0152A', color: '#FDF6EE',
-                    border: '2px solid #C0152A',
+                    background: '#6B0000', color: '#FDF6EE',
+                    border: '2px solid #6B0000',
                     fontFamily: 'Barlow Condensed, sans-serif',
                     fontSize: 13, fontWeight: 700, letterSpacing: 2,
                     textTransform: 'uppercase', padding: '11px 28px',

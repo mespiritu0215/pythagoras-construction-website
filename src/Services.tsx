@@ -1,7 +1,15 @@
 /**
  * Services.tsx  (Updated — carousel manager popup + save fix)
  *
- * Color update: dark maroon (#6B0000 / rgba(107,0,0,...)) → crimson-red (#C0152A / rgba(192,21,42,...))
+ * Changes vs previous version:
+ *  - Each carousel now has a "🖼 Manage Images" button in edit mode
+ *    that opens a full popup showing all carousel photos.
+ *    Admin can remove any image or add new ones (uploaded to Firebase).
+ *  - CarouselManagerModal stores the live image list via getText/setText
+ *    so any changes persist across sessions.
+ *  - AddServiceItem now uses local state so newly added items appear
+ *    immediately and are persisted to Firestore; font colours match
+ *    each section's text theme.
  */
 
 import React, { useState, useEffect, useRef, JSX } from 'react';
@@ -30,7 +38,7 @@ import PoiFeston3 from "./CompletedProjects/PoiFestonSanAndres/PoiFestonSanAndre
 import { useAdmin, EditableText, EditableImage, uploadToStorage } from './AdminContext';
 
 // ─────────────────────────────────────────────────────────────
-//  Static image arrays
+//  Static image arrays (defaults — overridable by admin via popup)
 // ─────────────────────────────────────────────────────────────
 
 const GlobeCalbayogImages: string[] = [GlobeCalbayog1, GlobeCalbayog12, GlobeCalbayog16];
@@ -57,10 +65,12 @@ interface ServiceData {
 
 // ─────────────────────────────────────────────────────────────
 //  CAROUSEL MANAGER MODAL
+//  Shows all images in a grid; admin can remove any or add new.
+//  Changes are persisted via getText/setText as a JSON array.
 // ─────────────────────────────────────────────────────────────
 
 interface CarouselManagerProps {
-  adminKeyBase:  string;
+  adminKeyBase:  string;   // e.g. "srv.1.carousel"
   defaultImages: string[];
   onClose:       () => void;
 }
@@ -69,6 +79,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
   const { getText, setText } = useAdmin();
   const listKey = `${adminKeyBase}.list`;
 
+  // Load the saved list, falling back to the built-in defaults
   const [images, setImages] = useState<string[]>(() => {
     try {
       const stored = getText(listKey, '');
@@ -81,6 +92,8 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Sync images when Firestore data loads/changes (handles the case where
+  // the modal was opened before the Firestore snapshot arrived)
   const savedListStr = getText(listKey, '');
   useEffect(() => {
     try {
@@ -90,6 +103,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [savedListStr]);
 
+  // Save new list both locally (instant feedback) and to Firestore
   const persist = async (newImgs: string[]) => {
     setImages(newImgs);
     try {
@@ -115,6 +129,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
     }
   };
 
+  // Close on backdrop click
   const onBackdrop = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
@@ -124,7 +139,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
       onClick={onBackdrop}
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(30,0,5,0.92)',
+        background: 'rgba(18,0,0,0.92)',
         zIndex: 99999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 20, overflowY: 'auto',
@@ -159,7 +174,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
             aria-label="Close"
             style={{
               background: 'none', border: 'none',
-              fontSize: 22, cursor: 'pointer', color: '#C0152A',
+              fontSize: 22, cursor: 'pointer', color: '#6B0000',
               lineHeight: 1, padding: '4px 8px', flexShrink: 0,
             }}
           >✕</button>
@@ -170,7 +185,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
           <div style={{
             padding: '48px 0', textAlign: 'center',
             color: 'rgba(44,24,16,0.4)', fontSize: 14, letterSpacing: 1,
-            border: '2px dashed rgba(192,21,42,0.15)', borderRadius: 2,
+            border: '2px dashed rgba(107,0,0,0.15)', borderRadius: 2,
             marginBottom: 24,
           }}>
             No images yet — add some below.
@@ -188,7 +203,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
                 style={{
                   position: 'relative', borderRadius: 2,
                   overflow: 'hidden',
-                  border: '1px solid rgba(192,21,42,0.14)',
+                  border: '1px solid rgba(107,0,0,0.14)',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 }}
               >
@@ -208,7 +223,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
                   <button
                     onClick={() => persist(images.filter((_, j) => j !== i))}
                     style={{
-                      background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
+                      background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
                       border: 'none', borderRadius: 2, cursor: 'pointer',
                       fontFamily: 'Barlow Condensed, sans-serif',
                       fontSize: 11, fontWeight: 700, padding: '4px 10px',
@@ -227,14 +242,14 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
         <div style={{
           display: 'flex', gap: 12, justifyContent: 'space-between',
           alignItems: 'center', flexWrap: 'wrap',
-          borderTop: '1px solid rgba(192,21,42,0.12)', paddingTop: 20,
+          borderTop: '1px solid rgba(107,0,0,0.12)', paddingTop: 20,
         }}>
           <button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
             style={{
-              background: '#C0152A', color: '#FDF6EE',
-              border: '2px solid #C0152A',
+              background: '#6B0000', color: '#FDF6EE',
+              border: '2px solid #6B0000',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 13, fontWeight: 700, letterSpacing: 2,
               textTransform: 'uppercase', padding: '11px 28px',
@@ -249,7 +264,7 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
             onClick={onClose}
             style={{
               background: 'transparent',
-              border: '1px solid rgba(192,21,42,0.35)',
+              border: '1px solid rgba(107,0,0,0.35)',
               color: 'rgba(44,24,16,0.7)',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 12, fontWeight: 700, letterSpacing: 2,
@@ -274,11 +289,13 @@ function CarouselManagerModal({ adminKeyBase, defaultImages, onClose }: Carousel
 
 // ─────────────────────────────────────────────────────────────
 //  CAROUSEL
+//  Reads live image list from stored JSON (with fallback to props).
+//  In edit mode shows a "Manage Images" button that opens the modal.
 // ─────────────────────────────────────────────────────────────
 
 interface CarouselProps {
-  images:       string[];
-  adminKeyBase: string;
+  images:       string[];  // default / fallback images
+  adminKeyBase: string;    // e.g. "srv.1.carousel"
 }
 
 function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.Element {
@@ -288,6 +305,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
   const [showManager, setShowManager] = useState<boolean>(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Read the live image list; fall back to default images
   const listKey = `${adminKeyBase}.list`;
   const activeImages: string[] = (() => {
     try {
@@ -298,6 +316,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
     }
   })();
 
+  // Clamp index when images are removed
   const safeIndex = activeImages.length > 0
     ? Math.min(current, activeImages.length - 1)
     : 0;
@@ -320,7 +339,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
           <button
             onClick={() => setShowManager(true)}
             style={{
-              background: '#C0152A', color: '#FDF6EE',
+              background: '#6B0000', color: '#FDF6EE',
               border: 'none',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 12, fontWeight: 700, letterSpacing: 2,
@@ -357,6 +376,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
           />
         ))}
 
+        {/* Progress bar */}
         <div className="srv-carousel-bar">
           <div
             className="srv-carousel-bar-fill"
@@ -364,6 +384,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
           />
         </div>
 
+        {/* Dots */}
         <div className="srv-carousel-dots">
           {activeImages.map((_, i) => (
             <span
@@ -374,12 +395,13 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
           ))}
         </div>
 
+        {/* Edit mode: manage images button */}
         {editMode && (
           <button
             onClick={() => setShowManager(true)}
             style={{
               position: 'absolute', top: 10, right: 10, zIndex: 10,
-              background: 'rgba(192,21,42,0.88)', color: '#FDF6EE',
+              background: 'rgba(107,0,0,0.88)', color: '#FDF6EE',
               border: '1px solid rgba(253,246,238,0.25)',
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 11, fontWeight: 700, letterSpacing: 1.5,
@@ -393,6 +415,7 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
         )}
       </div>
 
+      {/* Carousel manager modal */}
       {showManager && (
         <CarouselManagerModal
           adminKeyBase={adminKeyBase}
@@ -406,6 +429,10 @@ function Carousel({ images: defaultImages, adminKeyBase }: CarouselProps): JSX.E
 
 // ─────────────────────────────────────────────────────────────
 //  SERVICE EXTRA ITEMS
+//
+//  Always rendered (not gated behind editMode) so saved items remain
+//  visible after the admin exits edit mode.  Edit UI (input row +
+//  remove buttons) is shown only while editMode is active.
 // ─────────────────────────────────────────────────────────────
 
 function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) {
@@ -418,6 +445,7 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
   const [inputVal, setInputVal] = React.useState('');
   const [saving,   setSaving]   = React.useState(false);
 
+  // Sync whenever Firestore delivers a new snapshot
   const savedStr = getText(extraKey, '[]');
   React.useEffect(() => {
     if (saving) return;
@@ -426,7 +454,7 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
   }, [savedStr]);
 
   const persist = async (newItems: string[]) => {
-    setExtraItems(newItems);
+    setExtraItems(newItems); // optimistic
     setSaving(true);
     try {
       await setText(extraKey, JSON.stringify(newItems));
@@ -446,15 +474,18 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
 
   const removeItem = (idx: number) => persist(extraItems.filter((_, i) => i !== idx));
 
-  const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(192,21,42,0.10)';
-  const removeColor  = isDark ? 'rgb(92, 64, 51)'  : '#C0152A';
-  const removeBorder = isDark ? 'rgb(92, 64, 51)' : 'rgba(192,21,42,0.25)';
+  // Theme-aware remove button colours
+  const removeBg     = isDark ? 'rgba(253,246,238,0.10)' : 'rgba(107,0,0,0.10)';
+  const removeColor  = isDark ? 'rgb(92, 64, 51)'  : '#6B0000';
+  const removeBorder = isDark ? 'rgb(92, 64, 51)' : 'rgba(107,0,0,0.25)';
 
+  // Input background/border stay theme-aware; text and + button use var(--text-mid)
   const inputBg     = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.9)';
-  const inputBorder = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(192,21,42,0.22)';
+  const inputBorder = isDark ? 'rgba(253,246,238,0.22)' : 'rgba(107,0,0,0.22)';
 
   return (
     <>
+      {/* Always-visible saved items — inherits colour from srv-list CSS */}
       {extraItems.map((item, idx) => (
         <li key={`extra-${idx}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ flex: 1, fontFamily: 'Barlow, sans-serif', fontSize: 14 }}>
@@ -480,6 +511,7 @@ function ServiceExtraItems({ svcN, isDark }: { svcN: number; isDark: boolean }) 
         </li>
       ))}
 
+      {/* Input row — edit mode only */}
       {editMode && (
         <li style={{ display: 'flex', gap: 8, marginTop: 10, alignItems: 'center' }}>
           <input
@@ -671,6 +703,7 @@ export default function Services(): JSX.Element {
                   <div className={`srv-rule${svc.dark ? '' : ' srv-rule-dark'}`} />
                 </div>
 
+                {/* Editable heading */}
                 <EditableText
                   adminKey={`srv.${svc.n}.heading`}
                   tag="h2"
@@ -681,6 +714,7 @@ export default function Services(): JSX.Element {
 
                 <div className="srv-heading-rule" />
 
+                {/* Editable list items */}
                 <ul className={`srv-list${svc.dark ? '' : ' srv-list-dark'}`}>
                   {svc.items.map((item, i) => (
                     <li key={i}>
@@ -701,6 +735,7 @@ export default function Services(): JSX.Element {
                       images={svc.carousel}
                       adminKeyBase={`srv.${svc.n}.carousel`}
                     />
+                    {/* Editable caption */}
                     <EditableText
                       adminKey={`srv.${svc.n}.caption`}
                       tag="p"
@@ -726,12 +761,13 @@ export default function Services(): JSX.Element {
             </div>
           </div>
 
+          {/* Edit mode helper hint */}
           {editMode && (
             <div style={{
               position: 'absolute', bottom: 8, right: 12,
               fontFamily: 'Barlow Condensed, sans-serif',
               fontSize: 10, letterSpacing: 2, textTransform: 'uppercase',
-              color: 'rgba(192,21,42,0.45)',
+              color: 'rgba(107,0,0,0.45)',
               pointerEvents: 'none',
             }}>
               ✏️ click text to edit · 🖼 click "Manage Images" to edit carousel

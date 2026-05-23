@@ -3,8 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ALL_PROJECTS } from './Projectsdata';
 import { useAdmin, ProjectOverride } from './AdminContext';
 
-// Color update: dark maroon (#6B0000 / rgba(107,0,0,...)) → crimson-red (#C0152A / rgba(192,21,42,...))
-
+// ─── Apply stored Firestore overrides to a static project ────
 function applyOverride(project: any, override?: ProjectOverride): any {
   if (!override) return project;
   return {
@@ -25,22 +24,32 @@ export default function ProjectDetails() {
   const { id }   = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  // ── Pull admin data so we can apply overrides and find admin-added projects ──
   const {
     adminProjects,
     projectOverrides,
     deletedProjectIds,
   } = useAdmin();
 
+  // 1. Check static projects first (match by string comparison to support both
+  //    numeric IDs like "1" and timestamp IDs like "1621234567890").
   const staticProject = ALL_PROJECTS.find((p) => String(p.id) === id);
+
+  // 2. Check admin-added projects (Firestore collection, string IDs).
   const adminProject = adminProjects.find((p) => p.id === id);
+
+  // 3. Resolve the project — apply overrides to static projects.
   const project: any = staticProject
     ? applyOverride(staticProject, id ? projectOverrides[id] : undefined)
     : adminProject ?? null;
 
+  // Guard: project deleted by admin
   const isDeleted = staticProject && id
     ? deletedProjectIds.includes(Number(id))
     : false;
 
+  // ── Carousel state ───────────────────────────────────────
+  // Show all available images (admin-added projects may have more than 3)
   const carouselImages: string[] = project
     ? (project.images?.length ? project.images : [project.cover])
     : [];
@@ -67,6 +76,7 @@ export default function ProjectDetails() {
     });
   }, [carouselImages.length]);
 
+  // Auto-play every 3.5s
   useEffect(() => {
     if (!project) return;
     intervalRef.current = setInterval(advance, 3500);
@@ -99,6 +109,7 @@ export default function ProjectDetails() {
     return () => { document.body.style.background = ''; };
   }, []);
 
+  // ── Not found / deleted ─────────────────────────────────
   if (!project || isDeleted) {
     return (
       <div className="pd-not-found">
@@ -145,6 +156,7 @@ export default function ProjectDetails() {
         <div className="pd-carousel-wrap">
           <div className="pd-carousel">
 
+            {/* Track */}
             <div
               className={`pd-carousel-track ${isAnimating ? (animDir === 'right' ? 'slide-out-left' : 'slide-out-right') : ''}`}
             >
@@ -156,6 +168,7 @@ export default function ProjectDetails() {
               />
             </div>
 
+            {/* Prev / Next */}
             {carouselImages.length > 1 && (
               <>
                 <button className="pd-car-btn pd-car-prev" onClick={handlePrev} aria-label="Previous">
@@ -167,10 +180,12 @@ export default function ProjectDetails() {
               </>
             )}
 
+            {/* Counter */}
             <div className="pd-car-counter">
               {activeIdx + 1} <span>/</span> {carouselImages.length}
             </div>
 
+            {/* Dots */}
             {carouselImages.length > 1 && (
               <div className="pd-car-dots">
                 {carouselImages.map((_, i) => (
@@ -185,6 +200,7 @@ export default function ProjectDetails() {
             )}
           </div>
 
+          {/* Thumbnail strip */}
           {carouselImages.length > 1 && (
             <div className="pd-thumbs">
               {carouselImages.map((img, i) => (
@@ -258,6 +274,7 @@ export default function ProjectDetails() {
       {/* ── STYLES ────────────────────────────────────────── */}
       <style>{`
 
+        /* Page */
         .pd-page {
           min-height: 100vh;
           background: #FDF6EE;
@@ -282,7 +299,7 @@ export default function ProjectDetails() {
         }
         .pd-hero-overlay {
           position: absolute; inset: 0;
-          background: linear-gradient(135deg, rgba(60,5,10,0.94) 0%, rgba(139,0,16,0.90) 60%, rgba(192,21,42,0.85) 100%);
+          background: linear-gradient(135deg, rgba(43,8,0,0.94) 0%, rgba(74,0,0,0.90) 60%, rgba(107,0,0,0.85) 100%);
           pointer-events: none;
         }
         .pd-hero-inner {
@@ -317,7 +334,7 @@ export default function ProjectDetails() {
           font-family: 'Barlow Condensed', sans-serif;
           font-size: clamp(9px,1vw,11px); font-weight: 700;
           letter-spacing: 3px; text-transform: uppercase;
-          color: #FDF6EE; background: #C0152A;
+          color: #FDF6EE; background: #6B0000;
           padding: 4px 14px; align-self: flex-start;
         }
         .pd-badge-ongoing {
@@ -341,7 +358,7 @@ export default function ProjectDetails() {
         .pd-location svg { flex-shrink: 0; opacity: 0.6; }
         .pd-hero-rule {
           position: relative; z-index: 2; height: 1px;
-          background: linear-gradient(to right, #C0152A, rgba(192,21,42,0.2), transparent);
+          background: linear-gradient(to right, #6B0000, rgba(107,0,0,0.2), transparent);
         }
 
         /* ── Main layout ── */
@@ -363,7 +380,7 @@ export default function ProjectDetails() {
           aspect-ratio: 16 / 10;
           overflow: hidden;
           background: #E8D8C4;
-          box-shadow: 0 20px 60px rgba(192,21,42,0.12);
+          box-shadow: 0 20px 60px rgba(107,0,0,0.12);
         }
 
         .pd-carousel-track {
@@ -394,31 +411,34 @@ export default function ProjectDetails() {
           to   { opacity: 1; transform: scale(1); }
         }
 
+        /* Prev / Next buttons */
         .pd-car-btn {
           position: absolute; top: 50%; transform: translateY(-50%);
           width: 48px; height: 48px; border-radius: 50%;
           background: rgba(253,246,238,0.92);
-          border: none; color: #C0152A;
+          border: none; color: #6B0000;
           font-size: 30px; line-height: 1; padding-bottom: 4px;
           cursor: pointer; z-index: 5;
           display: flex; align-items: center; justify-content: center;
           transition: background 0.2s, color 0.2s, transform 0.2s;
-          box-shadow: 0 4px 16px rgba(192,21,42,0.15);
+          box-shadow: 0 4px 16px rgba(107,0,0,0.15);
         }
-        .pd-car-btn:hover { background: #C0152A; color: #FDF6EE; transform: translateY(-50%) scale(1.08); }
+        .pd-car-btn:hover { background: #6B0000; color: #FDF6EE; transform: translateY(-50%) scale(1.08); }
         .pd-car-prev { left: 16px; }
         .pd-car-next { right: 16px; }
 
+        /* Counter */
         .pd-car-counter {
           position: absolute; top: 14px; right: 16px;
           font-family: 'Barlow Condensed', sans-serif;
           font-size: 13px; font-weight: 700; letter-spacing: 2px;
           color: rgba(253,246,238,0.8); z-index: 5;
-          background: rgba(60,5,10,0.45); padding: 4px 10px;
+          background: rgba(43,8,0,0.45); padding: 4px 10px;
           backdrop-filter: blur(4px);
         }
         .pd-car-counter span { opacity: 0.45; margin: 0 2px; }
 
+        /* Dots */
         .pd-car-dots {
           position: absolute; bottom: 14px; left: 50%;
           transform: translateX(-50%);
@@ -432,6 +452,7 @@ export default function ProjectDetails() {
         }
         .pd-car-dot.active { background: #FDF6EE; transform: scale(1.3); }
 
+        /* Thumbnails */
         .pd-thumbs {
           display: flex; gap: 8px;
         }
@@ -442,7 +463,7 @@ export default function ProjectDetails() {
           transition: border-color 0.2s, opacity 0.2s;
           opacity: 0.55; background: none;
         }
-        .pd-thumb.active { border-color: #C0152A; opacity: 1; }
+        .pd-thumb.active { border-color: #6B0000; opacity: 1; }
         .pd-thumb:hover { opacity: 0.85; }
         .pd-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -458,7 +479,7 @@ export default function ProjectDetails() {
           font-family: 'Barlow Condensed', sans-serif;
           font-size: clamp(10px,1.1vw,12px); font-weight: 700;
           letter-spacing: 4px; text-transform: uppercase;
-          color: #C0152A; margin: 0;
+          color: #6B0000; margin: 0;
         }
         .pd-info-title {
           font-family: 'Bebas Neue', sans-serif;
@@ -467,7 +488,7 @@ export default function ProjectDetails() {
           line-height: 1; margin: 0;
         }
         .pd-info-divider {
-          width: 48px; height: 2px; background: #C0152A;
+          width: 48px; height: 2px; background: #6B0000;
         }
 
         .pd-description {
@@ -476,6 +497,7 @@ export default function ProjectDetails() {
           line-height: 1.85; color: #5C4033; margin: 0;
         }
 
+        /* Meta grid */
         .pd-meta-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -499,25 +521,27 @@ export default function ProjectDetails() {
           font-size: clamp(12px,1.2vw,14px); font-weight: 600;
           color: #2C1810; line-height: 1.4;
         }
-        .status-ongoing { color: #C0152A; }
+        .status-ongoing { color: #6B0000; }
         .status-done    { color: #3a6b3a; }
 
+        /* CTA */
         .pd-cta {
           display: inline-flex; align-items: center;
-          background: #C0152A; color: #FDF6EE;
+          background: #6B0000; color: #FDF6EE;
           font-family: 'Barlow Condensed', sans-serif;
           font-weight: 700; font-size: 13px;
           letter-spacing: 2px; text-transform: uppercase;
-          padding: 15px 28px; border: 2px solid #C0152A;
+          padding: 15px 28px; border: 2px solid #6B0000;
           cursor: pointer; transition: background 0.2s, color 0.2s;
           align-self: flex-start;
         }
-        .pd-cta:hover { background: transparent; color: #C0152A; }
+        .pd-cta:hover { background: transparent; color: #6B0000; }
 
-        .pd-not-found { padding: 80px; text-align: center; color: #C0152A; font-size: 20px; }
+        /* Not found */
+        .pd-not-found { padding: 80px; text-align: center; color: #6B0000; font-size: 20px; }
         .pd-not-found button {
           margin-top: 16px; padding: 12px 28px;
-          background: #C0152A; color: #FDF6EE;
+          background: #6B0000; color: #FDF6EE;
           border: none; cursor: pointer;
           font-family: 'Barlow Condensed', sans-serif;
           font-size: 13px; font-weight: 700;

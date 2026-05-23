@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   Services.css — crimson-red, white & cream palette
-   Color update: #6B0000 / rgba(107,0,0,...) → #C0152A / rgba(192,21,42,...)
+   Services.css — maroon, white & cream palette
 ═══════════════════════════════════════════════════════════════ */
 
 .srv-page { overflow-x: hidden; }
@@ -29,7 +28,7 @@
 .srv-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(60,5,10,0.94) 0%, rgba(139,0,16,0.90) 60%, rgba(192,21,42,0.85) 100%);
+  background: linear-gradient(135deg, rgba(43,8,0,0.94) 0%, rgba(74,0,0,0.90) 60%, rgba(107,0,0,0.85) 100%);
   pointer-events: none;
 }
 
@@ -104,7 +103,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  background: rgba(192,21,42,0.38);
+  background: rgba(107,0,0,0.38);
   border-top: 1px solid rgba(253,246,238,0.10);
   padding: clamp(18px, 2.5vw, 28px) var(--side-pad);
   animation: srvFadeUp 0.8s 0.46s ease both;
@@ -180,7 +179,7 @@
   font-family: var(--font-display);
   font-size: clamp(80px, 12vw, 140px);
   line-height: 1;
-  color: rgba(192,21,42,0.06);
+  color: rgba(107,0,0,0.06);
   user-select: none;
   pointer-events: none;
   letter-spacing: 2px;
@@ -206,11 +205,11 @@
 .srv-rule {
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, rgba(192,21,42,0.4), transparent);
+  background: linear-gradient(to right, rgba(107,0,0,0.4), transparent);
 }
 
 .srv-rule-dark {
-  background: linear-gradient(to right, rgba(192,21,42,0.5), transparent);
+  background: linear-gradient(to right, rgba(107,0,0,0.5), transparent);
 }
 
 .srv-heading {
@@ -269,7 +268,7 @@
   width: 100%;
   display: block;
   border-radius: 2px;
-  box-shadow: 0 24px 48px rgba(192,21,42,0.10);
+  box-shadow: 0 24px 48px rgba(107,0,0,0.10);
 }
 
 .srv-img-accent-border {
@@ -307,7 +306,7 @@
   background: var(--cream-darker);
   overflow: hidden;
   border-radius: 2px;
-  box-shadow: 0 24px 48px rgba(192,21,42,0.10);
+  box-shadow: 0 24px 48px rgba(107,0,0,0.10);
 }
 
 .srv-carousel-img {
@@ -327,7 +326,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: rgba(192,21,42,0.15);
+  background: rgba(107,0,0,0.15);
 }
 
 .srv-carousel-bar-fill {

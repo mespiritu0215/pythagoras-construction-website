@@ -81,7 +81,7 @@ const css = `
 }
 .cu-bg-overlay {
   position: fixed; inset: 0;
-  background: linear-gradient(135deg, rgba(60,5,10,0.94) 0%, rgba(139,0,16,0.90) 100%);
+  background: linear-gradient(135deg, rgba(100,8,0,0.94) 0%, rgba(74,0,0,0.90) 100%);
   pointer-events: none; z-index: 1;
 }
 
@@ -135,7 +135,7 @@ const css = `
   background: #FFFFFF;
   border: 1px solid #E8D8C4;
   padding: clamp(28px,4vw,48px);
-  box-shadow: 0 8px 32px rgba(192,21,42,0.08);
+  box-shadow: 0 8px 32px rgba(107,0,0,0.08);
 }
 
 .cu-auth-gate {
@@ -144,11 +144,11 @@ const css = `
 }
 .cu-auth-lock {
   width: 56px; height: 56px;
-  border: 1px solid rgba(192,21,42,0.22);
+  border: 1px solid rgba(107,0,0,0.22);
   display: flex; align-items: center; justify-content: center;
-  background: rgba(192,21,42,0.05);
+  background: rgba(107,0,0,0.05);
 }
-.cu-auth-lock svg { width: 24px; height: 24px; fill: #C0152A; }
+.cu-auth-lock svg { width: 24px; height: 24px; fill: #6B0000; }
 .cu-auth-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(22px,3vw,32px); letter-spacing: 1px;
@@ -168,7 +168,7 @@ const css = `
 }
 .cu-user-avatar {
   width: 36px; height: 36px; border-radius: 50%;
-  border: 2px solid rgba(192,21,42,0.3); object-fit: cover;
+  border: 2px solid rgba(107,0,0,0.3); object-fit: cover;
 }
 .cu-user-name {
   font-family: 'Barlow Condensed', sans-serif;
@@ -186,12 +186,12 @@ const css = `
   padding: 5px 12px; cursor: pointer;
   transition: color 0.2s, border-color 0.2s;
 }
-.cu-sign-out:hover { color: #C0152A; border-color: rgba(192,21,42,0.35); }
+.cu-sign-out:hover { color: #8B0000; border-color: rgba(107,0,0,0.35); }
 
 /* Admin badge */
 .cu-admin-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  background: #C0152A; color: #FDF6EE;
+  background: #8B0000; color: #FDF6EE;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 9px; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; padding: 3px 8px;
@@ -206,7 +206,7 @@ const css = `
   letter-spacing: 2.5px; text-transform: uppercase;
   color: #9A8F85;
 }
-.cu-label span { color: #C0152A; margin-left: 2px; }
+.cu-label span { color: #6B0000; margin-left: 2px; }
 
 .cu-input, .cu-select, .cu-textarea {
   background: #FDF6EE;
@@ -219,7 +219,7 @@ const css = `
 }
 .cu-input::placeholder, .cu-textarea::placeholder { color: #9A8F85; }
 .cu-input:focus, .cu-select:focus, .cu-textarea:focus {
-  border-color: rgba(192,21,42,0.45); background: #FFFFFF;
+  border-color: rgba(107,0,0,0.45); background: #FFFFFF;
 }
 .cu-input:read-only { color: #9A8F85; cursor: default; }
 .cu-select {
@@ -233,22 +233,22 @@ const css = `
 
 .cu-error {
   padding: 12px 14px;
-  background: rgba(192,21,42,0.05);
-  border: 1px solid rgba(192,21,42,0.22);
+  background: rgba(107,0,0,0.05);
+  border: 1px solid rgba(107,0,0,0.22);
 }
-.cu-error p { margin: 0; font-size: 13px; line-height: 1.55; color: #C0152A; }
+.cu-error p { margin: 0; font-size: 13px; line-height: 1.55; color: #6B0000; }
 
 .cu-submit {
   display: inline-flex; align-items: center; gap: 8px;
-  background: #C0152A; color: #FDF6EE;
+  background: #6B0000; color: #FDF6EE;
   font-family: 'Barlow Condensed', sans-serif;
   font-weight: 700; font-size: 13px;
   letter-spacing: 2px; text-transform: uppercase;
-  padding: 15px 36px; border: 2px solid #C0152A;
+  padding: 15px 36px; border: 2px solid #6B0000;
   cursor: pointer; transition: background 0.2s, color 0.2s;
   align-self: flex-start; margin-top: 4px;
 }
-.cu-submit:hover:not(:disabled) { background: transparent; color: #C0152A; }
+.cu-submit:hover:not(:disabled) { background: transparent; color: #6B0000; }
 .cu-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .cu-spinner {
@@ -265,7 +265,7 @@ const css = `
 }
 .cu-success-icon {
   width: 56px; height: 56px;
-  background: rgba(192,21,42,0.07); border: 1px solid rgba(192,21,42,0.22);
+  background: rgba(107,0,0,0.07); border: 1px solid rgba(107,0,0,0.22);
   display: flex; align-items: center; justify-content: center;
 }
 .cu-success-icon svg { width: 24px; height: 24px; }
@@ -276,13 +276,13 @@ const css = `
 }
 .cu-success-sub { font-size: 14px; color: #5C4033; line-height: 1.7; margin: 0; }
 .cu-success-another {
-  background: none; border: 1px solid rgba(192,21,42,0.32);
-  color: #C0152A; font-family: 'Barlow Condensed', sans-serif;
+  background: none; border: 1px solid rgba(107,0,0,0.32);
+  color: #6B0000; font-family: 'Barlow Condensed', sans-serif;
   font-size: 12px; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; padding: 10px 24px; cursor: pointer;
   transition: background 0.2s, color 0.2s; margin-top: 8px;
 }
-.cu-success-another:hover { background: rgba(192,21,42,0.06); color: #E01A30; }
+.cu-success-another:hover { background: rgba(107,0,0,0.06); color: #8B0000; }
 
 @media (max-width: 860px) {
   .cu-inner { grid-template-columns: 1fr; gap: 52px; padding-top: clamp(100px,16vw,130px); }
@@ -457,7 +457,7 @@ export default function ContactUs(): JSX.Element {
     </svg>
   );
   const IconCheck = (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#C0152A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#6B0000" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12"/>
     </svg>
   );
@@ -573,13 +573,13 @@ export default function ContactUs(): JSX.Element {
 
               {isAdmin && (
                 <div style={{
-                  background: 'rgba(192,21,42,0.05)',
-                  border: '1px solid rgba(192,21,42,0.18)',
+                  background: 'rgba(107,0,0,0.05)',
+                  border: '1px solid rgba(107,0,0,0.18)',
                   padding: '10px 14px',
                   marginBottom: 20,
                   fontFamily: 'Barlow Condensed, sans-serif',
                   fontSize: 12, fontWeight: 700, letterSpacing: 2,
-                  textTransform: 'uppercase', color: '#C0152A',
+                  textTransform: 'uppercase', color: '#8B0000',
                 }}>
                   ⚙ Admin access granted — use the Edit Mode bar at the bottom of any page
                 </div>
