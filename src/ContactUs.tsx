@@ -44,7 +44,7 @@ const CONCERN_OPTIONS = [
 
 const RECIPIENT_MAP: Record<string, string> = {
   job: 'constructionpythagoras1@gmail.com',
-  project: 'constructionpythagoras1@gmail.com',
+  project: 'pci@pythagorasconstruction.com',
 };
 
 const SUBJECT_MAP: Record<string, string> = {
