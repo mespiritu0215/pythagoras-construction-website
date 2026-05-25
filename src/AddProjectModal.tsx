@@ -143,12 +143,12 @@ export function AddProjectModal({ onClose, editProject, isAdminProject }: Props)
       } else {
         // ── Editing a static project (store overrides) ─────
         const override: ProjectOverride = {
-          title:       projectData.title       || null,
-          description: projectData.description || null,
-          location:    projectData.location    || null,
-          client:      projectData.client      || null,
-          completion:  projectData.completion  || null,
-          amount:      projectData.amount      || null,
+          title:       projectData.title       || undefined,
+          description: projectData.description || undefined,
+          location:    projectData.location    || undefined,
+          client:      projectData.client      || undefined,
+          completion:  projectData.completion  || undefined,
+          amount:      projectData.amount      || undefined,
           ongoing:     projectData.ongoing,
           cover:  finalUrls[0],
           images: finalUrls,
