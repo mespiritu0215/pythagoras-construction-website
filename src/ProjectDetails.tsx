@@ -163,7 +163,7 @@ export default function ProjectDetails() {
               <img
                 key={activeIdx}
                 src={carouselImages[activeIdx]}
-                alt={`${project.title} — photo ${activeIdx + 1}`}
+                alt={`${project.title} — view ${activeIdx + 1}`}
                 className="pd-carousel-img"
               />
             </div>

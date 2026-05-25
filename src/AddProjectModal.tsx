@@ -385,7 +385,7 @@ export function AddProjectModal({ onClose, editProject, isAdminProject }: Props)
                 <div className="apm-toggle-row">
                   <button type="button"
                     className={`apm-toggle${ongoing ? ' on' : ''}`}
-                    onClick={() => setOngoing(v => !v)}
+                    onClick={() => setOngoing((v: boolean) => !v)}
                   />
                   <span className="apm-toggle-lbl">{ongoing ? 'Ongoing' : 'Completed'}</span>
                 </div>
