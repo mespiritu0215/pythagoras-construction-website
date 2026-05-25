@@ -290,7 +290,7 @@ function CarouselManagerModal({ storageKey, defaultImages, onClose }: CarouselMa
 // ─────────────────────────────────────────────────────────────
 
 function AboutUs() {
-  const { getText, setText, editMode, isAdmin, uploading: adminUploading } = useAdmin();
+  const { getText, setText, editMode } = useAdmin();
   const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   // ── Awards state ──────────────────────────────────────────

@@ -16,11 +16,6 @@ import { useAdmin, EditableText } from './AdminContext';
 /* ─────────────────────────────────────────────────────────────
    TYPES
 ───────────────────────────────────────────────────────────── */
-interface GoogleUser {
-  name: string;
-  email: string;
-  picture: string;
-}
 
 declare global {
   interface Window {
@@ -299,7 +294,7 @@ const css = `
 ───────────────────────────────────────────────────────────── */
 export default function ContactUs(): JSX.Element {
   // ── Admin context ──────────────────────────────────────────
-  const { user: adminUser, setUser: setAdminUser, isAdmin, editMode, getText } = useAdmin();
+  const { user: adminUser, setUser: setAdminUser, isAdmin, getText } = useAdmin();
   const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
 
   // ── Local state (derives user from adminContext) ───────────

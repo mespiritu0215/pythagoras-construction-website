@@ -274,7 +274,7 @@ function ProjectRow({ category, indexMap, setIndexMap, isLight, adminProjectIds 
 // ─────────────────────────────────────────────────────────────
 
 export default function Projects(): JSX.Element {
-  const { isAdmin, editMode, adminProjects, deletedProjectIds, getText } = useAdmin();
+  const { isAdmin, editMode, adminProjects, getText } = useAdmin();
   const siteEmail = getText('site.email', 'pci1051@yahoo.com.ph');
   const [showAddModal, setShowAddModal] = useState(false);
 
