@@ -38,7 +38,7 @@ const CONCERN_OPTIONS = [
 ];
 
 const RECIPIENT_MAP: Record<string, string> = {
-  job: 'constructionpythagoras1@gmail.com',
+  job: 'att@pythagorasconstruction.com',
   project: 'pci@pythagorasconstruction.com',
 };
 
@@ -47,10 +47,10 @@ const SUBJECT_MAP: Record<string, string> = {
   project: 'Construction Project Inquiry',
 };
 
-const GOOGLE_CLIENT_ID    = process.env.REACT_APP_GOOGLE_CLIENT_ID    ?? '';
-const EMAILJS_PUBLIC_KEY  = process.env.REACT_APP_EMAILJS_PUBLIC_KEY  ?? '';
-const EMAILJS_SERVICE_ID  = process.env.REACT_APP_EMAILJS_SERVICE_ID  ?? '';
-const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID ?? '';
+const GOOGLE_CLIENT_ID    = '871764279293-uvbgmvgphs3ro8toulpl7199ut242e6u.apps.googleusercontent.com';
+const EMAILJS_PUBLIC_KEY  = 'cyzWhAPnTX7FElevD';
+const EMAILJS_SERVICE_ID  = 'service_l6q3ybi';
+const EMAILJS_TEMPLATE_ID = 'template_tjfims7';
 
 /* ─────────────────────────────────────────────────────────────
    STYLES
